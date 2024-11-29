@@ -1,0 +1,91 @@
+package templates
+
+templ header() {
+	<head>
+		<title>GOTTH FINANCIAL TRACKER</title>
+		<meta charset="UTF-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" name="referrer" content="strict-origin-when-cross-origin"/>
+		<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+		<script src="https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js"></script>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="stylesheet" href="/static/app.css"/>
+		<link rel="preconnect" href="https://fonts.gstatic.com"/>
+		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet"/>
+	</head>
+}
+
+templ footer() {
+	<footer class="p-4 "></footer>
+}
+
+templ nav(user_id string) {
+	<nav class="container top-0 bg-primary-600 p-4 w-full fixed font-mono">
+		<div class="flex justify-between text-slate-800 text-xl underline font-normal">
+			if user_id == "" {
+				<ol class="flex space-x-5"></ol>
+				<ol class="flex space-x-5">
+					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+						<a href="/register">Register</a>
+					</li>
+					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+						<a href="/login">Login</a>
+					</li>
+				</ol>
+			} else {
+				<ol class="flex space-x-5">
+					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+						<a href="/">Home</a>
+					</li>
+					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+						<a href="/history">Transaction</a>
+					</li>
+                    <li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+                        <a href="/history">Recurring</a>
+                    </li>
+                    <li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+                        <a href="/history">Loans</a>
+                    </li>
+					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+						<a href="/about">About</a>
+					</li>
+				</ol>
+				<ol class="flex space-x-5">
+					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+						<a href="/profile">Profile</a>
+					</li>
+					<li class="cursor-pointer transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+						<a hx-get="/logout">Logout</a>
+					</li>
+				</ol>
+			}
+		</div>
+	</nav>
+}
+
+templ Layout(contents templ.Component, user_id string) {
+	@header()
+	<body class="flex flex-col items-center h-full w-full bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 font-mono">
+		<div class="flex w-full container items-center justify-center flex-col">
+			@nav(user_id)
+			<main class="flex-1 min-h-[95vh] justify-center items-center flex container" id="profile-container">
+				@contents
+			</main>
+			<section id="toast-container"></section>
+		</div>
+		<script>
+            document.addEventListener("DOMContentLoaded", () => {} {
+                document.querySelectorAll("[data-dismiss-target]").forEach(function(button) {
+                    button.addEventListener("click", function() {
+                        var targetId = this.getAttribute("data-dismiss-target");
+                        var targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.remove();
+                        }
+                    });
+                });
+            });
+        </script>
+	</body>
+	<script src="/static/toast.js" defer></script>
+}

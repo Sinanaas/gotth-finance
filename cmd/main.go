@@ -5,6 +5,8 @@ import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/routers"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"log"
 )
@@ -37,6 +39,8 @@ func init() {
 	BasicRouter = routers.NewBasicRouter(BasicController)
 
 	server = gin.Default()
+	store := cookie.NewStore([]byte(config.SessionSecretKey))
+	server.Use(sessions.Sessions("mysession", store))
 }
 
 func main() {

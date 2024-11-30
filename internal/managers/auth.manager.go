@@ -2,9 +2,12 @@ package managers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -95,6 +98,14 @@ func (am *AuthManager) Login(ctx *gin.Context) (ret bool) {
 		return false
 	}
 
+	// set session
+	session := sessions.Default(ctx)
+	session.Set("user_id", user.ID.String())
+	if err := session.Save(); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to save session"})
+		return
+	}
+
 	ctx.SetCookie("access_token", accessToken, am.config.AccessTokenMaxAge, "/", "", false, true)
 	ctx.SetCookie("refresh_token", refreshToken, am.config.RefreshTokenMaxAge, "/", "", false, true)
 	ctx.SetCookie("logged_in", "true", am.config.AccessTokenMaxAge, "/", "", false, false)
@@ -131,4 +142,7 @@ func (am *AuthManager) Logout(ctx *gin.Context) {
 	ctx.SetCookie("access_token", "", -1, "/", "", false, true)
 	ctx.SetCookie("refresh_token", "", -1, "/", "", false, true)
 	ctx.SetCookie("logged_in", "", -1, "/", "", false, false)
+
+	session := sessions.Default(ctx)
+	session.Clear()
 }

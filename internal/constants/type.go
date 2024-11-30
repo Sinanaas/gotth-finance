@@ -16,3 +16,11 @@ const (
 	Weekly
 	Monthly
 )
+
+func (t TransactionType) ToString() string {
+	return [...]string{"Expenses", "Income", "Transfer", "Investment"}[t]
+}
+
+func GetTransactionTypes() []TransactionType {
+	return []TransactionType{Expenses, Income, Transfer, Investment}
+}

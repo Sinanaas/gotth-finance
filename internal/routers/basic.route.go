@@ -17,4 +17,6 @@ func NewBasicRouter(basicController controllers.BasicController) BasicRouter {
 
 func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup) {
 	rg.GET("/", middleware.DeserializeUser(), handlers.NewGetHomeHandler().ServeHTTP)
+	rg.GET("/transaction", middleware.DeserializeUser(), handlers.NewGetTransaction().ServeHTTP)
+	rg.POST("/transaction", middleware.DeserializeUser(), br.basicController.CreateTransaction)
 }

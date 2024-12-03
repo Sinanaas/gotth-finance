@@ -47,7 +47,12 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	c := templates.Transaction(categories, transactions)
+	accounts, err := basicController.GetUserAccounts(user_id)
+	if err != nil {
+		return
+	}
+
+	c := templates.Transaction(categories, transactions, accounts)
 
 	err = templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer)
 	if err != nil {

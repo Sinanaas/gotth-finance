@@ -137,3 +137,31 @@ func (m *BasicManager) GetTransactionWithCategoryName(user_id string) ([]models.
 
 	return transactionsWithCategory, nil
 }
+
+func (m *BasicManager) GetAccountName(account_id string) (string, error) {
+	accountUUID, err := uuid.Parse(account_id)
+	if err != nil {
+		return "", err
+	}
+
+	var account models.Account
+	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
+		return "", err
+	}
+
+	return account.Name, nil
+}
+
+func (m *BasicManager) GetUserAccounts(user_id string) ([]models.Account, error) {
+	userUUID, err := uuid.Parse(user_id)
+	if err != nil {
+		return nil, err
+	}
+
+	var accounts []models.Account
+	if err := m.DB.Where("user_id = ?", userUUID).Find(&accounts).Error; err != nil {
+		return nil, err
+	}
+
+	return accounts, nil
+}

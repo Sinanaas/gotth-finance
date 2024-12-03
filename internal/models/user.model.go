@@ -18,6 +18,8 @@ type User struct {
 	Transactions []Transaction `gorm:"foreignKey:UserID"`
 	// Recurring relation
 	Recurrings []Recurring `gorm:"foreignKey:UserID"`
+	// Accounts relation
+	Accounts []Account `gorm:"foreignKey:UserID"`
 }
 
 type SignUpInput struct {

@@ -3,7 +3,7 @@ package templates
 import "github.com/Sinanaas/gotth-financial-tracker/internal/models"
 import "fmt"
 
-templ Transaction(categories []models.Category, transactions []models.TransactionWithCategory) {
+templ Transaction(categories []models.Category, transactions []models.TransactionWithCategory, accounts []models.Account) {
 <main class="container mx-auto p-4">
     <h1 class="text-4xl font-bold text-center mb-6">Transaction</h1>
     <div class="flex flex-col md:flex-row gap-6">
@@ -20,7 +20,6 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                         Add a Transaction
                     </h2>
                 </div>
-                <div id="transaction-error" class="text-red-500"></div>
                 <div class="flex flex-col gap-2">
                     <label for="amount" class="text-slate-600 font-semibold">Amount</label>
                     <input
@@ -41,6 +40,19 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                     >
                         <option value="income">Income</option>
                         <option value="expense">Expense</option>
+                    </select>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <label for="account" class="text-slate-600 font-semibold">Account</label>
+                    <select
+                            name="Account"
+                            id="account"
+                            class="rounded p-2 border border-slate-300"
+                    >
+                        for _, account := range accounts {
+                        <option value={ fmt.Sprintf(
+                        "%s", account) }>{ account.Name }</option>
+                        }
                     </select>
                 </div>
                 <div class="flex flex-col gap-2">

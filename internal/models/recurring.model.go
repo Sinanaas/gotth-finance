@@ -19,4 +19,7 @@ type Recurring struct {
 	// Belongs to a category
 	CategoryID uuid.UUID
 	Category   Category `gorm:"foreignKey:CategoryID"`
+	// Belongs to an account
+	AccountID uuid.UUID
+	Account   Account `gorm:"foreignKey:AccountID"`
 }

@@ -53,3 +53,19 @@ func (bc *BasicController) GetCategoryName(category_id string) (string, error) {
 	}
 	return categoryName, nil
 }
+
+func (bc *BasicController) GetAccountName(account_id string) (string, error) {
+	accountName, err := bc.BM.GetAccountName(account_id)
+	if err != nil {
+		return "", err
+	}
+	return accountName, nil
+}
+
+func (bc *BasicController) GetUserAccounts(user_id string) ([]models.Account, error) {
+	accounts, err := bc.BM.GetUserAccounts(user_id)
+	if err != nil {
+		return nil, err
+	}
+	return accounts, nil
+}

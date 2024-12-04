@@ -19,4 +19,7 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup) {
 	rg.GET("/", middleware.DeserializeUser(), handlers.NewGetHomeHandler().ServeHTTP)
 	rg.GET("/transaction", middleware.DeserializeUser(), handlers.NewGetTransaction().ServeHTTP)
 	rg.POST("/transaction", middleware.DeserializeUser(), br.basicController.CreateTransaction)
+	rg.GET("/accounts", middleware.DeserializeUser(), handlers.NewGetAccountsHandler)
+	rg.POST("/account", middleware.DeserializeUser(), br.basicController.CreateAccount)
+	rg.GET("/account/balance", middleware.DeserializeUser(), br.basicController.GetAccountBalance)
 }

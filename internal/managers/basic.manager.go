@@ -1,14 +1,11 @@
 package managers
 
 import (
-	"log"
-	"strconv"
+	"fmt"
 	"time"
 
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -29,27 +26,8 @@ func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
 	return categories, nil
 }
 
-func (m *BasicManager) CraeteTransaction(ctx *gin.Context) error {
-	var payload models.TransactionRequest
-	var err error
-	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
-	if err != nil {
-		log.Fatal(err)
-		return err
-	}
-	payload.Date = ctx.PostForm("Date")
-	payload.Type, err = strconv.Atoi(ctx.PostForm("Type"))
-	payload.Description = ctx.PostForm("Description")
-	payload.Category = ctx.PostForm("Category")
-
-	session := sessions.Default(ctx)
-	var user_id string
-	v := session.Get("user_id")
-	if v != nil {
-		user_id = v.(string)
-	}
-
-	userUUID, err := uuid.Parse(user_id)
+func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
 	if err != nil {
 		return err
 	}
@@ -59,7 +37,12 @@ func (m *BasicManager) CraeteTransaction(ctx *gin.Context) error {
 		return err
 	}
 
-	categoryUUID, err := uuid.Parse(payload.Category)
+	categoryUUID, err := uuid.Parse(payload.CategoryID)
+	if err != nil {
+		return err
+	}
+
+	accountUUID, err := uuid.Parse(payload.Account)
 	if err != nil {
 		return err
 	}
@@ -71,8 +54,13 @@ func (m *BasicManager) CraeteTransaction(ctx *gin.Context) error {
 		Description:     payload.Description,
 		CategoryID:      categoryUUID,
 		TransactionDate: transactionDate,
+		AccountID:       accountUUID,
 	}
 
+	err = m.CalculateBalance(payload.Account, transaction.Amount, transaction.TransactionType)
+	if err != nil {
+		return err
+	}
 	if err := m.DB.Create(&transaction).Error; err != nil {
 		return err
 	}
@@ -108,7 +96,41 @@ func (m *BasicManager) GetCategoryName(category_id string) (string, error) {
 	return category.Name, nil
 }
 
-func (m *BasicManager) GetTransactionWithCategoryName(user_id string) ([]models.TransactionWithCategory, error) {
+func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+
+	account := models.Account{
+		UserID:      userUUID,
+		Name:        payload.Name,
+		Description: payload.Description,
+		Balance:     payload.Balance,
+	}
+
+	if err := m.DB.Create(&account).Error; err != nil {
+		return err
+	}
+
+	if payload.Balance > 0 {
+		createdAccount, _ := m.GetLatestUserAccount(payload.UserID)
+		var transaction models.TransactionRequest
+		category, _ := m.FindCategoryByName("Income")
+		transaction.UserID = payload.UserID
+		transaction.Amount = payload.Balance
+		transaction.Type = 1
+		transaction.Description = "Initial deposit"
+		transaction.Account = createdAccount.ID.String()
+		transaction.CategoryID = category.ID.String()
+		transaction.Date = time.Now().Format("2006-01-02")
+		err = m.CreateTransaction(transaction)
+	}
+
+	return nil
+}
+
+func (m *BasicManager) GetTransactionWithCategoryName(user_id string) ([]models.TransactionCategoryAccounts, error) {
 	userUUID, err := uuid.Parse(user_id)
 	if err != nil {
 		return nil, err
@@ -119,18 +141,28 @@ func (m *BasicManager) GetTransactionWithCategoryName(user_id string) ([]models.
 		return nil, err
 	}
 
-	var transactionsWithCategory []models.TransactionWithCategory
+	var transactionsWithCategory []models.TransactionCategoryAccounts
 	for _, transaction := range transactions {
 		categoryName, err := m.GetCategoryName(transaction.CategoryID.String())
 		if err != nil {
 			return nil, err
 		}
+		var accountName string
+		if transaction.AccountID != uuid.Nil {
+			accountName, err = m.GetAccountName(transaction.AccountID.String())
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			accountName = ""
+		}
 
-		transactionsWithCategory = append(transactionsWithCategory, models.TransactionWithCategory{
+		transactionsWithCategory = append(transactionsWithCategory, models.TransactionCategoryAccounts{
 			Amount:          transaction.Amount,
 			TransactionType: transaction.TransactionType,
 			Description:     transaction.Description,
 			CategoryName:    categoryName,
+			AccountName:     accountName,
 			TransactionDate: transaction.TransactionDate,
 		})
 	}
@@ -164,4 +196,75 @@ func (m *BasicManager) GetUserAccounts(user_id string) ([]models.Account, error)
 	}
 
 	return accounts, nil
+}
+
+func (m *BasicManager) GetLatestUserAccount(user_id string) (models.Account, error) {
+	userUUID, err := uuid.Parse(user_id)
+	if err != nil {
+		return models.Account{}, err
+	}
+
+	var account models.Account
+	if err := m.DB.Where("user_id = ?", userUUID).Last(&account).Error; err != nil {
+		return models.Account{}, err
+	}
+
+	return account, nil
+}
+
+func (m *BasicManager) FindCategoryByName(name string) (models.Category, error) {
+	var category models.Category
+	if err := m.DB.Where("name = ?", name).First(&category).Error; err != nil {
+		return models.Category{}, err
+	}
+	return category, nil
+}
+
+func (m *BasicManager) CalculateBalance(account_id string, amount float64, transactionType constants.TransactionType) error {
+	accountUUID, err := uuid.Parse(account_id)
+	if err != nil {
+		return err
+	}
+
+	var account models.Account
+	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
+		return err
+	}
+	transactions, err := m.FindAccountTransactions(account_id)
+	if transactionType == constants.Income && len(transactions) == 0 {
+		account.Balance += amount
+	} else {
+		if account.Balance < amount {
+			return fmt.Errorf("insufficient balance")
+		}
+		account.Balance -= amount
+	}
+
+	if err := m.DB.Save(&account).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicManager) FindAccountTransactions(account_id string) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	if err := m.DB.Where("account_id = ?", account_id).First(&transactions).Error; err != nil {
+		return []models.Transaction{}, err
+	}
+	return transactions, nil
+}
+
+func (m *BasicManager) FindAccountById(account_id string) (models.Account, error) {
+	accountUUID, err := uuid.Parse(account_id)
+	if err != nil {
+		return models.Account{}, err
+	}
+
+	var account models.Account
+	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
+		return models.Account{}, err
+	}
+
+	return account, nil
 }

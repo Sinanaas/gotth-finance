@@ -1,9 +1,10 @@
 package templates
 
 import "github.com/Sinanaas/gotth-financial-tracker/internal/models"
+import "github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 import "fmt"
 
-templ Transaction(categories []models.Category, transactions []models.TransactionWithCategory, accounts []models.Account) {
+templ Transaction(categories []models.Category, transactions []models.TransactionCategoryAccounts, accounts []models.Account) {
 <main class="container mx-auto p-4">
     <h1 class="text-4xl font-bold text-center mb-6">Transaction</h1>
     <div class="flex flex-col md:flex-row gap-6">
@@ -38,22 +39,41 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                             id="type"
                             class="rounded p-2 border border-slate-300"
                     >
-                        <option value="income">Income</option>
-                        <option value="expense">Expense</option>
+                        <option value="0">Income</option>
+                        <option value="1">Expense</option>
                     </select>
                 </div>
-                <div class="flex flex-col gap-2">
-                    <label for="account" class="text-slate-600 font-semibold">Account</label>
-                    <select
-                            name="Account"
-                            id="account"
-                            class="rounded p-2 border border-slate-300"
-                    >
+                <div class="flex w-full justify-between gap-6">
+                    <div class="flex flex-col gap-2 w-1/2">
+                        <label for="account" class="text-slate-600 font-semibold">Account</label>
+                        <select
+                                name="Account"
+                                id="account"
+                                class="rounded p-2 w-full border border-slate-300"
+                                hx-get="/account/balance"
+                                hx-target="#balance"
+                                hx-params="Account"
+                        >
                         for _, account := range accounts {
-                        <option value={ fmt.Sprintf(
-                        "%s", account) }>{ account.Name }</option>
-                        }
-                    </select>
+                            <option class="w-full" value={ fmt.Sprintf("%s", account.ID) }>
+                            { account.Name }
+                            </option>
+						}
+                        </select>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="balance" class="text-slate-600 font-semibold">Balance</label>
+                        <div id="balance" class="text-sm text-gray-900">
+                            <div class="text-sm text-gray-900">
+                                <input
+                                        type="text"
+                                        value=""
+                                        disabled
+                                        class="rounded p-2 border border-slate-300"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex flex-col gap-2">
                     <label for="description" class="text-slate-600 font-semibold">Description</label>
@@ -111,6 +131,10 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                     </th>
                     <th scope="col"
                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Account
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Type
                     </th>
                     <th scope="col"
@@ -129,7 +153,10 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                         <div class="text-sm text-gray-900">{ transaction.Description }</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Rp. { fmt.Sprintf("%v", transaction.Amount) }</div>
+                        <div class="text-sm text-gray-900">Rp. { utils.FormatCurrency(transaction.Amount) }</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">{ transaction.AccountName }</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{ transaction.TransactionType.ToString() }</div>

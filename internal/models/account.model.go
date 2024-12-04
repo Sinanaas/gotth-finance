@@ -16,3 +16,10 @@ type Account struct {
 	Description string  `gorm:"type:text"`
 	Balance     float64 `gorm:"type:decimal(10,2);default:0.00"`
 }
+
+type AccountRequest struct {
+	Name        string
+	Description string
+	Balance     float64
+	UserID      string
+}

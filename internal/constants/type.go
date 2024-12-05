@@ -5,8 +5,6 @@ type TransactionType int
 const (
 	Expenses TransactionType = iota
 	Income
-	Transfer
-	Investment
 )
 
 type Periodicity int
@@ -18,9 +16,17 @@ const (
 )
 
 func (t TransactionType) ToString() string {
-	return [...]string{"Expenses", "Income", "Transfer", "Investment"}[t]
+	return [...]string{"Expenses", "Income"}[t]
+}
+
+func (t TransactionType) ToIndex() int {
+	return int(t)
+}
+
+func (t TransactionType) ToArrayString() []string {
+	return []string{"Expenses", "Income"}
 }
 
 func GetTransactionTypes() []TransactionType {
-	return []TransactionType{Expenses, Income, Transfer, Investment}
+	return []TransactionType{Expenses, Income}
 }

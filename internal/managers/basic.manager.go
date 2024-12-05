@@ -116,7 +116,7 @@ func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
 	if payload.Balance > 0 {
 		createdAccount, _ := m.GetLatestUserAccount(payload.UserID)
 		var transaction models.TransactionRequest
-		category, _ := m.FindCategoryByName("Income")
+		category, _ := m.FindCategoryByName("Initial")
 		transaction.UserID = payload.UserID
 		transaction.Amount = payload.Balance
 		transaction.Type = 1
@@ -231,9 +231,9 @@ func (m *BasicManager) CalculateBalance(account_id string, amount float64, trans
 		return err
 	}
 	transactions, err := m.FindAccountTransactions(account_id)
-	if transactionType == constants.Income && len(transactions) == 0 {
+	if transactionType == constants.Income && len(transactions) != 0 {
 		account.Balance += amount
-	} else {
+	} else if transactionType == constants.Expenses {
 		if account.Balance < amount {
 			return fmt.Errorf("insufficient balance")
 		}

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
@@ -52,7 +53,10 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	c := templates.Transaction(categories, transactions, accounts)
+	var transactionType constants.TransactionType
+	transactionTypeArray := transactionType.ToArrayString()
+
+	c := templates.Transaction(categories, transactions, accounts, transactionTypeArray)
 
 	err = templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer)
 	if err != nil {

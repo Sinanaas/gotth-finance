@@ -76,19 +76,6 @@ templ Layout(contents templ.Component, user_id string) {
 			</main>
 			<section id="toast-container"></section>
 		</div>
-		<script>
-            document.addEventListener("DOMContentLoaded", () => {} {
-                document.querySelectorAll("[data-dismiss-target]").forEach(function(button) {
-                    button.addEventListener("click", function() {
-                        var targetId = this.getAttribute("data-dismiss-target");
-                        var targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            targetElement.remove();
-                        }
-                    });
-                });
-            });
-        </script>
 	</body>
 	<script src="/static/toast.js" defer></script>
 }

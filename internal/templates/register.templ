@@ -1,76 +1,121 @@
 package templates
 
 templ Register(title string) {
-	<div hx-ext="response-targets" class="mt-[-12vh]">
-		<form
+<div hx-ext="response-targets" class="mt-[-12vh]">
+	<form
 			hx-post="/register"
 			hx-trigger="submit"
 			hx-target-401="#register-error"
 			hx-encoding="application/x-www-form-urlencoded"
 			class="flex flex-col w-[300px] bg-slate-100 p-4 pb-5 rounded-lg shadow-md gap-4"
-		>
-			<div class="flex justify-center items-center border-b border-slate-300 pb-4">
-				<h1 class="text-xl font-bold text-slate-700">
-					Register
-				</h1>
-			</div>
-			<div id="register-error"></div>
-			<div class="flex flex-col gap-1">
-				<label for="Email" class="text-slate-600 font-semibold">Email</label>
-				<input
-					type="Email"
+			id="form"
+	>
+		<div class="flex justify-center items-center border-b border-slate-300 pb-4">
+			<h1 class="text-xl font-bold text-slate-700">
+				Register
+			</h1>
+		</div>
+		<div id="register-error" class="text-red-500 text-sm"></div>
+		<div class="flex flex-col gap-1">
+			<label for="Email" class="text-slate-600 font-semibold">Email</label>
+			<input
+					type="email"
 					name="Email"
 					id="email"
 					placeholder="name@company.com"
 					autocomplete="email"
-					class="rounded p-1"
-				/>
-			</div>
-			<div class="flex flex-col gap-1">
-				<label for="Username" class="text-slate-600 font-semibold">Usename</label>
-				<input
+					class="rounded p-1 border border-gray-300"
+					required
+					onkeyup="this.setCustomValidity('')"
+					hx-on:htmx:validation:validate="
+						if (!this.value.includes('@') || !this.value.includes('.')) {
+							this.setCustomValidity('Please enter a valid email address.');
+							htmx.find('#form').reportValidity();
+						} else {
+							this.setCustomValidity('');
+							htmx.find('#form').reportValidity();
+						}
+					"
+			/>
+		</div>
+		<div class="flex flex-col gap-1">
+			<label for="Username" class="text-slate-600 font-semibold">Username</label>
+			<input
 					type="text"
 					name="Username"
 					id="username"
 					placeholder="username"
-					class="rounded p-1"
-				/>
-			</div>
-			<div class="flex flex-col gap-1">
-				<label for="Password" class="text-slate-600 font-semibold">Password</label>
-				<input
+					class="rounded p-1 border border-gray-300"
+					required
+					onkeyup="this.setCustomValidity('')"
+					hx-on:htmx:validation:validate="
+						if (this.value.trim().length < 4) {
+							this.setCustomValidity('Username must be at least 4 characters long.');
+							htmx.find('#form').reportValidity();
+						} else {
+							this.setCustomValidity('');
+							htmx.find('#form').reportValidity();
+						}
+					"
+			/>
+		</div>
+		<div class="flex flex-col gap-1">
+			<label for="Password" class="text-slate-600 font-semibold">Password</label>
+			<input
 					type="password"
 					name="Password"
 					id="password"
 					placeholder="••••••••"
-					autocomplete="current-password"
-					class="rounded p-1"
-				/>
-			</div>
-			<div class="flex flex-col gap-1">
-				<label for="ConfirmPassword" class="text-slate-600 font-semibold">Confirm Password</label>
-				<input
+					autocomplete="new-password"
+					class="rounded p-1 border border-gray-300"
+					required
+					onkeyup="this.setCustomValidity('')"
+					hx-on:htmx:validation:validate="
+						if (this.value.length < 8) {
+							this.setCustomValidity('Password must be at least 8 characters long.');
+							htmx.find('#form').reportValidity();
+						} else {
+							this.setCustomValidity('');
+							htmx.find('#form').reportValidity();
+						}
+					"
+			/>
+		</div>
+		<div class="flex flex-col gap-1">
+			<label for="ConfirmPassword" class="text-slate-600 font-semibold">Confirm Password</label>
+			<input
 					type="password"
 					name="ConfirmPassword"
 					id="confirm-password"
 					placeholder="••••••••"
-					autocomplete="current-password"
-					class="rounded p-1"
-				/>
-			</div>
-			<button type="submit" class="text-white bg-amber-400 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300">
-				Register
-			</button>
-			<div class="flex justify-center text-center">
-				<p class="font-thin text-slate-600 text-sm">
-					Already have an account?
-					<a href="/login" class="text-amber-600 underline">Login</a>
-				</p>
-			</div>
-		</form>
-	</div>
+					autocomplete="new-password"
+					class="rounded p-1 border border-gray-300"
+					required
+					onkeyup="this.setCustomValidity('')"
+					hx-on:htmx:validation:validate="
+						if (this.value !== htmx.find('#password').value) {
+							this.setCustomValidity('Passwords do not match.');
+							htmx.find('#form').reportValidity();
+						} else {
+							this.setCustomValidity('');
+							htmx.find('#form').reportValidity();
+						}
+					"
+			/>
+		</div>
+		<button type="submit" class="text-white bg-amber-400 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300">
+			Register
+		</button>
+		<div class="flex justify-center text-center">
+			<p class="font-thin text-slate-600 text-sm">
+				Already have an account?
+				<a href="/login" class="text-amber-600 underline">Login</a>
+			</p>
+		</div>
+	</form>
+</div>
 }
 
 templ RegisterError() {
-	<p>Invalid email or password</p>
+<p class="text-red-500">Invalid registration details</p>
 }

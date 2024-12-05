@@ -31,6 +31,17 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                             placeholder="0.00"
                             class="rounded p-2 border border-slate-300"
                             min="0"
+                            required
+                            onkeyup="this.setCustomValidity('')"
+                            hx-on:htmx:validation:validate="
+                            if (this.value < 0) {
+                                this.setCustomValidity('Amount cannot be negative.');
+                                htmx.find('#account-form').reportValidity();
+                            } else {
+                                this.setCustomValidity('');
+                                htmx.find('#account-form').reportValidity();
+                            }
+                        "
                     />
                 </div>
                 <div class="flex flex-col gap-2">
@@ -39,12 +50,15 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                             name="Type"
                             id="type"
                             class="rounded p-2 border border-slate-300"
+                            required
+                            oninvalid="this.setCustomValidity('Please select a transaction type.')"
+                            oninput="this.setCustomValidity('')"
                     >
                         <option disabled selected value class="w-full text-slate-600">select a transaction type</option>
                         for i := 0 ; i < len(transactionType) ; i++ {
-                            <option class="w-full" value={ strconv.Itoa(i) }>
+                        <option class="w-full" value={ strconv.Itoa(i) }>
                             { transactionType[i] }
-                            </option>
+                        </option>
                         }
                     </select>
                 </div>
@@ -58,13 +72,16 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                                 hx-get="/account/balance"
                                 hx-target="#balance"
                                 hx-params="Account"
+                                required
+                                oninvalid="this.setCustomValidity('Please select an account.')"
+                                oninput="this.setCustomValidity('')"
                         >
-                        <option disabled selected value class="w-full text-slate-600">select an account</option>
-                        for _, account := range accounts {
+                            <option disabled selected value class="w-full text-slate-600">select an account</option>
+                            for _, account := range accounts {
                             <option class="w-full" value={ fmt.Sprintf("%s", account.ID) }>
                             { account.Name }
                             </option>
-						}
+                            }
                         </select>
                     </div>
                     <div class="flex flex-col gap-2">
@@ -89,6 +106,9 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                             id="description"
                             placeholder="Description"
                             class="rounded p-2 border border-slate-300"
+                            required
+                            oninvalid="this.setCustomValidity('Please enter a description.')"
+                            oninput="this.setCustomValidity('')"
                     />
                 </div>
                 <div class="flex flex-col gap-2">
@@ -98,6 +118,9 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                             name="Date"
                             id="date"
                             class="rounded p-2 border border-slate-300"
+                            required
+                            oninvalid="this.setCustomValidity('Please select a date.')"
+                            oninput="this.setCustomValidity('')"
                     />
                 </div>
                 <div class="flex flex-col gap-2">
@@ -106,10 +129,13 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                             name="Category"
                             id="category"
                             class="rounded p-2 border border-slate-300"
+                            required
+                            oninvalid="this.setCustomValidity('Please select a category.')"
+                            oninput="this.setCustomValidity('')"
                     >
+                        <option disabled selected value class="w-full text-slate-600">select a category</option>
                         for _, category := range categories {
-                        <option value={ fmt.Sprintf(
-                        "%s", category.ID) }>{ category.Name }</option>
+                        <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
                         }
                     </select>
                 </div>

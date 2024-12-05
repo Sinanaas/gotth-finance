@@ -151,7 +151,7 @@ func Layout(contents templ.Component, user_id string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><section id=\"toast-container\"></section></div><script>\r\n            document.addEventListener(\"DOMContentLoaded\", () => {} {\r\n                document.querySelectorAll(\"[data-dismiss-target]\").forEach(function(button) {\r\n                    button.addEventListener(\"click\", function() {\r\n                        var targetId = this.getAttribute(\"data-dismiss-target\");\r\n                        var targetElement = document.querySelector(targetId);\r\n                        if (targetElement) {\r\n                            targetElement.remove();\r\n                        }\r\n                    });\r\n                });\r\n            });\r\n        </script></body><script src=\"/static/toast.js\" defer></script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><section id=\"toast-container\"></section></div></body><script src=\"/static/toast.js\" defer></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

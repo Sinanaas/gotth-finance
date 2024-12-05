@@ -14,6 +14,7 @@ templ Accounts(accounts []models.Account) {
                     hx-target-401="#account-error"
                     hx-encoding="application/x-www-form-urlencoded"
                     class="flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4"
+                    id="account-form"
             >
                 <div class="flex justify-center items-center border-b border-slate-300 pb-4 mb-4">
                     <h2 class="text-xl font-bold text-slate-700">
@@ -28,6 +29,17 @@ templ Accounts(accounts []models.Account) {
                             id="name"
                             placeholder="Account Name"
                             class="rounded p-2 border border-slate-300"
+                            required
+                            onkeyup="this.setCustomValidity('')"
+                            hx-on:htmx:validation:validate="
+                            if (this.value.trim().length < 3) {
+                                this.setCustomValidity('Account name must be at least 3 characters long.');
+                                htmx.find('#account-form').reportValidity();
+                            } else {
+                                this.setCustomValidity('');
+                                htmx.find('#account-form').reportValidity();
+                            }
+                        "
                     />
                 </div>
                 <div class="flex flex-col gap-2">
@@ -39,6 +51,17 @@ templ Accounts(accounts []models.Account) {
                             placeholder="0.00"
                             class="rounded p-2 border border-slate-300"
                             min="0"
+                            required
+                            onkeyup="this.setCustomValidity('')"
+                            hx-on:htmx:validation:validate="
+                            if (this.value < 0) {
+                                this.setCustomValidity('Balance cannot be negative.');
+                                htmx.find('#account-form').reportValidity();
+                            } else {
+                                this.setCustomValidity('');
+                                htmx.find('#account-form').reportValidity();
+                            }
+                        "
                     />
                 </div>
                 <div class="flex flex-col gap-2">
@@ -49,6 +72,17 @@ templ Accounts(accounts []models.Account) {
                             id="description"
                             placeholder="Account Description"
                             class="rounded p-2 border border-slate-300"
+                            required
+                            onkeyup="this.setCustomValidity('')"
+                            hx-on:htmx:validation:validate="
+                            if (this.value.trim().length < 5) {
+                                this.setCustomValidity('Description must be at least 5 characters long.');
+                                htmx.find('#account-form').reportValidity();
+                            } else {
+                                this.setCustomValidity('');
+                                htmx.find('#account-form').reportValidity();
+                            }
+                        "
                     />
                 </div>
                 <div class="flex justify-center">

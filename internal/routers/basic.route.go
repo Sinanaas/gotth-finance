@@ -22,4 +22,7 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup) {
 	rg.GET("/accounts", middleware.DeserializeUser(), handlers.NewGetAccountsHandler)
 	rg.POST("/account", middleware.DeserializeUser(), br.basicController.CreateAccount)
 	rg.GET("/account/balance", middleware.DeserializeUser(), br.basicController.GetAccountBalance)
+	rg.GET("/recurring", middleware.DeserializeUser(), handlers.NewGetRecurringHandler().ServeHTTP)
+	rg.POST("/recurring", middleware.DeserializeUser(), br.basicController.CreateRecurring)
+
 }

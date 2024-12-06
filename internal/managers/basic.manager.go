@@ -68,8 +68,8 @@ func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) erro
 	return nil
 }
 
-func (m *BasicManager) GetUserTransactions(user_id string) ([]models.Transaction, error) {
-	userUUID, err := uuid.Parse(user_id)
+func (m *BasicManager) GetUserTransactions(userId string) ([]models.Transaction, error) {
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -82,8 +82,8 @@ func (m *BasicManager) GetUserTransactions(user_id string) ([]models.Transaction
 	return transactions, nil
 }
 
-func (m *BasicManager) GetCategoryName(category_id string) (string, error) {
-	categoryUUID, err := uuid.Parse(category_id)
+func (m *BasicManager) GetCategoryName(categoryId string) (string, error) {
+	categoryUUID, err := uuid.Parse(categoryId)
 	if err != nil {
 		return "", err
 	}
@@ -130,8 +130,8 @@ func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
 	return nil
 }
 
-func (m *BasicManager) GetTransactionWithCategoryName(user_id string) ([]models.TransactionCategoryAccounts, error) {
-	userUUID, err := uuid.Parse(user_id)
+func (m *BasicManager) GetTransactionWithCategoryName(userId string) ([]models.TransactionCategoryAccounts, error) {
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -170,8 +170,8 @@ func (m *BasicManager) GetTransactionWithCategoryName(user_id string) ([]models.
 	return transactionsWithCategory, nil
 }
 
-func (m *BasicManager) GetAccountName(account_id string) (string, error) {
-	accountUUID, err := uuid.Parse(account_id)
+func (m *BasicManager) GetAccountName(accountId string) (string, error) {
+	accountUUID, err := uuid.Parse(accountId)
 	if err != nil {
 		return "", err
 	}
@@ -184,8 +184,8 @@ func (m *BasicManager) GetAccountName(account_id string) (string, error) {
 	return account.Name, nil
 }
 
-func (m *BasicManager) GetUserAccounts(user_id string) ([]models.Account, error) {
-	userUUID, err := uuid.Parse(user_id)
+func (m *BasicManager) GetUserAccounts(userId string) ([]models.Account, error) {
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -198,8 +198,8 @@ func (m *BasicManager) GetUserAccounts(user_id string) ([]models.Account, error)
 	return accounts, nil
 }
 
-func (m *BasicManager) GetLatestUserAccount(user_id string) (models.Account, error) {
-	userUUID, err := uuid.Parse(user_id)
+func (m *BasicManager) GetLatestUserAccount(userId string) (models.Account, error) {
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return models.Account{}, err
 	}
@@ -220,8 +220,8 @@ func (m *BasicManager) FindCategoryByName(name string) (models.Category, error) 
 	return category, nil
 }
 
-func (m *BasicManager) CalculateBalance(account_id string, amount float64, transactionType constants.TransactionType) error {
-	accountUUID, err := uuid.Parse(account_id)
+func (m *BasicManager) CalculateBalance(accountId string, amount float64, transactionType constants.TransactionType) error {
+	accountUUID, err := uuid.Parse(accountId)
 	if err != nil {
 		return err
 	}
@@ -230,7 +230,7 @@ func (m *BasicManager) CalculateBalance(account_id string, amount float64, trans
 	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
 		return err
 	}
-	transactions, err := m.FindAccountTransactions(account_id)
+	transactions, err := m.FindAccountTransactions(accountId)
 	if transactionType == constants.Income && len(transactions) != 0 {
 		account.Balance += amount
 	} else if transactionType == constants.Expenses {
@@ -247,16 +247,16 @@ func (m *BasicManager) CalculateBalance(account_id string, amount float64, trans
 	return nil
 }
 
-func (m *BasicManager) FindAccountTransactions(account_id string) ([]models.Transaction, error) {
+func (m *BasicManager) FindAccountTransactions(accountId string) ([]models.Transaction, error) {
 	var transactions []models.Transaction
-	if err := m.DB.Where("account_id = ?", account_id).First(&transactions).Error; err != nil {
+	if err := m.DB.Where("account_id = ?", accountId).First(&transactions).Error; err != nil {
 		return []models.Transaction{}, err
 	}
 	return transactions, nil
 }
 
-func (m *BasicManager) FindAccountById(account_id string) (models.Account, error) {
-	accountUUID, err := uuid.Parse(account_id)
+func (m *BasicManager) FindAccountById(accountId string) (models.Account, error) {
+	accountUUID, err := uuid.Parse(accountId)
 	if err != nil {
 		return models.Account{}, err
 	}
@@ -267,4 +267,79 @@ func (m *BasicManager) FindAccountById(account_id string) (models.Account, error
 	}
 
 	return account, nil
+}
+
+func (m *BasicManager) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var recurrings []models.Recurring
+	if err := m.DB.Where("user_id = ?", userUUID).Find(&recurrings).Error; err != nil {
+		return nil, err
+	}
+
+	var recurringsWithCategory []models.RecurringWithCategoryName
+	for _, recurring := range recurrings {
+		categoryName, err := m.GetCategoryName(recurring.CategoryID.String())
+		if err != nil {
+			return nil, err
+		}
+
+		var accountName string
+		if recurring.AccountID != uuid.Nil {
+			accountName, err = m.GetAccountName(recurring.AccountID.String())
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			accountName = ""
+		}
+
+		recurringsWithCategory = append(recurringsWithCategory, models.RecurringWithCategoryName{
+			Amount:          recurring.Amount,
+			TransactionType: recurring.TransactionType,
+			Name:            recurring.Name,
+			CategoryName:    categoryName,
+			Periodicity:     recurring.Periodicity,
+			AccountName:     accountName,
+		})
+	}
+
+	return recurringsWithCategory, nil
+
+}
+
+func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+
+	categoryUUID, err := uuid.Parse(payload.CategoryID)
+	if err != nil {
+		return err
+	}
+
+	accountUUID, err := uuid.Parse(payload.AccountID)
+	if err != nil {
+		return err
+	}
+
+	recurring := models.Recurring{
+		UserID:          userUUID,
+		Name:            payload.Name,
+		Amount:          payload.Amount,
+		TransactionType: constants.TransactionType(payload.TransactionType),
+		Periodicity:     constants.Periodicity(payload.Periodicity),
+		CategoryID:      categoryUUID,
+		AccountID:       accountUUID,
+	}
+
+	if err := m.DB.Create(&recurring).Error; err != nil {
+		return err
+	}
+
+	return nil
 }

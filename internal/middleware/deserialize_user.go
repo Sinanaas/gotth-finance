@@ -14,21 +14,21 @@ import (
 
 func DeserializeUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var access_token string
+		var accessToken string
 		cookie, err := ctx.Cookie("access_token")
 		if err != nil {
 			ctx.Redirect(http.StatusSeeOther, "/login")
 			return
 		}
 
-		access_token = cookie
-		if access_token == "" {
+		accessToken = cookie
+		if accessToken == "" {
 			ctx.Redirect(http.StatusSeeOther, "/login")
 			return
 		}
 
 		config, _ := initializers.LoadConfig(".")
-		sub, err := utils.ValidateToken(access_token, config.AccessTokenPublicKey)
+		sub, err := utils.ValidateToken(accessToken, config.AccessTokenPublicKey)
 
 		if err != nil {
 			ctx.Redirect(http.StatusSeeOther, "/login")

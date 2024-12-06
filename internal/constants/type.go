@@ -19,14 +19,14 @@ func (t TransactionType) ToString() string {
 	return [...]string{"Expenses", "Income"}[t]
 }
 
-func (t TransactionType) ToIndex() int {
-	return int(t)
-}
-
 func (t TransactionType) ToArrayString() []string {
 	return []string{"Expenses", "Income"}
 }
 
-func GetTransactionTypes() []TransactionType {
-	return []TransactionType{Expenses, Income}
+func (p Periodicity) ToString() string {
+	return [...]string{"Daily", "Weekly", "Monthly"}[p]
+}
+
+func (p Periodicity) ToArrayString() []string {
+	return []string{"Daily", "Weekly", "Monthly"}
 }

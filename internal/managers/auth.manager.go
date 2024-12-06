@@ -113,29 +113,30 @@ func (am *AuthManager) Login(ctx *gin.Context) (ret bool) {
 	return true
 }
 
-func (am *AuthManager) RefreshToken(ctx *gin.Context) {
+func (am *AuthManager) RefreshToken(ctx *gin.Context) bool {
 	cookie, err := ctx.Cookie("refresh_token")
 	if err != nil {
-		return
+		return false
 	}
 	config, _ := initializers.LoadConfig(".")
 	sub, err := utils.ValidateToken(cookie, config.RefreshTokenPublicKey)
 	if err != nil {
-		return
+		return false
 	}
 
 	var user models.User
 	result := am.DB.First(&user, "id = ?", fmt.Sprint(sub))
 	if result.Error != nil {
-		return
+		return false
 	}
 	accessToken, err := utils.GenerateToken(config.AccessTokenExpiresIn, user.ID.String(), config.AccessTokenPrivateKey)
 	if err != nil {
-		return
+		return false
 	}
 
 	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge*60, "/", "localhost", false, true)
 	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "localhost", false, false)
+	return true
 }
 
 func (am *AuthManager) Logout(ctx *gin.Context) {

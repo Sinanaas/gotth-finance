@@ -36,7 +36,13 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 }
 
 func (ac *AuthController) RefreshToken(ctx *gin.Context) {
-	ac.AuthManager.RefreshToken(ctx)
+	if !ac.AuthManager.RefreshToken(ctx) {
+		ctx.Header("HX-Redirect", "/login")
+		ctx.Status(401)
+	} else {
+		ctx.Status(200)
+	}
+
 }
 
 func (ac *AuthController) Logout(ctx *gin.Context) {

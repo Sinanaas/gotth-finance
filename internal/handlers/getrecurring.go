@@ -12,14 +12,13 @@ import (
 	"net/http"
 )
 
-type GetTransactionHandler struct {
+type GetRecurringHandler struct{}
+
+func NewGetRecurringHandler() *GetRecurringHandler {
+	return &GetRecurringHandler{}
 }
 
-func NewGetTransaction() *GetTransactionHandler {
-	return &GetTransactionHandler{}
-}
-
-func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
+func (h *GetRecurringHandler) ServeHTTP(ctx *gin.Context) {
 	config, err := initializers.LoadConfig(".")
 	if err != nil {
 		log.Fatal("❌ Could not load environment variables", err)
@@ -43,7 +42,7 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 		userId = v.(string)
 	}
 
-	transactions, err := basicController.GetTransactionWithCategoryName(userId)
+	recurring, err := basicController.GetRecurringWithCategoryName(userId)
 	if err != nil {
 		return
 	}
@@ -56,8 +55,10 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 	var transactionType constants.TransactionType
 	transactionTypeArray := transactionType.ToArrayString()
 
-	c := templates.Transaction(categories, transactions, accounts, transactionTypeArray)
+	var periodicty constants.Periodicity
+	periodicityArray := periodicty.ToArrayString()
 
+	c := templates.Recurring(categories, recurring, accounts, transactionTypeArray, periodicityArray)
 	err = templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -34,12 +34,12 @@ func (bc *BasicController) CreateTransaction(ctx *gin.Context) {
 	}
 	payload.Account = ctx.PostForm("Account")
 	session := sessions.Default(ctx)
-	var user_id string
+	var userId string
 	v := session.Get("user_id")
 	if v != nil {
-		user_id = v.(string)
+		userId = v.(string)
 	}
-	payload.UserID = user_id
+	payload.UserID = userId
 
 	err = bc.BM.CreateTransaction(payload)
 
@@ -58,40 +58,48 @@ func (bc *BasicController) GetAllCategories() ([]models.Category, error) {
 	return categories, nil
 }
 
-func (bc *BasicController) GetUserTransactions(user_id string) ([]models.Transaction, error) {
-	transactions, err := bc.BM.GetUserTransactions(user_id)
+func (bc *BasicController) GetUserTransactions(userId string) ([]models.Transaction, error) {
+	transactions, err := bc.BM.GetUserTransactions(userId)
 	if err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
-func (bc *BasicController) GetTransactionWithCategoryName(user_id string) ([]models.TransactionCategoryAccounts, error) {
-	transactions, err := bc.BM.GetTransactionWithCategoryName(user_id)
+func (bc *BasicController) GetTransactionWithCategoryName(userId string) ([]models.TransactionCategoryAccounts, error) {
+	transactions, err := bc.BM.GetTransactionWithCategoryName(userId)
 	if err != nil {
 		return nil, err
 	}
 	return transactions, nil
 }
 
-func (bc *BasicController) GetCategoryName(category_id string) (string, error) {
-	categoryName, err := bc.BM.GetCategoryName(category_id)
+func (bc *BasicController) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
+	recurrings, err := bc.BM.GetRecurringWithCategoryName(userId)
+	if err != nil {
+		return nil, err
+	}
+	return recurrings, nil
+}
+
+func (bc *BasicController) GetCategoryName(categoryId string) (string, error) {
+	categoryName, err := bc.BM.GetCategoryName(categoryId)
 	if err != nil {
 		return "", err
 	}
 	return categoryName, nil
 }
 
-func (bc *BasicController) GetAccountName(account_id string) (string, error) {
-	accountName, err := bc.BM.GetAccountName(account_id)
+func (bc *BasicController) GetAccountName(accountId string) (string, error) {
+	accountName, err := bc.BM.GetAccountName(accountId)
 	if err != nil {
 		return "", err
 	}
 	return accountName, nil
 }
 
-func (bc *BasicController) GetUserAccounts(user_id string) ([]models.Account, error) {
-	accounts, err := bc.BM.GetUserAccounts(user_id)
+func (bc *BasicController) GetUserAccounts(userId string) ([]models.Account, error) {
+	accounts, err := bc.BM.GetUserAccounts(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -109,12 +117,12 @@ func (bc *BasicController) CreateAccount(ctx *gin.Context) {
 		return
 	}
 	session := sessions.Default(ctx)
-	var user_id string
+	var userId string
 	v := session.Get("user_id")
 	if v != nil {
-		user_id = v.(string)
+		userId = v.(string)
 	}
-	payload.UserID = user_id
+	payload.UserID = userId
 
 	err = bc.BM.CreateAccount(payload)
 	if err != nil {
@@ -140,4 +148,40 @@ func (bc *BasicController) GetAccountBalance(ctx *gin.Context) {
 	renderedHTML := utils.GetMessageTemplate(balanceMessage)
 
 	ctx.Data(200, "text/html", renderedHTML)
+}
+
+func (bc *BasicController) CreateRecurring(ctx *gin.Context) {
+	var payload models.RecurringRequest
+	var err error
+
+	payload.Name = ctx.PostForm("Name")
+	payload.CategoryID = ctx.PostForm("Category")
+	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
+	if err != nil {
+		return
+	}
+	payload.Periodicity, err = strconv.Atoi(ctx.PostForm("Periodicity"))
+	if err != nil {
+		return
+	}
+	payload.TransactionType, err = strconv.Atoi(ctx.PostForm("Type"))
+	if err != nil {
+		return
+	}
+	payload.AccountID = ctx.PostForm("Account")
+	session := sessions.Default(ctx)
+	var userId string
+	v := session.Get("user_id")
+	if v != nil {
+		userId = v.(string)
+	}
+	payload.UserID = userId
+
+	err = bc.BM.CreateRecurring(payload)
+
+	if err != nil {
+		return
+	}
+
+	ctx.Header("HX-Redirect", "/recurring")
 }

@@ -24,13 +24,13 @@ func NewGetAccountsHandler(ctx *gin.Context) {
 	basicController := controllers.NewBasicController(basicManager)
 
 	session := sessions.Default(ctx)
-	var user_id string
+	var userId string
 	v := session.Get("user_id")
 	if v != nil {
-		user_id = v.(string)
+		userId = v.(string)
 	}
 
-	accounts, err := basicController.GetUserAccounts(user_id)
+	accounts, err := basicController.GetUserAccounts(userId)
 	c := templates.Accounts(accounts)
 
 	cookie, _ := ctx.Cookie("access_token")

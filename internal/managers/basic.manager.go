@@ -352,7 +352,7 @@ func (m *BasicManager) GetLoanWithCategoryName(id string) ([]models.LoanCategory
 
 	var loans []models.Loan
 	var accountName string
-	if err := m.DB.Where("user_id = ?", userUUID).Find(&loans).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&loans).Error; err != nil {
 		return nil, err
 	}
 
@@ -381,6 +381,7 @@ func (m *BasicManager) GetLoanWithCategoryName(id string) ([]models.LoanCategory
 			Status:          loan.Status,
 			TransactionType: loan.TransactionType,
 			Description:     loan.Description,
+			ID:              loan.ID.String(),
 		})
 	}
 
@@ -425,5 +426,50 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 		return err
 	}
 
+	return nil
+}
+
+func (m *BasicManager) FinishLoan(id string) error {
+	loanUUID, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+	tx := m.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	var loan models.Loan
+	if err := m.DB.Where("id = ?", loanUUID).First(&loan).Error; err != nil {
+		return err
+	}
+
+	loan.Status = true
+	loan.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := m.DB.Save(&loan).Error; err != nil {
+		return err
+	}
+
+	// create transaction
+	var transaction models.Transaction
+	transaction.UserID = loan.UserID
+	transaction.Amount = loan.Amount
+	transaction.TransactionType = loan.TransactionType
+	transaction.Description = "Bayar Hutang: " + loan.Description
+	transaction.CategoryID = loan.CategoryID
+	transaction.TransactionDate = time.Now()
+	transaction.AccountID = loan.AccountID
+
+	if err := m.CalculateBalance(loan.AccountID.String(), loan.Amount, loan.TransactionType); err != nil {
+		tx.Rollback()
+	}
+
+	if err := m.DB.Create(&transaction).Error; err != nil {
+		tx.Rollback()
+	}
+
+	tx.Commit()
 	return nil
 }

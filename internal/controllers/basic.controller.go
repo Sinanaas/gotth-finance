@@ -228,3 +228,19 @@ func (bc *BasicController) CreateLoan(ctx *gin.Context) {
 
 	ctx.Header("HX-Redirect", "/loans")
 }
+
+func (bc *BasicController) FinishLoan(ctx *gin.Context) {
+	loanID := ctx.PostForm("LoanID")
+	if loanID == "" {
+		ctx.JSON(400, gin.H{"error": "Loan ID is missing"})
+		return
+	}
+
+	err := bc.BM.FinishLoan(loanID)
+	if err != nil {
+		ctx.JSON(400, gin.H{"error": "Loan not found"})
+		return
+	}
+
+	ctx.Header("HX-Redirect", "/loans")
+}

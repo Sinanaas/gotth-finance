@@ -28,6 +28,7 @@ type Loan struct {
 }
 
 type LoanCategoryAccount struct {
+	ID              string
 	Amount          float64
 	ToWhom          string
 	Description     string

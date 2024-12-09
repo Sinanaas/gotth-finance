@@ -74,6 +74,14 @@ func (bc *BasicController) GetTransactionWithCategoryName(userId string) ([]mode
 	return transactions, nil
 }
 
+func (bc *BasicController) GetLoanWithCategoryName(userId string) ([]models.LoanCategoryAccount, error) {
+	loans, err := bc.BM.GetLoanWithCategoryName(userId)
+	if err != nil {
+		return nil, err
+	}
+	return loans, nil
+}
+
 func (bc *BasicController) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
 	recurrings, err := bc.BM.GetRecurringWithCategoryName(userId)
 	if err != nil {
@@ -184,4 +192,39 @@ func (bc *BasicController) CreateRecurring(ctx *gin.Context) {
 	}
 
 	ctx.Header("HX-Redirect", "/recurring")
+}
+
+func (bc *BasicController) CreateLoan(ctx *gin.Context) {
+	var payload models.LoanRequest
+	var err error
+
+	payload.Description = ctx.PostForm("Description")
+	payload.CategoryID = ctx.PostForm("Category")
+	payload.ToWhom = ctx.PostForm("Towhom")
+	payload.Status = false
+	payload.LoanDate = ctx.PostForm("Date")
+	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
+	if err != nil {
+		return
+	}
+	payload.TransactionType, err = strconv.Atoi(ctx.PostForm("Type"))
+	if err != nil {
+		return
+	}
+	payload.AccountID = ctx.PostForm("Account")
+	session := sessions.Default(ctx)
+	var userId string
+	v := session.Get("user_id")
+	if v != nil {
+		userId = v.(string)
+	}
+	payload.UserID = userId
+
+	err = bc.BM.CreateLoan(payload)
+
+	if err != nil {
+		return
+	}
+
+	ctx.Header("HX-Redirect", "/loans")
 }

@@ -343,3 +343,87 @@ func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
 
 	return nil
 }
+
+func (m *BasicManager) GetLoanWithCategoryName(id string) ([]models.LoanCategoryAccount, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var loans []models.Loan
+	var accountName string
+	if err := m.DB.Where("user_id = ?", userUUID).Find(&loans).Error; err != nil {
+		return nil, err
+	}
+
+	var loansWithCategory []models.LoanCategoryAccount
+	for _, loan := range loans {
+		categoryName, err := m.GetCategoryName(loan.CategoryID.String())
+		if err != nil {
+			return nil, err
+		}
+
+		if loan.AccountID != uuid.Nil {
+			accountName, err = m.GetAccountName(loan.AccountID.String())
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			accountName = ""
+		}
+
+		loansWithCategory = append(loansWithCategory, models.LoanCategoryAccount{
+			Amount:          loan.Amount,
+			ToWhom:          loan.ToWhom,
+			CategoryName:    categoryName,
+			AccountName:     accountName,
+			LoanDate:        loan.LoanDate,
+			Status:          loan.Status,
+			TransactionType: loan.TransactionType,
+			Description:     loan.Description,
+		})
+	}
+
+	return loansWithCategory, nil
+
+}
+
+func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+
+	categoryUUID, err := uuid.Parse(payload.CategoryID)
+	if err != nil {
+		return err
+	}
+
+	accountUUID, err := uuid.Parse(payload.AccountID)
+	if err != nil {
+		return err
+	}
+
+	transactionDate, err := time.Parse("2006-01-02", payload.LoanDate)
+	if err != nil {
+		return err
+	}
+
+	loan := models.Loan{
+		UserID:          userUUID,
+		Amount:          payload.Amount,
+		ToWhom:          payload.ToWhom,
+		CategoryID:      categoryUUID,
+		AccountID:       accountUUID,
+		LoanDate:        transactionDate,
+		Status:          payload.Status,
+		TransactionType: constants.TransactionType(payload.TransactionType),
+		Description:     payload.Description,
+	}
+
+	if err := m.DB.Create(&loan).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -65,10 +65,9 @@ templ Layout(contents templ.Component, user_id string) {
 	<body class="flex flex-col items-center h-full w-full bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 font-mono">
 		<div class="flex w-full container items-center justify-center flex-col">
 			@nav(user_id)
-			<main class="flex-1 min-h-[95vh] justify-center items-center flex container" id="profile-container">
+			<main class="flex-1 pt-[10vh] min-h-[95vh] max-h-[95vh] items-center justify-center flex container" id="profile-container">
 				@contents
 			</main>
-			<section id="toast-container"></section>
 		</div>
 	</body>
 	<script src="/static/toast.js" defer></script>

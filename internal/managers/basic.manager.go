@@ -410,14 +410,22 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 		return err
 	}
 
+	tx := m.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	loan := models.Loan{
-		UserID:          userUUID,
-		Amount:          payload.Amount,
-		ToWhom:          payload.ToWhom,
-		CategoryID:      categoryUUID,
-		AccountID:       accountUUID,
-		LoanDate:        transactionDate,
-		Status:          payload.Status,
+		UserID:     userUUID,
+		Amount:     payload.Amount,
+		ToWhom:     payload.ToWhom,
+		CategoryID: categoryUUID,
+		AccountID:  accountUUID,
+		LoanDate:   transactionDate,
+		Status:     payload.Status,
+
 		TransactionType: constants.TransactionType(payload.TransactionType),
 		Description:     payload.Description,
 	}
@@ -426,6 +434,29 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 		return err
 	}
 
+	// create trnsaction
+	var transaction models.Transaction
+	transaction.UserID = userUUID
+	transaction.Amount = payload.Amount
+	transaction.TransactionType = constants.TransactionType(payload.TransactionType)
+	if loan.TransactionType == constants.Expenses {
+		transaction.Description = "Memberi Hutang: " + payload.Description
+	} else {
+		transaction.Description = "Hutang: " + payload.Description
+	}
+	transaction.CategoryID = categoryUUID
+	transaction.TransactionDate = transactionDate
+	transaction.AccountID = accountUUID
+
+	if err := m.CalculateBalance(loan.AccountID.String(), loan.Amount, loan.TransactionType); err != nil {
+		tx.Rollback()
+	}
+
+	if err := m.DB.Create(&transaction).Error; err != nil {
+		tx.Rollback()
+	}
+
+	tx.Commit()
 	return nil
 }
 
@@ -456,13 +487,17 @@ func (m *BasicManager) FinishLoan(id string) error {
 	var transaction models.Transaction
 	transaction.UserID = loan.UserID
 	transaction.Amount = loan.Amount
-	transaction.TransactionType = loan.TransactionType
+	if loan.TransactionType == constants.Income {
+		transaction.TransactionType = constants.Expenses
+	} else if loan.TransactionType == constants.Expenses {
+		transaction.TransactionType = constants.Income
+	}
 	transaction.Description = "Bayar Hutang: " + loan.Description
 	transaction.CategoryID = loan.CategoryID
 	transaction.TransactionDate = time.Now()
 	transaction.AccountID = loan.AccountID
 
-	if err := m.CalculateBalance(loan.AccountID.String(), loan.Amount, loan.TransactionType); err != nil {
+	if err := m.CalculateBalance(loan.AccountID.String(), loan.Amount, transaction.TransactionType); err != nil {
 		tx.Rollback()
 	}
 

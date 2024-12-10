@@ -13,6 +13,7 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
             <form
                     hx-post="/loan"
                     hx-trigger="submit"
+                    hx-encoding="application/x-www-form-urlencoded"
                     class="flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4"
             >
                 <div class="flex justify-center items-center border-b border-slate-300 pb-4 mb-4">
@@ -55,7 +56,11 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                         <option disabled selected value class="w-full text-slate-600">select a transaction type</option>
                         for i := 0 ; i < len(transactionType) ; i++ {
                         <option class="w-full" value={ strconv.Itoa(i) }>
-                            { transactionType[i] }
+                            if transactionType[i] == "Expenses" {
+                                { transactionType[i] + " / Memberi Hutang" }
+                            } else {
+                                { transactionType[i] + " / Hutang" }
+                            }
                         </option>
                         }
                     </select>
@@ -222,6 +227,7 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                         <form
                                 hx-post="/loan/finish"
                                 hx-trigger="submit"
+                                hx-encoding="application/x-www-form-urlencoded"
                                 hx-params="LoanID"
                         >
                             <button

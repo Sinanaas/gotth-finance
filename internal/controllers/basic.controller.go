@@ -10,11 +10,11 @@ import (
 )
 
 type BasicController struct {
-	BM managers.BasicManager
+	BM *managers.BasicManager
 }
 
-func NewBasicController(bm managers.BasicManager) BasicController {
-	return BasicController{bm}
+func NewBasicController(bm *managers.BasicManager) *BasicController {
+	return &BasicController{BM: bm}
 }
 
 func (bc *BasicController) CreateTransaction(ctx *gin.Context) {

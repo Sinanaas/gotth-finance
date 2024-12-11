@@ -17,8 +17,8 @@ type AuthManager struct {
 	config *initializers.Config
 }
 
-func NewAuthManager(DB *gorm.DB, config *initializers.Config) AuthManager {
-	return AuthManager{DB, config}
+func NewAuthManager(db *gorm.DB, conf *initializers.Config) *AuthManager {
+	return &AuthManager{DB: db, config: conf}
 }
 
 func (am *AuthManager) SignUp(ctx *gin.Context) (ret bool) {
@@ -106,8 +106,8 @@ func (am *AuthManager) Login(ctx *gin.Context) (ret bool) {
 		return
 	}
 
-	ctx.SetCookie("access_token", accessToken, am.config.AccessTokenMaxAge, "/", "", false, true)
-	ctx.SetCookie("refresh_token", refreshToken, am.config.RefreshTokenMaxAge, "/", "", false, true)
+	ctx.SetCookie("access_token", accessToken, am.config.AccessTokenMaxAge*60, "/", "", false, true)
+	ctx.SetCookie("refresh_token", refreshToken, am.config.RefreshTokenMaxAge*60, "/", "", false, true)
 	ctx.SetCookie("logged_in", "true", am.config.AccessTokenMaxAge, "/", "", false, false)
 
 	return true
@@ -134,8 +134,8 @@ func (am *AuthManager) RefreshToken(ctx *gin.Context) bool {
 		return false
 	}
 
-	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge*60, "/", "localhost", false, true)
-	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "localhost", false, false)
+	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge, "/", "localhost", false, true)
+	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge, "/", "localhost", false, false)
 	return true
 }
 

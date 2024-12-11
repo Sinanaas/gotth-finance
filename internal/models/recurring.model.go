@@ -4,13 +4,15 @@ import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"time"
 )
 
 type Recurring struct {
 	gorm.Model
-	ID     uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	Name   string    `gorm:"type:varchar(100)"`
-	Amount float64   `gorm:"type:decimal(12,2)"`
+	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	Name      string    `gorm:"type:varchar(100)"`
+	Amount    float64   `gorm:"type:decimal(12,2)"`
+	StartDate time.Time `gorm:"type:date"`
 	// type enum
 	TransactionType constants.TransactionType `gorm:"type:int"`
 	// periodicity enum

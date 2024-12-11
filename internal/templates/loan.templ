@@ -2,6 +2,7 @@ package templates
 
 import "github.com/Sinanaas/gotth-financial-tracker/internal/models"
 import "github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+import "github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 import "fmt"
 import "strconv"
 
@@ -150,7 +151,9 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                     >
                         <option disabled selected value class="w-full text-slate-600">select a category</option>
                         for _, category := range categories {
-                        <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+                            if category.Name != "Income" {
+                                <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+						    }
                         }
                     </select>
                 </div>
@@ -162,7 +165,7 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
         </div>
         <div class="w-full md:w-2/3">
             <div class="w-full flex justify-center items-center">
-                <h1 class="text-4xl font-bold text-center mb-6">Loans</h1>
+                <h1 class="text-4xl font-bold text-center mb-6">HUTANG</h1>
             </div>
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
@@ -207,9 +210,15 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{ loan.LoanDate.Format("2006-01-02") }</div>
                     </td>
+                    if loan.TransactionType == constants.Income {
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Rp. { utils.FormatCurrency(loan.Amount) }</div>
+                        <div class="text-sm text-green-900">Rp. { utils.FormatCurrency(loan.Amount) }</div>
                     </td>
+                    } else {
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-red-900">Rp. { utils.FormatCurrency(loan.Amount) }</div>
+                    </td>
+                    }
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{ loan.Description }</div>
                     </td>
@@ -231,10 +240,11 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                                 hx-trigger="submit"
                                 hx-encoding="application/x-www-form-urlencoded"
                                 hx-params="LoanID"
+                                class="flex justify-center mb-0"
                         >
                             <button
                                     type="submit"
-                                    class="text-white bg-amber-400 hover:bg-amber-500 font-semibold p-2 rounded-lg shadow-md transition duration-300"
+                                    class="text-white bg-amber-400 px-2 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300"
                                     name="LoanID"
                                     value={ fmt.Sprintf("%s", loan.ID) }
                             >

@@ -6,11 +6,11 @@ import (
 )
 
 type AuthController struct {
-	AuthManager managers.AuthManager
+	AuthManager *managers.AuthManager
 }
 
-func NewAuthController(authManager managers.AuthManager) AuthController {
-	return AuthController{authManager}
+func NewAuthController(authManager *managers.AuthManager) *AuthController {
+	return &AuthController{AuthManager: authManager}
 }
 
 func (ac *AuthController) SignUp(ctx *gin.Context) {
@@ -36,13 +36,9 @@ func (ac *AuthController) SignIn(ctx *gin.Context) {
 }
 
 func (ac *AuthController) RefreshToken(ctx *gin.Context) {
-	if !ac.AuthManager.RefreshToken(ctx) {
+	if ac.AuthManager.RefreshToken(ctx) == false {
 		ctx.Header("HX-Redirect", "/login")
-		ctx.Status(401)
-	} else {
-		ctx.Status(200)
 	}
-
 }
 
 func (ac *AuthController) Logout(ctx *gin.Context) {

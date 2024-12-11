@@ -2,35 +2,22 @@ package handlers
 
 import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"log"
 )
 
-type GetAccountsHandler struct{}
+type GetAccountsHandler struct {
+	BC *controllers.BasicController
+}
 
-func NewGetAccountsHandler(ctx *gin.Context) {
-	config, err := initializers.LoadConfig(".")
-	if err != nil {
-		log.Fatal("❌ Could not load environment variables", err)
-	}
+func NewGetAccountsHandler(bc *controllers.BasicController) *GetAccountsHandler {
+	return &GetAccountsHandler{BC: bc}
+}
 
-	initializers.ConnectDB(&config)
-
-	basicManager := managers.NewBasicManager(initializers.DB)
-	basicController := controllers.NewBasicController(basicManager)
-
-	session := sessions.Default(ctx)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
-	}
-
-	accounts, err := basicController.GetUserAccounts(userId)
+func (h *GetAccountsHandler) ServeHTTP(ctx *gin.Context) {
+	userId := utils.GetSessionUserID(ctx)
+	accounts, err := h.BC.GetUserAccounts(userId)
 	c := templates.Accounts(accounts)
 
 	cookie, _ := ctx.Cookie("access_token")

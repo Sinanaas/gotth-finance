@@ -3,51 +3,35 @@ package handlers
 import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
-type GetLoanHandler struct{}
+type GetLoanHandler struct {
+	BC *controllers.BasicController
+}
 
-func NewGetLoanHandler() *GetLoanHandler {
-	return &GetLoanHandler{}
+func NewGetLoanHandler(bc *controllers.BasicController) *GetLoanHandler {
+	return &GetLoanHandler{BC: bc}
 }
 
 func (h *GetLoanHandler) ServeHTTP(ctx *gin.Context) {
-	config, err := initializers.LoadConfig(".")
-	if err != nil {
-		log.Fatal("❌ Could not load environment variables", err)
-	}
-
-	initializers.ConnectDB(&config)
-
-	basicManager := managers.NewBasicManager(initializers.DB)
-	basicController := controllers.NewBasicController(basicManager)
-
 	cookie, _ := ctx.Cookie("access_token")
-	categories, err := basicController.GetAllCategories()
+	userId := utils.GetSessionUserID(ctx)
+
+	categories, err := h.BC.GetAllCategories()
 	if err != nil {
 		return
 	}
 
-	session := sessions.Default(ctx)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
-	}
-
-	loans, err := basicController.GetLoanWithCategoryName(userId)
+	loans, err := h.BC.GetLoanWithCategoryName(userId)
 	if err != nil {
 		return
 	}
 
-	accounts, err := basicController.GetUserAccounts(userId)
+	accounts, err := h.BC.GetUserAccounts(userId)
 	if err != nil {
 		return
 	}

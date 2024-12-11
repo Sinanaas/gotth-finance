@@ -12,18 +12,22 @@ import (
 )
 
 var (
-	server          *gin.Engine
-	BasicController controllers.BasicController
-	BasicManager    managers.BasicManager
-	BasicRouter     routers.BasicRouter
+	server *gin.Engine
+	router *gin.RouterGroup
+	config initializers.Config
+	err    error
 
-	AuthController controllers.AuthController
-	AuthManager    managers.AuthManager
-	AuthRouter     routers.AuthRouter
+	BasicController *controllers.BasicController
+	BasicManager    *managers.BasicManager
+	BasicRouter     *routers.BasicRouter
+
+	AuthController *controllers.AuthController
+	AuthManager    *managers.AuthManager
+	AuthRouter     *routers.AuthRouter
 )
 
 func init() {
-	config, err := initializers.LoadConfig(".")
+	config, err = initializers.LoadConfig(".")
 	if err != nil {
 		log.Fatal("❌ Could not load environment variables", err)
 	}
@@ -32,27 +36,22 @@ func init() {
 
 	AuthManager = managers.NewAuthManager(initializers.DB, &config)
 	AuthController = controllers.NewAuthController(AuthManager)
-	AuthRouter = routers.NewAuthRouter(AuthController)
+	AuthRouter = routers.NewAuthRouter(AuthController, router)
 
 	BasicManager = managers.NewBasicManager(initializers.DB)
 	BasicController = controllers.NewBasicController(BasicManager)
-	BasicRouter = routers.NewBasicRouter(BasicController)
+	BasicRouter = routers.NewBasicRouter(BasicController, router)
 
 	server = gin.Default()
 	store := cookie.NewStore([]byte(config.SessionSecretKey))
 	server.Use(sessions.Sessions("mysession", store))
+
+	router = server.Group("/")
+
+	BasicRouter.BasicRoute(router, BasicController)
+	AuthRouter.AuthRoute(router, AuthController)
 }
 
 func main() {
-	config, err := initializers.LoadConfig(".")
-	if err != nil {
-		log.Fatal("❌ Could not load environment variables", err)
-	}
-
-	router := server.Group("/")
-
-	BasicRouter.BasicRoute(router)
-	AuthRouter.AuthRoute(router)
-
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

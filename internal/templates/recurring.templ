@@ -2,6 +2,7 @@ package templates
 
 import "github.com/Sinanaas/gotth-financial-tracker/internal/models"
 import "github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+import "github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 import "fmt"
 import "strconv"
 
@@ -122,7 +123,9 @@ templ Recurring(categories []models.Category, recurring []models.RecurringWithCa
                     >
                         <option disabled selected value class="w-full text-slate-600">select a category</option>
                         for _, category := range categories {
-                        <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+                            if category.Name != "Income" {
+                                <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+						    }
                         }
                     </select>
                 </div>
@@ -189,9 +192,15 @@ templ Recurring(categories []models.Category, recurring []models.RecurringWithCa
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{ rec.Name }</div>
                     </td>
+                    if rec.TransactionType == constants.Income {
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Rp. { utils.FormatCurrency(rec.Amount) }</div>
+                        <div class="text-sm text-gray-900 text-green-400">Rp. { utils.FormatCurrency(rec.Amount) }</div>
                     </td>
+                    } else {
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900 text-red-400">Rp. { utils.FormatCurrency(rec.Amount) }</div>
+                    </td>
+                    }
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">{ rec.AccountName }</div>
                     </td>

@@ -8,17 +8,18 @@ import (
 )
 
 type AuthRouter struct {
-	authController controllers.AuthController
+	AC *controllers.AuthController
+	RG *gin.RouterGroup
 }
 
-func NewAuthRouter(authController controllers.AuthController) AuthRouter {
-	return AuthRouter{authController}
+func NewAuthRouter(ac *controllers.AuthController, rg *gin.RouterGroup) *AuthRouter {
+	return &AuthRouter{AC: ac, RG: rg}
 }
 
-func (ar *AuthRouter) AuthRoute(rg *gin.RouterGroup) {
+func (ar *AuthRouter) AuthRoute(rg *gin.RouterGroup, ac *controllers.AuthController) {
 	rg.GET("/login", handlers.NewGetLoginHandler().ServeHTTP)
-	rg.POST("/login", ar.authController.SignIn)
+	rg.POST("/login", handlers.NewPostLoginHandler(ac).ServeHTTP)
 	rg.GET("/register", handlers.NewGetRegisterHandler().ServeHTTP)
-	rg.POST("/register", ar.authController.SignUp)
-	rg.GET("/logout", middleware.DeserializeUser(), ar.authController.Logout)
+	rg.POST("/register", handlers.NewPostRegisterHandler(ac).ServeHTTP)
+	rg.GET("/logout", middleware.DeserializeUser(), handlers.NewGetLogoutHandler(ac).ServeHTTP)
 }

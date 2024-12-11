@@ -14,8 +14,8 @@ type BasicManager struct {
 	DB *gorm.DB
 }
 
-func NewBasicManager(DB *gorm.DB) BasicManager {
-	return BasicManager{DB}
+func NewBasicManager(db *gorm.DB) *BasicManager {
+	return &BasicManager{DB: db}
 }
 
 func (m *BasicManager) GetAllCategories() ([]models.Category, error) {

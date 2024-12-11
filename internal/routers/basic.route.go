@@ -8,23 +8,24 @@ import (
 )
 
 type BasicRouter struct {
-	basicController controllers.BasicController
+	BC *controllers.BasicController
+	RG *gin.RouterGroup
 }
 
-func NewBasicRouter(basicController controllers.BasicController) BasicRouter {
-	return BasicRouter{basicController}
+func NewBasicRouter(bc *controllers.BasicController, rg *gin.RouterGroup) *BasicRouter {
+	return &BasicRouter{BC: bc, RG: rg}
 }
 
-func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup) {
+func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bc *controllers.BasicController) {
 	rg.GET("/", middleware.DeserializeUser(), handlers.NewGetHomeHandler().ServeHTTP)
-	rg.GET("/transaction", middleware.DeserializeUser(), handlers.NewGetTransaction().ServeHTTP)
-	rg.POST("/transaction", middleware.DeserializeUser(), br.basicController.CreateTransaction)
-	rg.GET("/accounts", middleware.DeserializeUser(), handlers.NewGetAccountsHandler)
-	rg.POST("/account", middleware.DeserializeUser(), br.basicController.CreateAccount)
-	rg.GET("/account/balance", middleware.DeserializeUser(), br.basicController.GetAccountBalance)
-	rg.GET("/recurring", middleware.DeserializeUser(), handlers.NewGetRecurringHandler().ServeHTTP)
-	rg.POST("/recurring", middleware.DeserializeUser(), br.basicController.CreateRecurring)
-	rg.GET("/loans", middleware.DeserializeUser(), handlers.NewGetLoanHandler().ServeHTTP)
-	rg.POST("/loan", middleware.DeserializeUser(), br.basicController.CreateLoan)
-	rg.POST("/loan/finish", middleware.DeserializeUser(), br.basicController.FinishLoan)
+	rg.GET("/transaction", middleware.DeserializeUser(), handlers.NewGetTransaction(bc).ServeHTTP)
+	rg.POST("/transaction", middleware.DeserializeUser(), handlers.NewPostTransactionHandler(bc).ServeHTTP)
+	rg.GET("/accounts", middleware.DeserializeUser(), handlers.NewGetAccountsHandler(bc).ServeHTTP)
+	rg.POST("/account", middleware.DeserializeUser(), handlers.NewPostAccountHandler(bc).ServeHTTP)
+	rg.GET("/account/balance", middleware.DeserializeUser(), handlers.NewGetBalanceHandler(bc).ServeHTTP)
+	rg.GET("/recurring", middleware.DeserializeUser(), handlers.NewGetRecurringHandler(bc).ServeHTTP)
+	rg.POST("/recurring", middleware.DeserializeUser(), handlers.NewPostRecurringHandler(bc).ServeHTTP)
+	rg.GET("/loans", middleware.DeserializeUser(), handlers.NewGetLoanHandler(bc).ServeHTTP)
+	rg.POST("/loan", middleware.DeserializeUser(), handlers.NewPostLoanHandler(bc).ServeHTTP)
+	rg.POST("/loan/finish", middleware.DeserializeUser(), handlers.NewPostFinishLoanHandler(bc).ServeHTTP)
 }

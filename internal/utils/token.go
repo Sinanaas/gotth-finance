@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-// CreateToken creates a JWT token
+// GenerateToken creates a JWT token
 func GenerateToken(ttl time.Duration, payload interface{}, privateKey string) (string, error) {
 	decodedPrivateKey, err := base64.StdEncoding.DecodeString(privateKey)
 	if err != nil {

@@ -13,6 +13,7 @@ const (
 	Daily Periodicity = iota
 	Weekly
 	Monthly
+	Yearly
 )
 
 func (t TransactionType) ToString() string {

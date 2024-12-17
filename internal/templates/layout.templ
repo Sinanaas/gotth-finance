@@ -9,7 +9,6 @@ templ header() {
 		<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 		<script src="https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js"></script>
 		<script src="https://cdn.tailwindcss.com"></script>
-		<link rel="stylesheet" href="/static/app.css"/>
 		<link rel="preconnect" href="https://fonts.gstatic.com"/>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet"/>
 	</head>
@@ -21,7 +20,7 @@ templ footer() {
 
 templ nav(user_id string) {
 	<nav class="container top-0 bg-primary-600 p-4 w-full fixed font-mono">
-		<div class="flex justify-between text-slate-800 text-xl underline font-normal">
+		<div class="flex justify-between text-white text-xl underline font-normal">
 			if user_id == "" {
 				<ol class="flex space-x-5"></ol>
 				<ol class="flex space-x-5">
@@ -70,5 +69,4 @@ templ Layout(contents templ.Component, user_id string) {
 			</main>
 		</div>
 	</body>
-	<script src="/static/toast.js" defer></script>
 }

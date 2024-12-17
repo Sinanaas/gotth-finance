@@ -17,7 +17,7 @@ func NewBasicRouter(bc *controllers.BasicController, rg *gin.RouterGroup) *Basic
 }
 
 func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bc *controllers.BasicController) {
-	rg.GET("/", middleware.DeserializeUser(), handlers.NewGetHomeHandler().ServeHTTP)
+	rg.GET("/", middleware.DeserializeUser(), handlers.NewGetHomeHandler(bc).ServeHTTP)
 	rg.GET("/transaction", middleware.DeserializeUser(), handlers.NewGetTransaction(bc).ServeHTTP)
 	rg.POST("/transaction", middleware.DeserializeUser(), handlers.NewPostTransactionHandler(bc).ServeHTTP)
 	rg.GET("/accounts", middleware.DeserializeUser(), handlers.NewGetAccountsHandler(bc).ServeHTTP)

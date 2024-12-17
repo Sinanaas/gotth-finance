@@ -176,6 +176,8 @@ func (bc *BasicController) CreateRecurring(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
+
+	payload.StartDate = ctx.PostForm("StartDate")
 	payload.AccountID = ctx.PostForm("Account")
 	session := sessions.Default(ctx)
 	var userId string
@@ -243,4 +245,58 @@ func (bc *BasicController) FinishLoan(ctx *gin.Context) {
 	}
 
 	ctx.Header("HX-Redirect", "/loans")
+}
+
+func (bc *BasicController) GetUserMonthlyExpenses(userId string) (float64, error) {
+	expenses, err := bc.BM.GetUserMonthlyExpenses(userId)
+	if err != nil {
+		return -1, err
+	}
+	return expenses, nil
+}
+
+func (bc *BasicController) GetUserMonthlyIncome(userId string) (float64, error) {
+	income, err := bc.BM.GetUserMonthlyIncome(userId)
+	if err != nil {
+		return -1, err
+	}
+	return income, nil
+}
+
+func (bc *BasicController) GetUserActiveLoans(userId string) ([]models.Loan, error) {
+	loans, err := bc.BM.GetUserActiveLoans(userId)
+	if err != nil {
+		return nil, err
+	}
+	return loans, nil
+}
+
+func (bc *BasicController) GetUserTotalBalance(userId string) float64 {
+	balance := bc.BM.GetUserTotalBalance(userId)
+	return balance
+}
+
+func (bc *BasicController) GetUserLatestSixTransactions(userId string) ([]models.Transaction, error) {
+	transactions, err := bc.BM.GetUserLatestSixTransactions(userId)
+	if err != nil {
+		return nil, err
+	}
+	return transactions, nil
+}
+
+func (bc *BasicController) GetUserUpcomingRecurring(userId string) (models.Recurring, error) {
+	recurring, err := bc.BM.GetUserUpcomingRecurring(userId)
+	if err != nil {
+		return models.Recurring{}, err
+	}
+	return recurring, nil
+}
+
+func (bc *BasicController) GetUserTopCategories(id string) ([]models.CategoryWithTotal, error) {
+	categories, err := bc.BM.GetUserTopCategories(id)
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
+
 }

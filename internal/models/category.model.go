@@ -11,3 +11,8 @@ type Category struct {
 	Name        string    `gorm:"type:varchar(100);unique_index"`
 	Description string    `gorm:"type:text"`
 }
+
+type CategoryWithTotal struct {
+	Name  string
+	Total float64
+}

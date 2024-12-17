@@ -302,6 +302,7 @@ func (m *BasicManager) GetRecurringWithCategoryName(userId string) ([]models.Rec
 			TransactionType: recurring.TransactionType,
 			Name:            recurring.Name,
 			CategoryName:    categoryName,
+			StartDate:       recurring.StartDate,
 			Periodicity:     recurring.Periodicity,
 			AccountName:     accountName,
 		})
@@ -327,9 +328,15 @@ func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
 		return err
 	}
 
+	transactionDate, err := time.Parse("2006-01-02", payload.StartDate)
+	if err != nil {
+		return err
+	}
+
 	recurring := models.Recurring{
 		UserID:          userUUID,
 		Name:            payload.Name,
+		StartDate:       transactionDate,
 		Amount:          payload.Amount,
 		TransactionType: constants.TransactionType(payload.TransactionType),
 		Periodicity:     constants.Periodicity(payload.Periodicity),
@@ -507,4 +514,143 @@ func (m *BasicManager) FinishLoan(id string) error {
 
 	tx.Commit()
 	return nil
+}
+
+func (m *BasicManager) GetUserMonthlyIncome(id string) (float64, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return 0, err
+	}
+
+	now := time.Now()
+	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	endOfMonth := startOfMonth.AddDate(0, 1, -1)
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("user_id = ? AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+		return 0, err
+	}
+
+	var total float64
+	for _, transaction := range transactions {
+		if transaction.TransactionType == constants.Income {
+			total += transaction.Amount
+		}
+	}
+
+	return total, nil
+}
+
+func (m *BasicManager) GetUserMonthlyExpenses(id string) (float64, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return 0, err
+	}
+
+	now := time.Now()
+	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	endOfMonth := startOfMonth.AddDate(0, 1, -1)
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("user_id = ? AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+		return 0, err
+	}
+
+	var total float64
+	for _, transaction := range transactions {
+		if transaction.TransactionType == constants.Expenses {
+			total += transaction.Amount
+		}
+	}
+
+	return total, nil
+}
+
+func (m *BasicManager) GetUserActiveLoans(id string) ([]models.Loan, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var loans []models.Loan
+	if err := m.DB.Where("user_id = ?", userUUID).Find(&loans).Error; err != nil {
+		return nil, err
+	}
+
+	return loans, nil
+}
+
+func (m *BasicManager) GetUserTotalBalance(userId string) float64 {
+	userUUID, _ := uuid.Parse(userId)
+	var accounts []models.Account
+	m.DB.Where("user_id = ?", userUUID).Find(&accounts)
+
+	var total float64
+	for _, account := range accounts {
+		total += account.Balance
+	}
+
+	return total
+}
+
+func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Transaction, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []models.Transaction
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ?", userUUID).Order("transaction_date desc").Limit(6).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}
+
+func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return models.Recurring{}, err
+	}
+
+	var recurrings []models.Recurring
+	if err := m.DB.Where("user_id = ?", userUUID).Find(&recurrings).Error; err != nil {
+		return models.Recurring{}, err
+	}
+
+	if len(recurrings) == 0 {
+		return models.Recurring{}, gorm.ErrRecordNotFound
+	}
+
+	today := time.Now()
+	var closestRecurring models.Recurring
+	minDiff := time.Duration(1<<63 - 1) // Max duration
+
+	for _, recurring := range recurrings {
+		diff := recurring.StartDate.Sub(today)
+		if diff >= 0 && diff < minDiff {
+			minDiff = diff
+			closestRecurring = recurring
+		}
+	}
+
+	if minDiff == time.Duration(1<<63-1) {
+		return models.Recurring{}, gorm.ErrRecordNotFound
+	}
+
+	return closestRecurring, nil
+}
+
+func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTotal, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var categories []models.CategoryWithTotal
+	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? GROUP BY c.name ORDER BY total DESC LIMIT 1", userUUID).Scan(&categories).Error; err != nil {
+		return nil, err
+	}
+
+	return categories, nil
 }

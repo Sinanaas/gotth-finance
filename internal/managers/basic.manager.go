@@ -600,7 +600,7 @@ func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Tra
 	}
 
 	var transactions []models.Transaction
-	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ?", userUUID).Order("transaction_date desc").Limit(6).Find(&transactions).Error; err != nil {
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ?", userUUID).Order("transaction_date desc").Limit(7).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 
@@ -627,7 +627,8 @@ func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring
 	minDiff := time.Duration(1<<63 - 1) // Max duration
 
 	for _, recurring := range recurrings {
-		diff := recurring.StartDate.Sub(today)
+		nextOccurrence := GetNextOccurrence(recurring.StartDate, recurring.Periodicity, today)
+		diff := nextOccurrence.Sub(today)
 		if diff >= 0 && diff < minDiff {
 			minDiff = diff
 			closestRecurring = recurring
@@ -639,6 +640,23 @@ func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring
 	}
 
 	return closestRecurring, nil
+}
+
+func GetNextOccurrence(startDate time.Time, frequency constants.Periodicity, today time.Time) time.Time {
+	nextOccurrence := startDate
+	for nextOccurrence.Before(today) {
+		switch frequency {
+		case constants.Daily:
+			nextOccurrence = nextOccurrence.AddDate(0, 0, 1)
+		case constants.Weekly:
+			nextOccurrence = nextOccurrence.AddDate(0, 0, 7)
+		case constants.Monthly:
+			nextOccurrence = nextOccurrence.AddDate(0, 1, 0)
+		case constants.Yearly:
+			nextOccurrence = nextOccurrence.AddDate(1, 0, 0)
+		}
+	}
+	return nextOccurrence
 }
 
 func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTotal, error) {

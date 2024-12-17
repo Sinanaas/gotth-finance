@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"log"
 	"time"
 )
 
@@ -21,12 +22,11 @@ func GenerateToken(ttl time.Duration, payload interface{}, privateKey string) (s
 
 	now := time.Now().UTC()
 
-	claims := jwt.MapClaims{
-		"sub": payload,
-		"exp": now.Add(ttl).Unix(),
-		"iat": now.Unix(),
-		"nbf": now.Unix(),
-	}
+	claims := make(jwt.MapClaims)
+	claims["sub"] = payload
+	claims["exp"] = now.Add(ttl).Unix()
+	claims["iat"] = now.Unix()
+	claims["nbf"] = now.Unix()
 
 	// Create a new token
 	token, err := jwt.NewWithClaims(jwt.SigningMethodRS256, claims).SignedString(key)
@@ -57,6 +57,7 @@ func ValidateToken(token string, publicKey string) (interface{}, error) {
 	})
 
 	if err != nil {
+		log.Printf("Error parsing token: %v", err)
 		return nil, fmt.Errorf("validate: %w", err)
 	}
 

@@ -35,11 +35,6 @@ func init() {
 		log.Fatal("❌ Could not load environment variables", err)
 	}
 
-	goCRON, err = gocron.NewScheduler()
-	if err != nil {
-		log.Fatal("❌ Could not create goCRON scheduler", err)
-	}
-
 	initializers.ConnectDB(&config)
 
 	AuthManager = managers.NewAuthManager(initializers.DB, &config)
@@ -59,15 +54,19 @@ func init() {
 	BasicRouter.BasicRoute(router, BasicController)
 	AuthRouter.AuthRoute(router, AuthController)
 
+	goCRON, err = gocron.NewScheduler()
+	if err != nil {
+		log.Fatal("❌ Could not create goCRON scheduler", err)
+	}
+
+	if err := BasicManager.LoadAndScheduleJobs(); err != nil {
+		log.Fatal("❌ Could not load and schedule jobs", err)
+	}
+
 	goCRON.Start()
 }
 
 func main() {
 	// print all active gocron jobs
-	for _, job := range goCRON.Jobs() {
-		log.Println("JOB:", job)
-	}
-	log.Println("HELLO WORLD!")
-
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

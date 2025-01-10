@@ -747,7 +747,7 @@ func (m *BasicManager) SetUserCRONJob(recurring models.Recurring, scheduler gocr
 	}()
 
 	recurring.JobID = j.ID()
-	recurring.JobName = j.Name()
+	recurring.JobName = recurring.Name
 
 	if err := m.DB.Save(&recurring).Error; err != nil {
 		tx.Rollback()
@@ -755,5 +755,35 @@ func (m *BasicManager) SetUserCRONJob(recurring models.Recurring, scheduler gocr
 
 	tx.Commit()
 
+	return nil
+}
+
+func (m *BasicManager) LoadAndScheduleJobs() error {
+	var recurrings []models.Recurring
+	if err := m.DB.Find(&recurrings).Error; err != nil {
+		return err
+	}
+
+	for _, recurring := range recurrings {
+		fn := constants.Fn(func() {
+			transactionRequest := models.TransactionRequest{
+				UserID:      recurring.UserID.String(),
+				Amount:      recurring.Amount,
+				Type:        int(recurring.TransactionType),
+				Description: recurring.Name,
+				CategoryID:  recurring.CategoryID.String(),
+				Account:     recurring.AccountID.String(),
+				Date:        time.Now().Format("2006-01-02"),
+			}
+
+			if err := m.CreateTransaction(transactionRequest); err != nil {
+				log.Errorf(nil, "❌ failed to create transaction: %v", err)
+			}
+		})
+
+		if err := m.SetUserCRONJob(recurring, *m.GoCRON, fn); err != nil {
+			return err
+		}
+	}
 	return nil
 }

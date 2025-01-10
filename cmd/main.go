@@ -8,6 +8,7 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
+	"github.com/go-co-op/gocron/v2"
 	"log"
 )
 
@@ -24,6 +25,8 @@ var (
 	AuthController *controllers.AuthController
 	AuthManager    *managers.AuthManager
 	AuthRouter     *routers.AuthRouter
+
+	goCRON gocron.Scheduler
 )
 
 func init() {
@@ -32,13 +35,18 @@ func init() {
 		log.Fatal("❌ Could not load environment variables", err)
 	}
 
+	goCRON, err = gocron.NewScheduler()
+	if err != nil {
+		log.Fatal("❌ Could not create goCRON scheduler", err)
+	}
+
 	initializers.ConnectDB(&config)
 
 	AuthManager = managers.NewAuthManager(initializers.DB, &config)
 	AuthController = controllers.NewAuthController(AuthManager)
 	AuthRouter = routers.NewAuthRouter(AuthController, router)
 
-	BasicManager = managers.NewBasicManager(initializers.DB)
+	BasicManager = managers.NewBasicManager(initializers.DB, &goCRON)
 	BasicController = controllers.NewBasicController(BasicManager)
 	BasicRouter = routers.NewBasicRouter(BasicController, router)
 
@@ -50,8 +58,16 @@ func init() {
 
 	BasicRouter.BasicRoute(router, BasicController)
 	AuthRouter.AuthRoute(router, AuthController)
+
+	goCRON.Start()
 }
 
 func main() {
+	// print all active gocron jobs
+	for _, job := range goCRON.Jobs() {
+		log.Println("JOB:", job)
+	}
+	log.Println("HELLO WORLD!")
+
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

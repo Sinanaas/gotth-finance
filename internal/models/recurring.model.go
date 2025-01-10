@@ -13,6 +13,8 @@ type Recurring struct {
 	Name      string    `gorm:"type:varchar(100)"`
 	Amount    float64   `gorm:"type:decimal(12,2)"`
 	StartDate time.Time `gorm:"type:date"`
+	JobID     uuid.UUID `gorm:"type:uuid"`
+	JobName   string    `gorm:"type:varchar(100)"`
 	// type enum
 	TransactionType constants.TransactionType `gorm:"type:int"`
 	// periodicity enum

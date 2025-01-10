@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/go-co-op/gocron/v2"
 	"strconv"
 )
 
@@ -298,5 +300,11 @@ func (bc *BasicController) GetUserTopCategories(id string) ([]models.CategoryWit
 		return nil, err
 	}
 	return categories, nil
+}
 
+func (bc *BasicController) SetUserCRONJob(recurring models.Recurring, scheduler gocron.Scheduler, taskFn constants.Fn) {
+	err := bc.BM.SetUserCRONJob(recurring, scheduler, taskFn)
+	if err != nil {
+		return
+	}
 }

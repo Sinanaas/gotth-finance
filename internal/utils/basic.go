@@ -19,8 +19,6 @@ func GetNextOccurrence(startDate time.Time, frequency constants.Periodicity, tod
 			if nextOccurrence.Day() > daysInMonth {
 				nextOccurrence = nextOccurrence.AddDate(0, 0, daysInMonth-nextOccurrence.Day())
 			}
-		case constants.Yearly:
-			nextOccurrence = nextOccurrence.AddDate(1, 0, 0)
 		}
 	}
 	return nextOccurrence
@@ -34,4 +32,10 @@ func GetRecurringDays(date time.Time, frequency constants.Periodicity) int {
 
 func daysIn(m time.Month, year int) int {
 	return time.Date(year, m+1, 0, 0, 0, 0, 0, time.UTC).Day()
+}
+
+func CalculateInitialDelay(startDate time.Time, periodicity constants.Periodicity) time.Duration {
+	now := time.Now()
+	nextOccurrence := GetNextOccurrence(startDate, periodicity, now)
+	return nextOccurrence.Sub(now)
 }

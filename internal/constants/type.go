@@ -1,5 +1,7 @@
 package constants
 
+type Fn func()
+
 type TransactionType int
 
 const (
@@ -13,7 +15,6 @@ const (
 	Daily Periodicity = iota
 	Weekly
 	Monthly
-	Yearly
 )
 
 func (t TransactionType) ToString() string {

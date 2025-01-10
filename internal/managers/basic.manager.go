@@ -2,20 +2,26 @@ package managers
 
 import (
 	"fmt"
+	"github.com/go-co-op/gocron/v2"
+	"github.com/google/uuid"
+	"google.golang.org/appengine/log"
 	"time"
 
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type BasicManager struct {
-	DB *gorm.DB
+	DB     *gorm.DB
+	GoCRON *gocron.Scheduler
 }
 
-func NewBasicManager(db *gorm.DB) *BasicManager {
-	return &BasicManager{DB: db}
+func NewBasicManager(db *gorm.DB, goCRON *gocron.Scheduler) *BasicManager {
+	return &BasicManager{
+		DB:     db,
+		GoCRON: goCRON,
+	}
 }
 
 func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
@@ -344,7 +350,27 @@ func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
 		AccountID:       accountUUID,
 	}
 
+	fn := constants.Fn(func() {
+		transactionRequest := models.TransactionRequest{
+			UserID:      payload.UserID,
+			Amount:      payload.Amount,
+			Type:        payload.TransactionType,
+			Description: payload.Name,
+			CategoryID:  payload.CategoryID,
+			Account:     payload.AccountID,
+			Date:        time.Now().Format("2006-01-02"),
+		}
+
+		if err := m.CreateTransaction(transactionRequest); err != nil {
+			log.Errorf(nil, "❌ failed to create transaction: %v", err)
+		}
+	})
+
 	if err := m.DB.Create(&recurring).Error; err != nil {
+		return err
+	}
+
+	if err := m.SetUserCRONJob(recurring, *m.GoCRON, fn); err != nil {
 		return err
 	}
 
@@ -652,8 +678,6 @@ func GetNextOccurrence(startDate time.Time, frequency constants.Periodicity, tod
 			nextOccurrence = nextOccurrence.AddDate(0, 0, 7)
 		case constants.Monthly:
 			nextOccurrence = nextOccurrence.AddDate(0, 1, 0)
-		case constants.Yearly:
-			nextOccurrence = nextOccurrence.AddDate(1, 0, 0)
 		}
 	}
 	return nextOccurrence
@@ -671,4 +695,65 @@ func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTot
 	}
 
 	return categories, nil
+}
+
+func (m *BasicManager) SetUserCRONJob(recurring models.Recurring, scheduler gocron.Scheduler, taskFn constants.Fn) error {
+	var err error
+	var j gocron.Job
+
+	switch recurring.Periodicity {
+	case constants.Daily:
+		j, err = scheduler.NewJob(
+			gocron.DailyJob(
+				1,
+				gocron.NewAtTimes(
+					gocron.NewAtTime(0, 0, 0)),
+			),
+			gocron.NewTask(taskFn),
+		)
+	case constants.Weekly:
+		j, err = scheduler.NewJob(
+			gocron.WeeklyJob(
+				1,
+				gocron.NewWeekdays(recurring.StartDate.Weekday()),
+				gocron.NewAtTimes(
+					gocron.NewAtTime(0, 0, 0)),
+			),
+			gocron.NewTask(taskFn),
+		)
+	case constants.Monthly:
+		j, err = scheduler.NewJob(
+			gocron.MonthlyJob(
+				1,
+				gocron.NewDaysOfTheMonth(recurring.StartDate.Day()),
+				gocron.NewAtTimes(
+					gocron.NewAtTime(0, 0, 0)),
+			),
+			gocron.NewTask(taskFn),
+		)
+	default:
+		return fmt.Errorf("❌ invalid periodicity")
+	}
+
+	if err != nil {
+		return fmt.Errorf("❌ failed to create new job: %w", err)
+	}
+
+	tx := m.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	recurring.JobID = j.ID()
+	recurring.JobName = j.Name()
+
+	if err := m.DB.Save(&recurring).Error; err != nil {
+		tx.Rollback()
+	}
+
+	tx.Commit()
+
+	return nil
 }

@@ -135,9 +135,7 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                     >
                         <option disabled selected value class="w-full text-slate-600">select a category</option>
                         for _, category := range categories {
-							if category.Name != "Income" {
-                                <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
-						    }
+                            <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
                         }
                     </select>
                 </div>

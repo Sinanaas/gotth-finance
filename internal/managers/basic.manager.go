@@ -2,14 +2,14 @@ package managers
 
 import (
 	"fmt"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/go-co-op/gocron/v2"
 	"github.com/google/uuid"
 	"google.golang.org/appengine/log"
-	"time"
-
-	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"gorm.io/gorm"
+	"sort"
+	"time"
 )
 
 type BasicManager struct {
@@ -172,6 +172,10 @@ func (m *BasicManager) GetTransactionWithCategoryName(userId string) ([]models.T
 			TransactionDate: transaction.TransactionDate,
 		})
 	}
+
+	sort.SliceStable(transactionsWithCategory, func(i, j int) bool {
+		return transactionsWithCategory[i].TransactionDate.After(transactionsWithCategory[j].TransactionDate)
+	})
 
 	return transactionsWithCategory, nil
 }
@@ -645,7 +649,7 @@ func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring
 	}
 
 	if len(recurrings) == 0 {
-		return models.Recurring{}, gorm.ErrRecordNotFound
+		return models.Recurring{}, nil
 	}
 
 	today := time.Now()

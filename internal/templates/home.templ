@@ -18,7 +18,11 @@ templ Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mod
     </a>
 
     <a href="/transaction" class="col-span-1 row-start-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg shadow-lg p-6">
-        <h1 class="text-lg font-semibold mb-2">Net Income</h1>
+        if incomeMonthAmount - expenseMonthAmount > 0 {
+            <h1 class="text-lg font-semibold mb-2">Net Income</h1>
+        } else {
+            <h1 class="text-lg font-semibold mb-2">Net Expense</h1>
+        }
         <p class="text-2xl font-extrabold">Rp. { utils.FormatCurrency(incomeMonthAmount - expenseMonthAmount) }</p>
     </a>
 

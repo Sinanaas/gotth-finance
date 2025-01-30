@@ -1,4 +1,4 @@
-package seeders
+package main
 
 import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"

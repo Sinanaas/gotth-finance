@@ -299,3 +299,56 @@ func (bc *BasicController) GetUserTopCategories(id string) ([]models.CategoryWit
 	}
 	return categories, nil
 }
+
+func (bc *BasicController) DeleteLoanById(ctx *gin.Context) {
+	loanId := ctx.PostForm("LoanID")
+	if loanId == "" {
+		return
+	}
+
+	err := bc.BM.DeleteLoanById(loanId)
+	if err != nil {
+		return
+	}
+	ctx.Header("HX-Redirect", "/loans")
+}
+
+func (bc *BasicController) DeleteAccountById(ctx *gin.Context) {
+	accountId := ctx.PostForm("AccountID")
+	if accountId == "" {
+		return
+	}
+
+	err := bc.BM.DeleteAccountById(accountId)
+	if err != nil {
+		return
+	}
+	ctx.Header("HX-Redirect", "/accounts")
+}
+
+func (bc *BasicController) DeleteRecurringById(ctx *gin.Context) {
+	recurringId := ctx.PostForm("RecurringID")
+	if recurringId == "" {
+		return
+	}
+
+	err := bc.BM.DeleteRecurringById(recurringId)
+	if err != nil {
+		return
+	}
+	ctx.Header("HX-Redirect", "/recurring")
+}
+
+func (bc *BasicController) DeleteTransactionById(ctx *gin.Context) {
+	transactionId := ctx.PostForm("TransactionID")
+	if transactionId == "" {
+		return
+	}
+
+	err := bc.BM.DeleteTransactionById(transactionId)
+	if err != nil {
+		return
+	}
+
+	ctx.Header("HX-Redirect", "/transaction")
+}

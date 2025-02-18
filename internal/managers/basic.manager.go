@@ -24,82 +24,19 @@ func NewBasicManager(db *gorm.DB, goCRON *gocron.Scheduler) *BasicManager {
 	}
 }
 
-func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
-	var categories []models.Category
-	if err := m.DB.Find(&categories).Error; err != nil {
-		return nil, err
-	}
-	return categories, nil
-}
-
-func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) error {
-	userUUID, err := uuid.Parse(payload.UserID)
-	if err != nil {
-		return err
-	}
-
-	transactionDate, err := time.Parse("2006-01-02", payload.Date)
-	if err != nil {
-		return err
-	}
-
-	categoryUUID, err := uuid.Parse(payload.CategoryID)
-	if err != nil {
-		return err
-	}
-
-	accountUUID, err := uuid.Parse(payload.Account)
-	if err != nil {
-		return err
-	}
-
-	transaction := models.Transaction{
-		UserID:          userUUID,
-		Amount:          payload.Amount,
-		TransactionType: constants.TransactionType(payload.Type),
-		Description:     payload.Description,
-		CategoryID:      categoryUUID,
-		TransactionDate: transactionDate,
-		AccountID:       accountUUID,
-	}
-
-	err = m.CalculateBalance(payload.Account, transaction.Amount, transaction.TransactionType)
-	if err != nil {
-		return err
-	}
-	if err := m.DB.Create(&transaction).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BasicManager) GetUserTransactions(userId string) ([]models.Transaction, error) {
-	userUUID, err := uuid.Parse(userId)
-	if err != nil {
-		return nil, err
-	}
-
-	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ?", userUUID).Find(&transactions).Error; err != nil {
-		return nil, err
-	}
-
-	return transactions, nil
-}
-
-func (m *BasicManager) GetCategoryName(categoryId string) (string, error) {
-	categoryUUID, err := uuid.Parse(categoryId)
+// Accounts
+func (m *BasicManager) GetAccountName(accountId string) (string, error) {
+	accountUUID, err := uuid.Parse(accountId)
 	if err != nil {
 		return "", err
 	}
 
-	var category models.Category
-	if err := m.DB.Where("id = ?", categoryUUID).First(&category).Error; err != nil {
+	var account models.Account
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
 		return "", err
 	}
 
-	return category.Name, nil
+	return account.Name, nil
 }
 
 func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
@@ -136,64 +73,6 @@ func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
 	return nil
 }
 
-func (m *BasicManager) GetTransactionWithCategoryName(userId string) ([]models.TransactionCategoryAccounts, error) {
-	userUUID, err := uuid.Parse(userId)
-	if err != nil {
-		return nil, err
-	}
-
-	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ?", userUUID).Find(&transactions).Error; err != nil {
-		return nil, err
-	}
-
-	var transactionsWithCategory []models.TransactionCategoryAccounts
-	for _, transaction := range transactions {
-		categoryName, err := m.GetCategoryName(transaction.CategoryID.String())
-		if err != nil {
-			return nil, err
-		}
-		var accountName string
-		if transaction.AccountID != uuid.Nil {
-			accountName, err = m.GetAccountName(transaction.AccountID.String())
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			accountName = ""
-		}
-
-		transactionsWithCategory = append(transactionsWithCategory, models.TransactionCategoryAccounts{
-			Amount:          transaction.Amount,
-			TransactionType: transaction.TransactionType,
-			Description:     transaction.Description,
-			CategoryName:    categoryName,
-			AccountName:     accountName,
-			TransactionDate: transaction.TransactionDate,
-		})
-	}
-
-	sort.SliceStable(transactionsWithCategory, func(i, j int) bool {
-		return transactionsWithCategory[i].TransactionDate.After(transactionsWithCategory[j].TransactionDate)
-	})
-
-	return transactionsWithCategory, nil
-}
-
-func (m *BasicManager) GetAccountName(accountId string) (string, error) {
-	accountUUID, err := uuid.Parse(accountId)
-	if err != nil {
-		return "", err
-	}
-
-	var account models.Account
-	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
-		return "", err
-	}
-
-	return account.Name, nil
-}
-
 func (m *BasicManager) GetUserAccounts(userId string) ([]models.Account, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {
@@ -201,7 +80,7 @@ func (m *BasicManager) GetUserAccounts(userId string) ([]models.Account, error) 
 	}
 
 	var accounts []models.Account
-	if err := m.DB.Where("user_id = ?", userUUID).Find(&accounts).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&accounts).Error; err != nil {
 		return nil, err
 	}
 
@@ -215,54 +94,11 @@ func (m *BasicManager) GetLatestUserAccount(userId string) (models.Account, erro
 	}
 
 	var account models.Account
-	if err := m.DB.Where("user_id = ?", userUUID).Last(&account).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Last(&account).Error; err != nil {
 		return models.Account{}, err
 	}
 
 	return account, nil
-}
-
-func (m *BasicManager) FindCategoryByName(name string) (models.Category, error) {
-	var category models.Category
-	if err := m.DB.Where("name = ?", name).First(&category).Error; err != nil {
-		return models.Category{}, err
-	}
-	return category, nil
-}
-
-func (m *BasicManager) CalculateBalance(accountId string, amount float64, transactionType constants.TransactionType) error {
-	accountUUID, err := uuid.Parse(accountId)
-	if err != nil {
-		return err
-	}
-
-	var account models.Account
-	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
-		return err
-	}
-	transactions, err := m.FindAccountTransactions(accountId)
-	if transactionType == constants.Income && len(transactions) != 0 {
-		account.Balance += amount
-	} else if transactionType == constants.Expenses {
-		if account.Balance < amount {
-			return fmt.Errorf("insufficient balance")
-		}
-		account.Balance -= amount
-	}
-
-	if err := m.DB.Save(&account).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *BasicManager) FindAccountTransactions(accountId string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
-	if err := m.DB.Where("account_id = ?", accountId).First(&transactions).Error; err != nil {
-		return []models.Transaction{}, err
-	}
-	return transactions, nil
 }
 
 func (m *BasicManager) FindAccountById(accountId string) (models.Account, error) {
@@ -272,115 +108,79 @@ func (m *BasicManager) FindAccountById(accountId string) (models.Account, error)
 	}
 
 	var account models.Account
-	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
 		return models.Account{}, err
 	}
 
 	return account, nil
 }
 
-func (m *BasicManager) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
-	userUUID, err := uuid.Parse(userId)
-	if err != nil {
-		return nil, err
-	}
-
-	var recurrings []models.Recurring
-	if err := m.DB.Where("user_id = ?", userUUID).Find(&recurrings).Error; err != nil {
-		return nil, err
-	}
-
-	var recurringsWithCategory []models.RecurringWithCategoryName
-	for _, recurring := range recurrings {
-		categoryName, err := m.GetCategoryName(recurring.CategoryID.String())
-		if err != nil {
-			return nil, err
-		}
-
-		var accountName string
-		if recurring.AccountID != uuid.Nil {
-			accountName, err = m.GetAccountName(recurring.AccountID.String())
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			accountName = ""
-		}
-
-		recurringsWithCategory = append(recurringsWithCategory, models.RecurringWithCategoryName{
-			Amount:          recurring.Amount,
-			TransactionType: recurring.TransactionType,
-			Name:            recurring.Name,
-			CategoryName:    categoryName,
-			StartDate:       recurring.StartDate,
-			Periodicity:     recurring.Periodicity,
-			AccountName:     accountName,
-		})
-	}
-
-	return recurringsWithCategory, nil
-
-}
-
-func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
-	userUUID, err := uuid.Parse(payload.UserID)
+func (m *BasicManager) DeleteAccountById(accountId string) error {
+	accountUUID, err := uuid.Parse(accountId)
 	if err != nil {
 		return err
 	}
 
-	categoryUUID, err := uuid.Parse(payload.CategoryID)
-	if err != nil {
+	var account models.Account
+	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
 		return err
 	}
 
-	accountUUID, err := uuid.Parse(payload.AccountID)
-	if err != nil {
-		return err
-	}
-
-	transactionDate, err := time.Parse("2006-01-02", payload.StartDate)
-	if err != nil {
-		return err
-	}
-
-	recurring := models.Recurring{
-		UserID:          userUUID,
-		Name:            payload.Name,
-		StartDate:       transactionDate,
-		Amount:          payload.Amount,
-		TransactionType: constants.TransactionType(payload.TransactionType),
-		Periodicity:     constants.Periodicity(payload.Periodicity),
-		CategoryID:      categoryUUID,
-		AccountID:       accountUUID,
-	}
-
-	fn := constants.Fn(func() {
-		transactionRequest := models.TransactionRequest{
-			UserID:      payload.UserID,
-			Amount:      payload.Amount,
-			Type:        payload.TransactionType,
-			Description: payload.Name,
-			CategoryID:  payload.CategoryID,
-			Account:     payload.AccountID,
-			Date:        time.Now().Format("2006-01-02"),
-		}
-
-		if err := m.CreateTransaction(transactionRequest); err != nil {
-			log.Errorf(nil, "❌ failed to create transaction: %v", err)
-		}
-	})
-
-	if err := m.DB.Create(&recurring).Error; err != nil {
-		return err
-	}
-
-	if err := m.SetUserCRONJob(recurring, *m.GoCRON, fn); err != nil {
+	account.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := m.DB.Save(&account).Error; err != nil {
 		return err
 	}
 
 	return nil
 }
 
+// Categories
+func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
+	var categories []models.Category
+	// add soft delete
+	if err := m.DB.Where("deleted_at IS NULL").Find(&categories).Error; err != nil {
+		return nil, err
+	}
+	return categories, nil
+}
+
+func (m *BasicManager) GetCategoryName(categoryId string) (string, error) {
+	categoryUUID, err := uuid.Parse(categoryId)
+	if err != nil {
+		return "", err
+	}
+
+	var category models.Category
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", categoryUUID).First(&category).Error; err != nil {
+		return "", err
+	}
+
+	return category.Name, nil
+}
+
+func (m *BasicManager) FindCategoryByName(name string) (models.Category, error) {
+	var category models.Category
+	if err := m.DB.Where("name = ? AND deleted_at IS NULL", name).First(&category).Error; err != nil {
+		return models.Category{}, err
+	}
+	return category, nil
+}
+
+func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTotal, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
+	}
+
+	var categories []models.CategoryWithTotal
+	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? AND deleted_at IS NULL GROUP BY c.name ORDER BY total DESC LIMIT 1", userUUID).Scan(&categories).Error; err != nil {
+		return nil, err
+	}
+
+	return categories, nil
+}
+
+// Loans
 func (m *BasicManager) GetLoanWithCategoryName(id string) ([]models.LoanCategoryAccount, error) {
 	userUUID, err := uuid.Parse(id)
 	if err != nil {
@@ -423,7 +223,6 @@ func (m *BasicManager) GetLoanWithCategoryName(id string) ([]models.LoanCategory
 	}
 
 	return loansWithCategory, nil
-
 }
 
 func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
@@ -546,56 +345,6 @@ func (m *BasicManager) FinishLoan(id string) error {
 	return nil
 }
 
-func (m *BasicManager) GetUserMonthlyIncome(id string) (float64, error) {
-	userUUID, err := uuid.Parse(id)
-	if err != nil {
-		return 0, err
-	}
-
-	now := time.Now()
-	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
-	endOfMonth := startOfMonth.AddDate(0, 1, -1)
-
-	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ? AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
-		return 0, err
-	}
-
-	var total float64
-	for _, transaction := range transactions {
-		if transaction.TransactionType == constants.Income {
-			total += transaction.Amount
-		}
-	}
-
-	return total, nil
-}
-
-func (m *BasicManager) GetUserMonthlyExpenses(id string) (float64, error) {
-	userUUID, err := uuid.Parse(id)
-	if err != nil {
-		return 0, err
-	}
-
-	now := time.Now()
-	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
-	endOfMonth := startOfMonth.AddDate(0, 1, -1)
-
-	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ? AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
-		return 0, err
-	}
-
-	var total float64
-	for _, transaction := range transactions {
-		if transaction.TransactionType == constants.Expenses {
-			total += transaction.Amount
-		}
-	}
-
-	return total, nil
-}
-
 func (m *BasicManager) GetUserActiveLoans(id string) ([]models.Loan, error) {
 	userUUID, err := uuid.Parse(id)
 	if err != nil {
@@ -603,38 +352,133 @@ func (m *BasicManager) GetUserActiveLoans(id string) ([]models.Loan, error) {
 	}
 
 	var loans []models.Loan
-	if err := m.DB.Where("user_id = ?", userUUID).Find(&loans).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&loans).Error; err != nil {
 		return nil, err
 	}
 
 	return loans, nil
 }
 
-func (m *BasicManager) GetUserTotalBalance(userId string) float64 {
-	userUUID, _ := uuid.Parse(userId)
-	var accounts []models.Account
-	m.DB.Where("user_id = ?", userUUID).Find(&accounts)
-
-	var total float64
-	for _, account := range accounts {
-		total += account.Balance
+func (m *BasicManager) DeleteLoanById(loadId string) error {
+	loanUUID, err := uuid.Parse(loadId)
+	if err != nil {
+		return err
 	}
 
-	return total
+	var loan models.Loan
+	if err := m.DB.Where("id = ?", loanUUID).First(&loan).Error; err != nil {
+		return err
+	}
+
+	loan.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := m.DB.Save(&loan).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Transaction, error) {
+// Recurring
+func (m *BasicManager) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	var transactions []models.Transaction
-	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ?", userUUID).Order("transaction_date desc").Limit(7).Find(&transactions).Error; err != nil {
+	var recurrings []models.Recurring
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&recurrings).Error; err != nil {
 		return nil, err
 	}
 
-	return transactions, nil
+	var recurringsWithCategory []models.RecurringWithCategoryName
+	for _, recurring := range recurrings {
+		categoryName, err := m.GetCategoryName(recurring.CategoryID.String())
+		if err != nil {
+			return nil, err
+		}
+
+		var accountName string
+		if recurring.AccountID != uuid.Nil {
+			accountName, err = m.GetAccountName(recurring.AccountID.String())
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			accountName = ""
+		}
+
+		recurringsWithCategory = append(recurringsWithCategory, models.RecurringWithCategoryName{
+			Amount:          recurring.Amount,
+			TransactionType: recurring.TransactionType,
+			Name:            recurring.Name,
+			CategoryName:    categoryName,
+			StartDate:       recurring.StartDate,
+			Periodicity:     recurring.Periodicity,
+			AccountName:     accountName,
+		})
+	}
+
+	return recurringsWithCategory, nil
+
+}
+
+func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+
+	categoryUUID, err := uuid.Parse(payload.CategoryID)
+	if err != nil {
+		return err
+	}
+
+	accountUUID, err := uuid.Parse(payload.AccountID)
+	if err != nil {
+		return err
+	}
+
+	transactionDate, err := time.Parse("2006-01-02", payload.StartDate)
+	if err != nil {
+		return err
+	}
+
+	recurring := models.Recurring{
+		UserID:          userUUID,
+		Name:            payload.Name,
+		StartDate:       transactionDate,
+		Amount:          payload.Amount,
+		TransactionType: constants.TransactionType(payload.TransactionType),
+		Periodicity:     constants.Periodicity(payload.Periodicity),
+		CategoryID:      categoryUUID,
+		AccountID:       accountUUID,
+	}
+
+	fn := constants.Fn(func() {
+		transactionRequest := models.TransactionRequest{
+			UserID:      payload.UserID,
+			Amount:      payload.Amount,
+			Type:        payload.TransactionType,
+			Description: payload.Name,
+			CategoryID:  payload.CategoryID,
+			Account:     payload.AccountID,
+			Date:        time.Now().Format("2006-01-02"),
+		}
+
+		if err := m.CreateTransaction(transactionRequest); err != nil {
+			log.Errorf(nil, "❌ failed to create transaction: %v", err)
+		}
+	})
+
+	if err := m.DB.Create(&recurring).Error; err != nil {
+		return err
+	}
+
+	if err := m.SetUserCRONJob(recurring, *m.GoCRON, fn); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring, error) {
@@ -644,7 +488,7 @@ func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring
 	}
 
 	var recurrings []models.Recurring
-	if err := m.DB.Where("user_id = ?", userUUID).Find(&recurrings).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&recurrings).Error; err != nil {
 		return models.Recurring{}, err
 	}
 
@@ -672,6 +516,258 @@ func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring
 	return closestRecurring, nil
 }
 
+func (m *BasicManager) DeleteRecurringById(recurringId string) error {
+	recurringUUID, err := uuid.Parse(recurringId)
+	if err != nil {
+		return err
+	}
+
+	var recurring models.Recurring
+	if err := m.DB.Where("id = ?", recurringUUID).First(&recurring).Error; err != nil {
+		return err
+	}
+
+	recurring.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := m.DB.Save(&recurring).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Transactions
+func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+
+	transactionDate, err := time.Parse("2006-01-02", payload.Date)
+	if err != nil {
+		return err
+	}
+
+	categoryUUID, err := uuid.Parse(payload.CategoryID)
+	if err != nil {
+		return err
+	}
+
+	accountUUID, err := uuid.Parse(payload.Account)
+	if err != nil {
+		return err
+	}
+
+	transaction := models.Transaction{
+		UserID:          userUUID,
+		Amount:          payload.Amount,
+		TransactionType: constants.TransactionType(payload.Type),
+		Description:     payload.Description,
+		CategoryID:      categoryUUID,
+		TransactionDate: transactionDate,
+		AccountID:       accountUUID,
+	}
+
+	err = m.CalculateBalance(payload.Account, transaction.Amount, transaction.TransactionType)
+	if err != nil {
+		return err
+	}
+	if err := m.DB.Create(&transaction).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicManager) GetUserTransactions(userId string) ([]models.Transaction, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}
+
+func (m *BasicManager) GetTransactionWithCategoryName(userId string) ([]models.TransactionCategoryAccounts, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+
+	var transactionsWithCategory []models.TransactionCategoryAccounts
+	for _, transaction := range transactions {
+		categoryName, err := m.GetCategoryName(transaction.CategoryID.String())
+		if err != nil {
+			return nil, err
+		}
+		var accountName string
+		if transaction.AccountID != uuid.Nil {
+			accountName, err = m.GetAccountName(transaction.AccountID.String())
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			accountName = ""
+		}
+
+		transactionsWithCategory = append(transactionsWithCategory, models.TransactionCategoryAccounts{
+			Amount:          transaction.Amount,
+			TransactionType: transaction.TransactionType,
+			Description:     transaction.Description,
+			CategoryName:    categoryName,
+			AccountName:     accountName,
+			TransactionDate: transaction.TransactionDate,
+		})
+	}
+
+	sort.SliceStable(transactionsWithCategory, func(i, j int) bool {
+		return transactionsWithCategory[i].TransactionDate.After(transactionsWithCategory[j].TransactionDate)
+	})
+
+	return transactionsWithCategory, nil
+}
+
+func (m *BasicManager) FindAccountTransactions(accountId string) ([]models.Transaction, error) {
+	var transactions []models.Transaction
+	if err := m.DB.Where("account_id = ? AND deleted_at IS NULL", accountId).First(&transactions).Error; err != nil {
+		return []models.Transaction{}, err
+	}
+	return transactions, nil
+}
+
+func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Transaction, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var transactions []models.Transaction
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Order("transaction_date desc").Limit(7).Find(&transactions).Error; err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}
+
+func (m *BasicManager) DeleteTransactionById(transactionId string) error {
+	transactionUUID, err := uuid.Parse(transactionId)
+	if err != nil {
+		return err
+	}
+
+	var transaction models.Transaction
+	if err := m.DB.Where("id = ?", transactionUUID).First(&transaction).Error; err != nil {
+		return err
+	}
+
+	transaction.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+	if err := m.DB.Save(&transaction).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Random
+func (m *BasicManager) CalculateBalance(accountId string, amount float64, transactionType constants.TransactionType) error {
+	accountUUID, err := uuid.Parse(accountId)
+	if err != nil {
+		return err
+	}
+
+	var account models.Account
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
+		return err
+	}
+	transactions, err := m.FindAccountTransactions(accountId)
+	if transactionType == constants.Income && len(transactions) != 0 {
+		account.Balance += amount
+	} else if transactionType == constants.Expenses {
+		if account.Balance < amount {
+			return fmt.Errorf("insufficient balance")
+		}
+		account.Balance -= amount
+	}
+
+	if err := m.DB.Save(&account).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *BasicManager) GetUserMonthlyIncome(id string) (float64, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return 0, err
+	}
+
+	now := time.Now()
+	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	endOfMonth := startOfMonth.AddDate(0, 1, -1)
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+		return 0, err
+	}
+
+	var total float64
+	for _, transaction := range transactions {
+		if transaction.TransactionType == constants.Income {
+			total += transaction.Amount
+		}
+	}
+
+	return total, nil
+}
+
+func (m *BasicManager) GetUserMonthlyExpenses(id string) (float64, error) {
+	userUUID, err := uuid.Parse(id)
+	if err != nil {
+		return 0, err
+	}
+
+	now := time.Now()
+	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
+	endOfMonth := startOfMonth.AddDate(0, 1, -1)
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+		return 0, err
+	}
+
+	var total float64
+	for _, transaction := range transactions {
+		if transaction.TransactionType == constants.Expenses {
+			total += transaction.Amount
+		}
+	}
+
+	return total, nil
+}
+
+func (m *BasicManager) GetUserTotalBalance(userId string) float64 {
+	userUUID, _ := uuid.Parse(userId)
+	var accounts []models.Account
+	m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&accounts)
+
+	var total float64
+	for _, account := range accounts {
+		total += account.Balance
+	}
+
+	return total
+}
+
 func GetNextOccurrence(startDate time.Time, frequency constants.Periodicity, today time.Time) time.Time {
 	nextOccurrence := startDate
 	for nextOccurrence.Before(today) {
@@ -685,20 +781,6 @@ func GetNextOccurrence(startDate time.Time, frequency constants.Periodicity, tod
 		}
 	}
 	return nextOccurrence
-}
-
-func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTotal, error) {
-	userUUID, err := uuid.Parse(id)
-	if err != nil {
-		return nil, err
-	}
-
-	var categories []models.CategoryWithTotal
-	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? GROUP BY c.name ORDER BY total DESC LIMIT 1", userUUID).Scan(&categories).Error; err != nil {
-		return nil, err
-	}
-
-	return categories, nil
 }
 
 func (m *BasicManager) SetUserCRONJob(recurring models.Recurring, scheduler gocron.Scheduler, taskFn constants.Fn) error {

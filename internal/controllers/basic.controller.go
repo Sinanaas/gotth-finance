@@ -323,6 +323,7 @@ func (bc *BasicController) DeleteAccountById(ctx *gin.Context) {
 	if err != nil {
 		return
 	}
+
 	ctx.Header("HX-Redirect", "/accounts")
 }
 
@@ -346,6 +347,13 @@ func (bc *BasicController) DeleteTransactionById(ctx *gin.Context) {
 	}
 
 	err := bc.BM.DeleteTransactionById(transactionId)
+	if err != nil {
+		return
+	}
+
+	accountId := ctx.PostForm("AccountID")
+
+	err = bc.BM.RecalculateAccountBalance(accountId)
 	if err != nil {
 		return
 	}

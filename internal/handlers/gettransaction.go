@@ -26,7 +26,7 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	transactions, err := h.BC.GetTransactionWithCategoryName(userId)
+	transactions, err := h.BC.GetUserTransactions(userId)
 	if err != nil {
 		return
 	}

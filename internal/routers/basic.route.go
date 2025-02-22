@@ -28,4 +28,9 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bc *controllers.BasicCont
 	rg.GET("/loans", middleware.DeserializeUser(), handlers.NewGetLoanHandler(bc).ServeHTTP)
 	rg.POST("/loan", middleware.DeserializeUser(), handlers.NewPostLoanHandler(bc).ServeHTTP)
 	rg.POST("/loan/finish", middleware.DeserializeUser(), handlers.NewPostFinishLoanHandler(bc).ServeHTTP)
+
+	rg.PUT("/transaction", middleware.DeserializeUser(), handlers.NewDeleteTransactionHandler(bc).ServeHTTP)
+	rg.PUT("/account", middleware.DeserializeUser(), handlers.NewDeleteAccountHandler(bc).ServeHTTP)
+	rg.PUT("/recurring", middleware.DeserializeUser(), handlers.NewDeleteRecurringHandler(bc).ServeHTTP)
+	rg.PUT("/loan", middleware.DeserializeUser(), handlers.NewDeleteLoanHandler(bc).ServeHTTP)
 }

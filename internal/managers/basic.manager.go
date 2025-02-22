@@ -68,6 +68,9 @@ func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
 		transaction.CategoryID = category.ID.String()
 		transaction.Date = time.Now().Format("2006-01-02")
 		err = m.CreateTransaction(transaction)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -134,6 +137,39 @@ func (m *BasicManager) DeleteAccountById(accountId string) error {
 	return nil
 }
 
+func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
+	accountUUID, err := uuid.Parse(accountId)
+	if err != nil {
+		return err
+	}
+
+	var account models.Account
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountId).First(&account).Error; err != nil {
+		return err
+	}
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("account_id = ? AND deleted_at IS NULL", accountUUID).Find(&transactions).Error; err != nil {
+		return err
+	}
+
+	var total float64
+	for _, transaction := range transactions {
+		if transaction.TransactionType == constants.Income {
+			total += transaction.Amount
+		} else if transaction.TransactionType == constants.Expenses {
+			total -= transaction.Amount
+		}
+	}
+
+	account.Balance = total
+	if err := m.DB.Save(&account).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Categories
 func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
 	var categories []models.Category
@@ -173,7 +209,7 @@ func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTot
 	}
 
 	var categories []models.CategoryWithTotal
-	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? AND deleted_at IS NULL GROUP BY c.name ORDER BY total DESC LIMIT 1", userUUID).Scan(&categories).Error; err != nil {
+	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? AND t.deleted_at IS NULL GROUP BY c.name ORDER BY total DESC LIMIT 1", userUUID).Scan(&categories).Error; err != nil {
 		return nil, err
 	}
 
@@ -585,7 +621,7 @@ func (m *BasicManager) GetUserTransactions(userId string) ([]models.Transaction,
 	}
 
 	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&transactions).Error; err != nil {
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 

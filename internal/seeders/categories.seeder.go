@@ -60,6 +60,10 @@ func main() {
 			Name:        "Income",
 			Description: "Income",
 		},
+		{
+			Name:        "Initial",
+			Description: "Initial account balance",
+		},
 	}
 
 	for _, category := range categories {

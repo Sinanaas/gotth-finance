@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/appengine/log"
 	"gorm.io/gorm"
-	"sort"
 	"time"
 )
 
@@ -24,7 +23,8 @@ func NewBasicManager(db *gorm.DB, goCRON *gocron.Scheduler) *BasicManager {
 	}
 }
 
-// Accounts
+// ACCOUNT methods
+
 func (m *BasicManager) GetAccountName(accountId string) (string, error) {
 	accountUUID, err := uuid.Parse(accountId)
 	if err != nil {
@@ -170,7 +170,8 @@ func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
 	return nil
 }
 
-// Categories
+// CATEGORY methods
+
 func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
 	var categories []models.Category
 	// add soft delete
@@ -216,7 +217,8 @@ func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTot
 	return categories, nil
 }
 
-// Loans
+// LOAN methods
+
 func (m *BasicManager) GetLoans(userId string) ([]models.Loan, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {
@@ -398,7 +400,8 @@ func (m *BasicManager) DeleteLoanById(loadId string) error {
 	return nil
 }
 
-// Recurring
+// RECURRING methods
+
 func (m *BasicManager) GetRecurrings(userId string) ([]models.Recurring, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {
@@ -411,48 +414,6 @@ func (m *BasicManager) GetRecurrings(userId string) ([]models.Recurring, error) 
 	}
 
 	return recurrings, nil
-}
-
-func (m *BasicManager) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
-	userUUID, err := uuid.Parse(userId)
-	if err != nil {
-		return nil, err
-	}
-
-	var recurrings []models.Recurring
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&recurrings).Error; err != nil {
-		return nil, err
-	}
-
-	var recurringsWithCategory []models.RecurringWithCategoryName
-	for _, recurring := range recurrings {
-		categoryName, err := m.GetCategoryName(recurring.CategoryID.String())
-		if err != nil {
-			return nil, err
-		}
-
-		var accountName string
-		if recurring.AccountID != uuid.Nil {
-			accountName, err = m.GetAccountName(recurring.AccountID.String())
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			accountName = ""
-		}
-
-		recurringsWithCategory = append(recurringsWithCategory, models.RecurringWithCategoryName{
-			Amount:          recurring.Amount,
-			TransactionType: recurring.TransactionType,
-			Name:            recurring.Name,
-			CategoryName:    categoryName,
-			StartDate:       recurring.StartDate,
-			Periodicity:     recurring.Periodicity,
-			AccountName:     accountName,
-		})
-	}
-
-	return recurringsWithCategory, nil
 }
 
 func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
@@ -572,7 +533,8 @@ func (m *BasicManager) DeleteRecurringById(recurringId string) error {
 	return nil
 }
 
-// Transactions
+// TRANSACTION methods
+
 func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) error {
 	userUUID, err := uuid.Parse(payload.UserID)
 	if err != nil {
@@ -629,50 +591,6 @@ func (m *BasicManager) GetUserTransactions(userId string) ([]models.Transaction,
 	return transactions, nil
 }
 
-func (m *BasicManager) GetTransactionWithCategoryName(userId string) ([]models.TransactionCategoryAccounts, error) {
-	userUUID, err := uuid.Parse(userId)
-	if err != nil {
-		return nil, err
-	}
-
-	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&transactions).Error; err != nil {
-		return nil, err
-	}
-
-	var transactionsWithCategory []models.TransactionCategoryAccounts
-	for _, transaction := range transactions {
-		categoryName, err := m.GetCategoryName(transaction.CategoryID.String())
-		if err != nil {
-			return nil, err
-		}
-		var accountName string
-		if transaction.AccountID != uuid.Nil {
-			accountName, err = m.GetAccountName(transaction.AccountID.String())
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			accountName = ""
-		}
-
-		transactionsWithCategory = append(transactionsWithCategory, models.TransactionCategoryAccounts{
-			Amount:          transaction.Amount,
-			TransactionType: transaction.TransactionType,
-			Description:     transaction.Description,
-			CategoryName:    categoryName,
-			AccountName:     accountName,
-			TransactionDate: transaction.TransactionDate,
-		})
-	}
-
-	sort.SliceStable(transactionsWithCategory, func(i, j int) bool {
-		return transactionsWithCategory[i].TransactionDate.After(transactionsWithCategory[j].TransactionDate)
-	})
-
-	return transactionsWithCategory, nil
-}
-
 func (m *BasicManager) FindAccountTransactions(accountId string) ([]models.Transaction, error) {
 	var transactions []models.Transaction
 	if err := m.DB.Where("account_id = ? AND deleted_at IS NULL", accountId).First(&transactions).Error; err != nil {
@@ -714,7 +632,8 @@ func (m *BasicManager) DeleteTransactionById(transactionId string) error {
 	return nil
 }
 
-// Random
+// RANDOM method
+
 func (m *BasicManager) CalculateBalance(accountId string, amount float64, transactionType constants.TransactionType) error {
 	accountUUID, err := uuid.Parse(accountId)
 	if err != nil {

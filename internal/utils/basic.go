@@ -33,9 +33,3 @@ func GetRecurringDays(date time.Time, frequency constants.Periodicity) int {
 func daysIn(m time.Month, year int) int {
 	return time.Date(year, m+1, 0, 0, 0, 0, 0, time.UTC).Day()
 }
-
-func CalculateInitialDelay(startDate time.Time, periodicity constants.Periodicity) time.Duration {
-	now := time.Now()
-	nextOccurrence := GetNextOccurrence(startDate, periodicity, now)
-	return nextOccurrence.Sub(now)
-}

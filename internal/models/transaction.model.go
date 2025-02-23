@@ -36,12 +36,3 @@ type TransactionRequest struct {
 	Account     string
 	UserID      string
 }
-
-type TransactionCategoryAccounts struct {
-	Amount          float64
-	TransactionType constants.TransactionType
-	Description     string
-	CategoryName    string
-	AccountName     string
-	TransactionDate time.Time
-}

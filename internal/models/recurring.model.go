@@ -30,16 +30,6 @@ type Recurring struct {
 	Account   Account `gorm:"foreignKey:AccountID"`
 }
 
-type RecurringWithCategoryName struct {
-	Amount          float64
-	TransactionType constants.TransactionType
-	Periodicity     constants.Periodicity
-	StartDate       time.Time
-	Name            string
-	CategoryName    string
-	AccountName     string
-}
-
 type RecurringRequest struct {
 	Name            string
 	Amount          float64

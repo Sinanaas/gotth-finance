@@ -260,14 +260,13 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 	}()
 
 	loan := models.Loan{
-		UserID:     userUUID,
-		Amount:     payload.Amount,
-		ToWhom:     payload.ToWhom,
-		CategoryID: categoryUUID,
-		AccountID:  accountUUID,
-		LoanDate:   transactionDate,
-		Status:     payload.Status,
-
+		UserID:          userUUID,
+		Amount:          payload.Amount,
+		ToWhom:          payload.ToWhom,
+		CategoryID:      categoryUUID,
+		AccountID:       accountUUID,
+		LoanDate:        transactionDate,
+		Status:          payload.Status,
 		TransactionType: constants.TransactionType(payload.TransactionType),
 		Description:     payload.Description,
 	}
@@ -276,7 +275,7 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 		return err
 	}
 
-	// create trnsaction
+	// create transaction
 	var transaction models.Transaction
 	transaction.UserID = userUUID
 	transaction.Amount = payload.Amount
@@ -296,6 +295,12 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 
 	if err := m.DB.Create(&transaction).Error; err != nil {
 		tx.Rollback()
+	}
+
+	// Update initial_transaction_id inside loan
+	if err := tx.Model(&loan).Update("initial_transaction_id", transaction.ID).Error; err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	tx.Commit()
@@ -373,6 +378,15 @@ func (m *BasicManager) DeleteLoanById(loadId string) error {
 
 	var loan models.Loan
 	if err := m.DB.Where("id = ?", loanUUID).First(&loan).Error; err != nil {
+		return err
+	}
+
+	if err := m.DeleteTransactionById(loan.InitialTransactionID.String()); err != nil {
+		return err
+	}
+
+	err = m.RecalculateAccountBalance(loan.AccountID.String())
+	if err != nil {
 		return err
 	}
 

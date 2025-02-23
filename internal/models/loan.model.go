@@ -16,6 +16,9 @@ type Loan struct {
 	LoanDate        time.Time                 `gorm:"type:date"`
 	ToWhom          string                    `gorm:"type:text"`
 	Amount          float64                   `gorm:"type:decimal(12,2)"`
+	// Initial Transaction
+	InitialTransactionID *uuid.UUID `gorm:"foreignKey:InitialTransactionID"`
+	InitialTransaction   Transaction
 	// Belongs to a user
 	UserID uuid.UUID
 	User   User `gorm:"foreignKey:UserID"`
@@ -25,18 +28,6 @@ type Loan struct {
 	// Belongs to a category
 	CategoryID uuid.UUID
 	Category   Category `gorm:"foreignKey:CategoryID"`
-}
-
-type LoanCategoryAccount struct {
-	ID              string
-	Amount          float64
-	ToWhom          string
-	Description     string
-	LoanDate        time.Time
-	Status          bool
-	TransactionType constants.TransactionType
-	AccountName     string
-	CategoryName    string
 }
 
 type LoanRequest struct {

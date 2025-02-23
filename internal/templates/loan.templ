@@ -6,7 +6,7 @@ import "github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 import "fmt"
 import "strconv"
 
-templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, accounts []models.Account, transactionType []string) {
+templ Loans(categories []models.Category, loans []models.Loan, accounts []models.Account, transactionType []string) {
 <main class="container mx-auto p-4 min-h-full top-0">
     <div class="flex flex-col md:flex-row gap-6">
         <div hx-ext="response-targets" class="w-full md:w-1/3">
@@ -57,9 +57,9 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                         for i := 0 ; i < len(transactionType) ; i++ {
                         <option class="w-full" value={ strconv.Itoa(i) }>
                             if transactionType[i] == "Expenses" {
-                                { transactionType[i] + " / Memberi Hutang" }
+                            { transactionType[i] + " / Memberi Hutang" }
                             } else {
-                                { transactionType[i] + " / Hutang" }
+                            { transactionType[i] + " / Hutang" }
                             }
                         </option>
                         }
@@ -151,9 +151,9 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                     >
                         <option disabled selected value class="w-full text-slate-600">select a category</option>
                         for _, category := range categories {
-                            if category.Name != "Income" {
-                                <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
-						    }
+                        if category.Name != "Income" {
+                        <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+                        }
                         }
                     </select>
                 </div>
@@ -172,7 +172,7 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                 <tr>
                     <th scope="col"
                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Loan Date
+                        Loan TANGAL
                     </th>
                     <th scope="col"
                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -200,7 +200,7 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                     </th>
                     <th scope="col"
                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        Actions
                     </th>
                 </tr>
                 </thead>
@@ -212,11 +212,11 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                     </td>
                     if loan.TransactionType == constants.Income {
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-green-900">Rp. { utils.FormatCurrency(loan.Amount) }</div>
+                        <div class="text-sm text-green-200">Rp. { utils.FormatCurrency(loan.Amount) }</div>
                     </td>
                     } else {
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-red-900">Rp. { utils.FormatCurrency(loan.Amount) }</div>
+                        <div class="text-sm text-red-200">Rp. { utils.FormatCurrency(loan.Amount) }</div>
                     </td>
                     }
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -229,10 +229,10 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                         <div class="text-sm text-gray-900">{ loan.TransactionType.ToString() }</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.CategoryName }</div>
+                        <div class="text-sm text-gray-900">{ loan.Category.Name }</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.AccountName }</div>
+                        <div class="text-sm text-gray-900">{ loan.Account.Name }</div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <form
@@ -250,6 +250,15 @@ templ Loans(categories []models.Category, loans []models.LoanCategoryAccount, ac
                             >
                             Finish
                             </button>
+                        </form>
+                        <form
+                                hx-put="/loan"
+                                hx-trigger="submit"
+                                hx-target="closest tr"
+                                hx-encoding="application/x-www-form-urlencoded"
+                        >
+                            <input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) }/>
+                            <button type="submit" class="text-white bg-red-500 hover:bg-red-600 font-semibold p-2 rounded-lg shadow-md transition duration-300">Delete</button>
                         </form>
                     </td>
                 </tr>

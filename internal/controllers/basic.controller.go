@@ -74,8 +74,8 @@ func (bc *BasicController) GetTransactionWithCategoryName(userId string) ([]mode
 	return transactions, nil
 }
 
-func (bc *BasicController) GetLoanWithCategoryName(userId string) ([]models.LoanCategoryAccount, error) {
-	loans, err := bc.BM.GetLoanWithCategoryName(userId)
+func (bc *BasicController) GetLoans(userId string) ([]models.Loan, error) {
+	loans, err := bc.BM.GetLoans(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -84,6 +84,14 @@ func (bc *BasicController) GetLoanWithCategoryName(userId string) ([]models.Loan
 
 func (bc *BasicController) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
 	recurrings, err := bc.BM.GetRecurringWithCategoryName(userId)
+	if err != nil {
+		return nil, err
+	}
+	return recurrings, nil
+}
+
+func (bc *BasicController) GetRecurrings(userId string) ([]models.Recurring, error) {
+	recurrings, err := bc.BM.GetRecurrings(userId)
 	if err != nil {
 		return nil, err
 	}

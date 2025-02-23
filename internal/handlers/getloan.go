@@ -26,7 +26,7 @@ func (h *GetLoanHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	loans, err := h.BC.GetLoanWithCategoryName(userId)
+	loans, err := h.BC.GetLoans(userId)
 	if err != nil {
 		return
 	}

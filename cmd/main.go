@@ -55,6 +55,7 @@ func init() {
 	AuthRouter.AuthRoute(router, AuthController)
 
 	goCRON, err = gocron.NewScheduler()
+	goCRON.remo
 	if err != nil {
 		log.Fatal("❌ Could not create goCRON scheduler", err)
 	}

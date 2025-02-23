@@ -26,7 +26,7 @@ func (h *GetRecurringHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	recurring, err := h.BC.GetRecurringWithCategoryName(userId)
+	recurring, err := h.BC.GetRecurrings(userId)
 	if err != nil {
 		return
 	}

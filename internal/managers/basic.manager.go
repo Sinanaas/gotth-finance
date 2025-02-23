@@ -217,48 +217,18 @@ func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTot
 }
 
 // Loans
-func (m *BasicManager) GetLoanWithCategoryName(id string) ([]models.LoanCategoryAccount, error) {
-	userUUID, err := uuid.Parse(id)
+func (m *BasicManager) GetLoans(userId string) ([]models.Loan, error) {
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return nil, err
 	}
 
 	var loans []models.Loan
-	var accountName string
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&loans).Error; err != nil {
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&loans).Error; err != nil {
 		return nil, err
 	}
 
-	var loansWithCategory []models.LoanCategoryAccount
-	for _, loan := range loans {
-		categoryName, err := m.GetCategoryName(loan.CategoryID.String())
-		if err != nil {
-			return nil, err
-		}
-
-		if loan.AccountID != uuid.Nil {
-			accountName, err = m.GetAccountName(loan.AccountID.String())
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			accountName = ""
-		}
-
-		loansWithCategory = append(loansWithCategory, models.LoanCategoryAccount{
-			Amount:          loan.Amount,
-			ToWhom:          loan.ToWhom,
-			CategoryName:    categoryName,
-			AccountName:     accountName,
-			LoanDate:        loan.LoanDate,
-			Status:          loan.Status,
-			TransactionType: loan.TransactionType,
-			Description:     loan.Description,
-			ID:              loan.ID.String(),
-		})
-	}
-
-	return loansWithCategory, nil
+	return loans, nil
 }
 
 func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
@@ -415,6 +385,20 @@ func (m *BasicManager) DeleteLoanById(loadId string) error {
 }
 
 // Recurring
+func (m *BasicManager) GetRecurrings(userId string) ([]models.Recurring, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var recurrings []models.Recurring
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&recurrings).Error; err != nil {
+		return nil, err
+	}
+
+	return recurrings, nil
+}
+
 func (m *BasicManager) GetRecurringWithCategoryName(userId string) ([]models.RecurringWithCategoryName, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {
@@ -455,7 +439,6 @@ func (m *BasicManager) GetRecurringWithCategoryName(userId string) ([]models.Rec
 	}
 
 	return recurringsWithCategory, nil
-
 }
 
 func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
@@ -560,6 +543,10 @@ func (m *BasicManager) DeleteRecurringById(recurringId string) error {
 
 	var recurring models.Recurring
 	if err := m.DB.Where("id = ?", recurringUUID).First(&recurring).Error; err != nil {
+		return err
+	}
+
+	if err := m.RemoveCRONJob(recurring, *m.GoCRON); err != nil {
 		return err
 	}
 
@@ -876,6 +863,14 @@ func (m *BasicManager) SetUserCRONJob(recurring models.Recurring, scheduler gocr
 	}
 
 	tx.Commit()
+
+	return nil
+}
+
+func (m *BasicManager) RemoveCRONJob(recurring models.Recurring, scheduler gocron.Scheduler) error {
+	if err := scheduler.RemoveJob(recurring.JobID); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -8,9 +8,18 @@ templ header() {
 		<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 		<script src="https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js"></script>
+
+		<script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<link rel="preconnect" href="https://fonts.gstatic.com"/>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet"/>
+
+		<!-- UIkit CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/css/uikit.min.css" />
+
+		<!-- UIkit JS -->
+		<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/js/uikit.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/js/uikit-icons.min.js"></script>
 	</head>
 }
 
@@ -51,7 +60,15 @@ templ nav(user_id string) {
 				</ol>
 				<ol class="flex space-x-5">
 					<li class="cursor-pointer transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-						<a hx-get="/logout">Logout</a>
+						<a
+								hx-get="/logout"
+								hx-target="#modals-here"
+								hx-trigger="click"
+								_="on htmx:afterOnLoad call UIkit.modal('#modal-example').show()"
+						>
+							Logout
+						</a>
+
 					</li>
 				</ol>
 			}
@@ -65,6 +82,7 @@ templ Layout(contents templ.Component, user_id string) {
 		<div class="flex w-full container items-center justify-center flex-col">
 			@nav(user_id)
 			<main class="flex-1 pt-[10vh] min-h-[95vh] max-h-[95vh] items-center justify-center flex container" id="profile-container">
+				<div id="modals-here"></div>
 				@contents
 			</main>
 		</div>

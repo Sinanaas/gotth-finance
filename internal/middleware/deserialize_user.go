@@ -18,12 +18,14 @@ func DeserializeUser() gin.HandlerFunc {
 		cookie, err := ctx.Cookie("access_token")
 		if err != nil {
 			ctx.Redirect(http.StatusSeeOther, "/login")
+			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
 			return
 		}
 
 		accessToken = cookie
 		if accessToken == "" {
 			ctx.Redirect(http.StatusSeeOther, "/login")
+			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
 			return
 		}
 
@@ -32,6 +34,7 @@ func DeserializeUser() gin.HandlerFunc {
 
 		if err != nil {
 			ctx.Redirect(http.StatusSeeOther, "/login")
+			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
 			return
 		}
 
@@ -39,6 +42,7 @@ func DeserializeUser() gin.HandlerFunc {
 		result := initializers.DB.First(&user, "id = ?", fmt.Sprint(sub))
 		if result.Error != nil {
 			ctx.Redirect(http.StatusSeeOther, "/login")
+			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
 			return
 		}
 

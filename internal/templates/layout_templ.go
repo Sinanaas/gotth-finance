@@ -29,7 +29,7 @@ func header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><title>GOTTH FINANCIAL TRACKER</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" name=\"referrer\" content=\"strict-origin-when-cross-origin\"><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/ws.js\"></script><script src=\"https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js\"></script><script src=\"https://cdn.tailwindcss.com\"></script><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\"><link href=\"https://fonts.googleapis.com/css2?family=Roboto:wght@500&amp;display=swap\" rel=\"stylesheet\"></head>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<head><title>GOTTH FINANCIAL TRACKER</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" name=\"referrer\" content=\"strict-origin-when-cross-origin\"><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/ws.js\"></script><script src=\"https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js\"></script><script src=\"https://unpkg.com/hyperscript.org@0.9.14\"></script><script src=\"https://cdn.tailwindcss.com\"></script><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\"><link href=\"https://fonts.googleapis.com/css2?family=Roboto:wght@500&amp;display=swap\" rel=\"stylesheet\"><!-- UIkit CSS --><link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/css/uikit.min.css\"><!-- UIkit JS --><script src=\"https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/js/uikit.min.js\"></script><script src=\"https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/js/uikit-icons.min.js\"></script></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -97,7 +97,7 @@ func nav(user_id string) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ol class=\"flex space-x-5\"><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/\">Home</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/transaction\">Transaction</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/recurring\">Recurring</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/loans\">Hutang</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/accounts\">Accounts</a></li></ol><ol class=\"flex space-x-5\"><li class=\"cursor-pointer transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a hx-get=\"/logout\">Logout</a></li></ol>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<ol class=\"flex space-x-5\"><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/\">Home</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/transaction\">Transaction</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/recurring\">Recurring</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/loans\">Hutang</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/accounts\">Accounts</a></li></ol><ol class=\"flex space-x-5\"><li class=\"cursor-pointer transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a hx-get=\"/logout\" hx-target=\"#modals-here\" hx-trigger=\"click\" _=\"on htmx:afterOnLoad call UIkit.modal(&#39;#modal-example&#39;).show()\">Logout</a></li></ol>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -143,7 +143,7 @@ func Layout(contents templ.Component, user_id string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"flex-1 pt-[10vh] min-h-[95vh] max-h-[95vh] items-center justify-center flex container\" id=\"profile-container\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"flex-1 pt-[10vh] min-h-[95vh] max-h-[95vh] items-center justify-center flex container\" id=\"profile-container\"><div id=\"modals-here\"></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

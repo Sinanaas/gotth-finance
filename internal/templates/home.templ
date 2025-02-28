@@ -8,26 +8,26 @@ import "fmt"
 templ Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []models.Account, loans []models.Loan, transactions []models.Transaction, recurring models.Recurring, month string, totalBalance string, topCategories []models.CategoryWithTotal) {
 <div class="w-full h-full grid grid-cols-5 grid-rows-4 gap-6 p-6 bg-gray-100 rounded">
     <a href="/transaction" class="col-span-1 row-start-1 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg shadow-lg p-6">
-        <h1 class="text-lg font-semibold mb-2">{ month } Income</h1>
+        <h1 class="text-lg font-semibold mb-2 text-white">{ month } Income</h1>
         <p class="text-2xl font-extrabold">Rp. { utils.FormatCurrency(incomeMonthAmount) }</p>
     </a>
 
     <a href="/transaction" class="col-span-1 row-start-2 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-lg shadow-lg p-6">
-        <h1 class="text-lg font-semibold mb-2">{ month } Expense</h1>
+        <h1 class="text-lg font-semibold mb-2 text-white">{ month } Expense</h1>
         <p class="text-2xl font-extrabold">Rp. { utils.FormatCurrency(expenseMonthAmount) }</p>
     </a>
 
     <a href="/transaction" class="col-span-1 row-start-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg shadow-lg p-6">
         if incomeMonthAmount - expenseMonthAmount > 0 {
-            <h1 class="text-lg font-semibold mb-2">Net Income</h1>
+            <h1 class="text-lg font-semibold mb-2 text-white">Net Income</h1>
         } else {
-            <h1 class="text-lg font-semibold mb-2">Net Expense</h1>
+            <h1 class="text-lg font-semibold mb-2 text-white">Net Expense</h1>
         }
         <p class="text-2xl font-extrabold">Rp. { utils.FormatCurrency(incomeMonthAmount - expenseMonthAmount) }</p>
     </a>
 
     <a href="/transaction" class="col-span-1 row-start-4 bg-gradient-to-r from-purple-400 to-purple-600 text-white rounded-lg shadow-lg p-6">
-        <h1 class="text-lg font-semibold mb-2">Total Balance</h1>
+        <h1 class="text-lg font-semibold mb-2 text-white">Total Balance</h1>
         <p class="text-2xl font-extrabold">Rp. { totalBalance }</p>
     </a>
 

@@ -34,14 +34,14 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-full h-full grid grid-cols-5 grid-rows-4 gap-6 p-6 bg-gray-100 rounded\"><a href=\"/transaction\" class=\"col-span-1 row-start-1 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg shadow-lg p-6\"><h1 class=\"text-lg font-semibold mb-2\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-full h-full grid grid-cols-5 grid-rows-4 gap-6 p-6 bg-gray-100 rounded\"><a href=\"/transaction\" class=\"col-span-1 row-start-1 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-lg shadow-lg p-6\"><h1 class=\"text-lg font-semibold mb-2 text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 11, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 11, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -60,14 +60,14 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></a> <a href=\"/transaction\" class=\"col-span-1 row-start-2 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-lg shadow-lg p-6\"><h1 class=\"text-lg font-semibold mb-2\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></a> <a href=\"/transaction\" class=\"col-span-1 row-start-2 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-lg shadow-lg p-6\"><h1 class=\"text-lg font-semibold mb-2 text-white\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 16, Col: 54}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 16, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -91,12 +91,12 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 			return templ_7745c5c3_Err
 		}
 		if incomeMonthAmount-expenseMonthAmount > 0 {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-lg font-semibold mb-2\">Net Income</h1>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-lg font-semibold mb-2 text-white\">Net Income</h1>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-lg font-semibold mb-2\">Net Expense</h1>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"text-lg font-semibold mb-2 text-white\">Net Expense</h1>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -114,7 +114,7 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></a> <a href=\"/transaction\" class=\"col-span-1 row-start-4 bg-gradient-to-r from-purple-400 to-purple-600 text-white rounded-lg shadow-lg p-6\"><h1 class=\"text-lg font-semibold mb-2\">Total Balance</h1><p class=\"text-2xl font-extrabold\">Rp. ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></a> <a href=\"/transaction\" class=\"col-span-1 row-start-4 bg-gradient-to-r from-purple-400 to-purple-600 text-white rounded-lg shadow-lg p-6\"><h1 class=\"text-lg font-semibold mb-2 text-white\">Total Balance</h1><p class=\"text-2xl font-extrabold\">Rp. ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

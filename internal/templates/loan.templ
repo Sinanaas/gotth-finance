@@ -14,6 +14,7 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
                     hx-post="/loan"
                     hx-trigger="submit"
                     hx-encoding="application/x-www-form-urlencoded"
+                    hx-swap="none"
                     class="flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4"
             >
                 <div class="flex justify-center items-center border-b border-slate-300 pb-4 mb-4">
@@ -75,6 +76,7 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
                                 hx-get="/account/balance"
                                 hx-target="#balance"
                                 hx-params="Account"
+                                hx-swap="outerHTML"
                                 required
                                 oninvalid="this.setCustomValidity('Please select an account.')"
                                 oninput="this.setCustomValidity('')"
@@ -96,6 +98,7 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
                                         value=""
                                         disabled
                                         class="rounded p-2 border border-slate-300"
+                                        hx-swap-oob="true"
                                 />
                             </div>
                         </div>

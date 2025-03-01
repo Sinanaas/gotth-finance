@@ -13,8 +13,8 @@ templ Recurring(categories []models.Category, recurring []models.Recurring, acco
             <form
                     hx-post="/recurring"
                     hx-trigger="submit"
-                    hx-target-401="#transaction-error"
                     hx-encoding="application/x-www-form-urlencoded"
+                    hx-swap="none"
                     class="flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4"
             >
                 <div class="flex justify-center items-center border-b border-slate-300 pb-4 mb-4">
@@ -84,6 +84,7 @@ templ Recurring(categories []models.Category, recurring []models.Recurring, acco
                                 hx-get="/account/balance"
                                 hx-target="#balance"
                                 hx-params="Account"
+                                hx-swap="outerHTML"
                                 required
                                 oninvalid="this.setCustomValidity('Please select an account.')"
                                 oninput="this.setCustomValidity('')"
@@ -105,6 +106,7 @@ templ Recurring(categories []models.Category, recurring []models.Recurring, acco
                                         value=""
                                         disabled
                                         class="rounded p-2 border border-slate-300"
+                                        hx-swap-oob="true"
                                 />
                             </div>
                         </div>

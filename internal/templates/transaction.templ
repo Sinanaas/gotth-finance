@@ -13,7 +13,6 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
             <form
                     hx-post="/transaction"
                     hx-trigger="submit"
-                    hx-target-401="#transaction-error"
                     hx-encoding="application/x-www-form-urlencoded"
                     hx-swap="none"
                     class="flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4 fixed"

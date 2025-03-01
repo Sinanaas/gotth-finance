@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/gin-gonic/gin"
 )
@@ -14,5 +15,12 @@ func NewPostFinishLoanHandler(bc *controllers.BasicController) *PostFinishLoanHa
 }
 
 func (h *PostFinishLoanHandler) ServeHTTP(c *gin.Context) {
-	h.BC.FinishLoan(c)
+	err := h.BC.FinishLoan(c)
+	if err != nil {
+		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/loans"}}`, err.Error()))
+		c.Status(400)
+		return
+	}
+	c.Writer.Header().Set("HX-Trigger", `{"swal:alert": {"title": "Loan Finished!", "text": "Loan has been successfully finished.", "icon": "success", "redirect": "/loans"}}`)
+	c.Status(200)
 }

@@ -7,8 +7,8 @@ import "fmt"
 import "strconv"
 
 templ Loans(categories []models.Category, loans []models.Loan, accounts []models.Account, transactionType []string) {
-<main class="container mx-auto p-4 min-h-full top-0">
-    <div class="flex flex-col md:flex-row gap-6">
+<main class="container mx-auto p-4 min-h-full max-h-full h-full top-0">
+    <div class="flex flex-col md:flex-row gap-6 h-full">
         <div hx-ext="response-targets" class="w-full md:w-1/3">
             <form
                     hx-post="/loan"
@@ -83,7 +83,8 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
                         >
                             <option disabled selected value class="w-full text-slate-600">select an account</option>
                             for _, account := range accounts {
-                            <option class="w-full" value={ fmt.Sprintf("%s", account.ID) }>
+                            <option class="w-full" value={ fmt.Sprintf(
+                            "%s", account.ID) }>
                             { account.Name }
                             </option>
                             }
@@ -155,7 +156,8 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
                         <option disabled selected value class="w-full text-slate-600">select a category</option>
                         for _, category := range categories {
                         if category.Name != "Income" {
-                        <option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+                        <option value={ fmt.Sprintf(
+                        "%s", category.ID) }>{ category.Name }</option>
                         }
                         }
                     </select>
@@ -166,114 +168,128 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
                 </button>
             </form>
         </div>
-        <div class="w-full md:w-2/3">
+        <div class="w-full md:w-2/3 h-full">
             <div class="w-full flex justify-center items-center">
                 <h1 class="text-4xl text-white font-bold text-center mb-6">HUTANG</h1>
             </div>
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                <tr>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Loan TANGAL
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amount
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Description
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        To Whom
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Type
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Category
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Account
-                    </th>
-                    <th scope="col"
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">
-                        Actions
-                    </th>
-                </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                for _, loan := range loans {
-                <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.LoanDate.Format("2006-01-02") }</div>
-                    </td>
-                    if loan.TransactionType == constants.Income {
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-green-200">Rp. { utils.FormatCurrency(loan.Amount) }</div>
-                    </td>
-                    } else {
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-red-200">Rp. { utils.FormatCurrency(loan.Amount) }</div>
-                    </td>
-                    }
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.Description }</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.ToWhom }</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.TransactionType.ToString() }</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.Category.Name }</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">{ loan.Account.Name }</div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap flex gap-2">
-                        <form
-                                hx-post="/loan/finish"
-                                hx-trigger="submit"
-                                hx-encoding="application/x-www-form-urlencoded"
-                                hx-params="LoanID"
-                                class="flex justify-center mb-0"
-                        >
-                            <button
-                                    type="submit"
-                                    class="text-white bg-amber-400 px-2 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300"
-                                    name="LoanID"
-                                    value={ fmt.Sprintf("%s", loan.ID) }
-                            >
-                            Finish
-                            </button>
-                        </form>
-                        <form
-                                hx-put="/loan"
-                                hx-trigger="submit"
-                                hx-encoding="application/x-www-form-urlencoded"
-                                class="flex justify-center mb-0"
-                                confirm-with-sweet-alert="true"
-                                swal-title="Delete Account?"
-                                swal-text="This action is irreversible!"
-                                swal-icon="error"
-                                swal-buttons="true"
-                                swal-danger="true"
-                        >
-                            <input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) }/>
-                            <button type="submit" class="text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                }
-                </tbody>
-            </table>
+            <div class="w-full h-5/6 rounded">
+                <div class="max-h-full overflow-auto w-full">
+                    <table class="min-w-full divide-y max-h-full divide-gray-200">
+                        <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Loan Tangggal
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Amount
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Description
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                To Whom
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Type
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Category
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Account
+                            </th>
+                            <th scope="col"
+                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center sticky right-0 bg-gray-50 shadow-md z-10">
+                                Actions
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                        for _, loan := range loans {
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{ loan.LoanDate.Format("2006-01-02") }</div>
+                            </td>
+                            if loan.TransactionType == constants.Income {
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-green-400">Rp. { utils.FormatCurrency(loan.Amount) }</div>
+                            </td>
+                            } else {
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-red-400">Rp. { utils.FormatCurrency(loan.Amount) }</div>
+                            </td>
+                            }
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{ loan.Description }</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{ loan.ToWhom }</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{ loan.TransactionType.ToString() }</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{ loan.Category.Name }</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{ loan.Account.Name }</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap sticky right-0 bg-white shadow-md z-10">
+                                <div class="flex gap-2">
+                                    <form
+                                            hx-post="/loan/finish"
+                                            hx-trigger="submit"
+                                            hx-encoding="application/x-www-form-urlencoded"
+                                            hx-swap="none"
+                                            class="flex justify-center mb-0"
+                                            confirm-with-sweet-alert="true"
+                                            swal-title="Finish Loan"
+                                            swal-text="Are you sure you want to finish this loan?"
+                                            swal-icon="warning"
+                                            swal-buttons="true"
+                                            swal-danger="true"
+                                    >
+                                        <input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) } />
+                                        <button
+                                                type="submit"
+                                                class="text-white bg-amber-400 px-2 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300"
+                                        >
+                                            Finish
+                                        </button>
+                                    </form>
+                                    <form
+                                            hx-put="/loan"
+                                            hx-trigger="submit"
+                                            hx-encoding="application/x-www-form-urlencoded"
+                                            class="flex justify-center mb-0"
+                                            confirm-with-sweet-alert="true"
+                                            swal-title="Delete Account?"
+                                            swal-text="This action is irreversible!"
+                                            swal-icon="error"
+                                            swal-buttons="true"
+                                            swal-danger="true"
+                                    >
+                                        <input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) }/>
+                                        <button type="submit"
+                                                class="text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </main>

@@ -35,7 +35,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"container mx-auto p-4 min-h-full top-0\"><div class=\"flex flex-col md:flex-row gap-6\"><div hx-ext=\"response-targets\" class=\"w-full md:w-1/3\"><form hx-post=\"/loan\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4\"><div class=\"flex justify-center items-center border-b border-slate-300 pb-4 mb-4\"><h2 class=\"text-xl font-bold text-slate-700\">Add a Loan</h2></div><div class=\"flex flex-col gap-2\"><label for=\"amount\" class=\"text-slate-600 font-semibold\">Amount</label> <input type=\"number\" name=\"Amount\" id=\"amount\" placeholder=\"0.00\" class=\"rounded p-2 border border-slate-300\" min=\"0\" required onkeyup=\"this.setCustomValidity(&#39;&#39;)\" hx-on:htmx:validation:validate=\"\r\n                            if (this.value &lt; 0) {\r\n                                this.setCustomValidity(&#39;Amount cannot be negative.&#39;);\r\n                                htmx.find(&#39;#account-form&#39;).reportValidity();\r\n                            } else {\r\n                                this.setCustomValidity(&#39;&#39;);\r\n                                htmx.find(&#39;#account-form&#39;).reportValidity();\r\n                            }\r\n                        \"></div><div class=\"flex flex-col gap-2\"><label for=\"type\" class=\"text-slate-600 font-semibold\">Type</label> <select name=\"Type\" id=\"type\" class=\"rounded p-2 border border-slate-300\" required oninvalid=\"this.setCustomValidity(&#39;Please select a transaction type.&#39;)\" oninput=\"this.setCustomValidity(&#39;&#39;)\"><option disabled selected value class=\"w-full text-slate-600\">select a transaction type</option> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"container mx-auto p-4 min-h-full max-h-full h-full top-0\"><div class=\"flex flex-col md:flex-row gap-6 h-full\"><div hx-ext=\"response-targets\" class=\"w-full md:w-1/3\"><form hx-post=\"/loan\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4\"><div class=\"flex justify-center items-center border-b border-slate-300 pb-4 mb-4\"><h2 class=\"text-xl font-bold text-slate-700\">Add a Loan</h2></div><div class=\"flex flex-col gap-2\"><label for=\"amount\" class=\"text-slate-600 font-semibold\">Amount</label> <input type=\"number\" name=\"Amount\" id=\"amount\" placeholder=\"0.00\" class=\"rounded p-2 border border-slate-300\" min=\"0\" required onkeyup=\"this.setCustomValidity(&#39;&#39;)\" hx-on:htmx:validation:validate=\"\r\n                            if (this.value &lt; 0) {\r\n                                this.setCustomValidity(&#39;Amount cannot be negative.&#39;);\r\n                                htmx.find(&#39;#account-form&#39;).reportValidity();\r\n                            } else {\r\n                                this.setCustomValidity(&#39;&#39;);\r\n                                htmx.find(&#39;#account-form&#39;).reportValidity();\r\n                            }\r\n                        \"></div><div class=\"flex flex-col gap-2\"><label for=\"type\" class=\"text-slate-600 font-semibold\">Type</label> <select name=\"Type\" id=\"type\" class=\"rounded p-2 border border-slate-300\" required oninvalid=\"this.setCustomValidity(&#39;Please select a transaction type.&#39;)\" oninput=\"this.setCustomValidity(&#39;&#39;)\"><option disabled selected value class=\"w-full text-slate-600\">select a transaction type</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -93,9 +93,10 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(
+				"%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 86, Col: 88}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 87, Col: 45}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -108,7 +109,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 87, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 88, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -130,9 +131,10 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", category.ID))
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(
+					"%s", category.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 158, Col: 70}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 160, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -145,7 +147,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 158, Col: 88}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 160, Col: 60}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -157,7 +159,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				}
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select></div><button type=\"submit\" class=\"text-white bg-amber-400 hover:bg-amber-500 font-semibold p-2 rounded-lg shadow-md transition duration-300\">Add Transaction</button></form></div><div class=\"w-full md:w-2/3\"><div class=\"w-full flex justify-center items-center\"><h1 class=\"text-4xl text-white font-bold text-center mb-6\">HUTANG</h1></div><table class=\"min-w-full divide-y divide-gray-200\"><thead class=\"bg-gray-50\"><tr><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Loan TANGAL</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Amount</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Description</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">To Whom</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Type</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Category</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Account</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center\">Actions</th></tr></thead> <tbody class=\"bg-white divide-y divide-gray-200\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</select></div><button type=\"submit\" class=\"text-white bg-amber-400 hover:bg-amber-500 font-semibold p-2 rounded-lg shadow-md transition duration-300\">Add Transaction</button></form></div><div class=\"w-full md:w-2/3 h-full\"><div class=\"w-full flex justify-center items-center\"><h1 class=\"text-4xl text-white font-bold text-center mb-6\">HUTANG</h1></div><div class=\"w-full h-5/6 rounded\"><div class=\"max-h-full overflow-auto w-full\"><table class=\"min-w-full divide-y max-h-full divide-gray-200\"><thead class=\"bg-gray-50\"><tr><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Loan Tangggal</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Amount</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Description</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">To Whom</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Type</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Category</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Account</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center sticky right-0 bg-gray-50 shadow-md z-10\">Actions</th></tr></thead> <tbody class=\"bg-white divide-y divide-gray-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -169,7 +171,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(loan.LoanDate.Format("2006-01-02"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 214, Col: 95}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 218, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -180,14 +182,14 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				return templ_7745c5c3_Err
 			}
 			if loan.TransactionType == constants.Income {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-green-200\">Rp. ")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-green-400\">Rp. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(loan.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 218, Col: 99}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 222, Col: 107}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -198,14 +200,14 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-red-200\">Rp. ")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-red-400\">Rp. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(loan.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 222, Col: 97}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 226, Col: 105}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -223,7 +225,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(loan.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 226, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 230, Col: 85}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -236,7 +238,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(loan.ToWhom)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 229, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 233, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -249,7 +251,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(loan.TransactionType.ToString())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 232, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 236, Col: 100}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -262,7 +264,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(loan.Category.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 235, Col: 79}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 239, Col: 87}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -275,44 +277,44 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(loan.Account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 238, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 242, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></td><td class=\"px-6 py-4 whitespace-nowrap flex gap-2\"><form hx-post=\"/loan/finish\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-params=\"LoanID\" class=\"flex justify-center mb-0\"><button type=\"submit\" class=\"text-white bg-amber-400 px-2 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300\" name=\"LoanID\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></td><td class=\"px-6 py-4 whitespace-nowrap sticky right-0 bg-white shadow-md z-10\"><div class=\"flex gap-2\"><form hx-post=\"/loan/finish\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Finish Loan\" swal-text=\"Are you sure you want to finish this loan?\" swal-icon=\"warning\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"LoanID\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", loan.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 252, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 259, Col: 109}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">Finish</button></form><form hx-put=\"/loan\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Account?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"LoanID\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <button type=\"submit\" class=\"text-white bg-amber-400 px-2 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300\">Finish</button></form><form hx-put=\"/loan\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Account?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"LoanID\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", loan.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 269, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 279, Col: 109}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <button type=\"submit\" class=\"text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300\">Delete</button></form></td></tr>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <button type=\"submit\" class=\"text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300\">Delete</button></form></div></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</tbody></table></div></div></main>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</tbody></table></div></div></div></div></main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

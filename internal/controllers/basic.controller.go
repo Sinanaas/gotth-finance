@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
@@ -149,20 +150,20 @@ func (bc *BasicController) CreateLoan(ctx *gin.Context) error {
 	return nil
 }
 
-func (bc *BasicController) FinishLoan(ctx *gin.Context) {
+func (bc *BasicController) FinishLoan(ctx *gin.Context) error {
 	loanID := ctx.PostForm("LoanID")
 	if loanID == "" {
 		ctx.JSON(400, gin.H{"error": "Loan ID is missing"})
-		return
+		return fmt.Errorf("loan ID is missing")
 	}
 
 	err := bc.BM.FinishLoan(loanID)
 	if err != nil {
 		ctx.JSON(400, gin.H{"error": "Loan not found"})
-		return
+		return fmt.Errorf("loan not found")
 	}
 
-	ctx.Header("HX-Redirect", "/loans")
+	return nil
 }
 
 func (bc *BasicController) GetUserActiveLoans(userId string) ([]models.Loan, error) {

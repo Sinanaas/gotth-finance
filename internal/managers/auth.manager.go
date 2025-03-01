@@ -21,33 +21,33 @@ func NewAuthManager(db *gorm.DB, conf *initializers.Config) *AuthManager {
 	return &AuthManager{DB: db, config: conf}
 }
 
-func (am *AuthManager) SignUp(ctx *gin.Context) (ret bool) {
+func (am *AuthManager) SignUp(ctx *gin.Context) error {
 	var payload models.SignUpInput
 	if err := ctx.ShouldBind(&payload); err != nil {
-		return false
+		return fmt.Errorf("failed to bind payload")
 	}
 
 	if payload.Email == "" || payload.Password == "" {
-		return false
+		return fmt.Errorf("email or password is empty")
 	}
 
 	if !utils.ValidateEmail(payload.Email) {
-		return false
+		return fmt.Errorf("invalid email")
 	}
 
 	var user models.User
 	result := am.DB.Where("email = ?", payload.Email).First(&user)
 	if result.Error == nil {
-		return false
+		return fmt.Errorf("email already exists")
 	}
 
 	if payload.Password != payload.ConfirmPassword {
-		return false
+		return fmt.Errorf("passwords do not match")
 	}
 
 	hashedPassword, err := utils.HashPassword(payload.Password)
 	if err != nil {
-		return false
+		return fmt.Errorf("failed to hash password")
 	}
 
 	user = models.User{
@@ -58,44 +58,44 @@ func (am *AuthManager) SignUp(ctx *gin.Context) (ret bool) {
 
 	result = am.DB.Create(&user)
 	if result.Error != nil {
-		return false
+		return fmt.Errorf("failed to create user")
 	}
 
-	return true
+	return nil
 }
 
-func (am *AuthManager) Login(ctx *gin.Context) (ret bool) {
+func (am *AuthManager) Login(ctx *gin.Context) error {
 	var payload models.SignInInput
 	if err := ctx.ShouldBind(&payload); err != nil {
-		return false
+		return fmt.Errorf("failed to bind payload")
 	}
 
 	if payload.Email == "" || payload.Password == "" {
-		return false
+		return fmt.Errorf("email or password is empty")
 	}
 
 	if !utils.ValidateEmail(payload.Email) {
-		return false
+		return fmt.Errorf("invalid email")
 	}
 
 	var user models.User
 	result := am.DB.Where("email = ?", payload.Email).First(&user)
 	if result.Error != nil {
-		return false
+		return fmt.Errorf("user does not exist")
 	}
 
 	if err := utils.VerifyPassword(user.Password, payload.Password); err != nil {
-		return false
+		return fmt.Errorf("user does not exist")
 	}
 
 	accessToken, err := utils.GenerateToken(am.config.AccessTokenExpiresIn, user.ID.String(), am.config.AccessTokenPrivateKey)
 	if err != nil {
-		return false
+		return fmt.Errorf("failed to generate access token")
 	}
 
 	refreshToken, err := utils.GenerateToken(am.config.RefreshTokenExpiresIn, user.ID.String(), am.config.RefreshTokenPrivateKey)
 	if err != nil {
-		return false
+		return fmt.Errorf("failed to generate refresh token")
 	}
 
 	// set session
@@ -103,14 +103,14 @@ func (am *AuthManager) Login(ctx *gin.Context) (ret bool) {
 	session.Set("user_id", user.ID.String())
 	if err := session.Save(); err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": "Failed to save session"})
-		return
+		return fmt.Errorf("failed to save session")
 	}
 
 	ctx.SetCookie("access_token", accessToken, am.config.AccessTokenMaxAge*60, "/", "", false, true)
 	ctx.SetCookie("refresh_token", refreshToken, am.config.RefreshTokenMaxAge*60, "/", "", false, true)
 	ctx.SetCookie("logged_in", "true", am.config.AccessTokenMaxAge, "/", "", false, false)
 
-	return true
+	return nil
 }
 
 func (am *AuthManager) RefreshToken(ctx *gin.Context) bool {

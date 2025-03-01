@@ -294,14 +294,14 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">Finish</button></form><form hx-put=\"/loan\" hx-trigger=\"submit\" hx-target=\"closest tr\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\"><input type=\"hidden\" name=\"LoanID\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">Finish</button></form><form hx-put=\"/loan\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Account?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"LoanID\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", loan.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 261, Col: 97}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 266, Col: 97}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {

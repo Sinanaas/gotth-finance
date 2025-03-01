@@ -25,20 +25,6 @@ func NewBasicManager(db *gorm.DB, goCRON *gocron.Scheduler) *BasicManager {
 
 // ACCOUNT methods
 
-func (m *BasicManager) GetAccountName(accountId string) (string, error) {
-	accountUUID, err := uuid.Parse(accountId)
-	if err != nil {
-		return "", err
-	}
-
-	var account models.Account
-	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
-		return "", err
-	}
-
-	return account.Name, nil
-}
-
 func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
 	userUUID, err := uuid.Parse(payload.UserID)
 	if err != nil {
@@ -179,20 +165,6 @@ func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
 		return nil, err
 	}
 	return categories, nil
-}
-
-func (m *BasicManager) GetCategoryName(categoryId string) (string, error) {
-	categoryUUID, err := uuid.Parse(categoryId)
-	if err != nil {
-		return "", err
-	}
-
-	var category models.Category
-	if err := m.DB.Where("id = ? AND deleted_at IS NULL", categoryUUID).First(&category).Error; err != nil {
-		return "", err
-	}
-
-	return category.Name, nil
 }
 
 func (m *BasicManager) FindCategoryByName(name string) (models.Category, error) {

@@ -254,9 +254,14 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
                         <form
                                 hx-put="/loan"
                                 hx-trigger="submit"
-                                hx-target="closest tr"
                                 hx-encoding="application/x-www-form-urlencoded"
                                 class="flex justify-center mb-0"
+                                confirm-with-sweet-alert="true"
+                                swal-title="Delete Account?"
+                                swal-text="This action is irreversible!"
+                                swal-icon="error"
+                                swal-buttons="true"
+                                swal-danger="true"
                         >
                             <input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) }/>
                             <button type="submit" class="text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300">Delete</button>

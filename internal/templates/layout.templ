@@ -14,12 +14,9 @@ templ header() {
 		<link rel="preconnect" href="https://fonts.gstatic.com"/>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet"/>
 
-		<!-- UIkit CSS -->
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/css/uikit.min.css" />
+		<!--		SWAL         -->
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
-		<!-- UIkit JS -->
-		<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/js/uikit.min.js"></script>
-		<script src="https://cdn.jsdelivr.net/npm/uikit@3.23.1/dist/js/uikit-icons.min.js"></script>
 	</head>
 }
 
@@ -64,11 +61,15 @@ templ nav(user_id string) {
 								hx-get="/logout"
 								hx-target="#modals-here"
 								hx-trigger="click"
-								_="on htmx:afterOnLoad call UIkit.modal('#modal-example').show()"
+								confirm-with-sweet-alert="true"
+								swal-title="Logout"
+								swal-text="Logout from your account?"
+								swal-icon="warning"
+								swal-buttons="true"
+								swal-danger="true"
 						>
 							Logout
 						</a>
-
 					</li>
 				</ol>
 			}
@@ -86,5 +87,45 @@ templ Layout(contents templ.Component, user_id string) {
 				@contents
 			</main>
 		</div>
+		<script>
+			// confirmation BEFORE request
+			document.body.addEventListener('htmx:confirm', function (evt) {
+				if (evt.target.matches("[confirm-with-sweet-alert='true']")) {
+					evt.preventDefault();
+
+					let title = evt.target.getAttribute("swal-title") || "Are you sure?";
+					let text = evt.target.getAttribute("swal-text") || "Are you sure you are sure?";
+					let icon = evt.target.getAttribute("swal-icon") || "warning";
+					let buttons = evt.target.getAttribute("swal-buttons") !== "false";
+					let dangerMode = evt.target.getAttribute("swal-danger") === "true";
+
+					swal({ title, text, icon, buttons, dangerMode }).then((confirmed) => {
+						if (confirmed) {
+							evt.detail.issueRequest();
+						}
+					});
+				}
+			});
+
+			// notification AFTER request
+			document.body.addEventListener('htmx:afterRequest', function (evt) {
+				let response = evt.detail.xhr.getResponseHeader("HX-Trigger");
+				console.log("HX-Trigger Response:", response); // Debugging
+				if (response) {
+					try {
+						let swalData = JSON.parse(response)["swal:alert"];
+						if (swalData) {
+							swal(swalData).then(() => {
+								if (swalData.redirect) {
+									window.location.href = swalData.redirect;
+								}
+							});
+						}
+					} catch (error) {
+						console.error("Failed to parse SweetAlert response:", error);
+					}
+				}
+			});
+		</script>
 	</body>
 }

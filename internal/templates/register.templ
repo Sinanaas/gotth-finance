@@ -6,6 +6,7 @@ templ Register(title string) {
 			hx-post="/register"
 			hx-trigger="submit"
 			hx-target-401="#register-error"
+			hx-swap="none"
 			hx-encoding="application/x-www-form-urlencoded"
 			class="flex flex-col w-[300px] bg-slate-100 p-4 pb-5 rounded-lg shadow-md gap-4"
 			id="form"
@@ -26,16 +27,6 @@ templ Register(title string) {
 					autocomplete="email"
 					class="rounded p-1 border border-gray-300"
 					required
-					onkeyup="this.setCustomValidity('')"
-					hx-on:htmx:validation:validate="
-						if (!this.value.includes('@') || !this.value.includes('.')) {
-							this.setCustomValidity('Please enter a valid email address.');
-							htmx.find('#form').reportValidity();
-						} else {
-							this.setCustomValidity('');
-							htmx.find('#form').reportValidity();
-						}
-					"
 			/>
 		</div>
 		<div class="flex flex-col gap-1">
@@ -93,8 +84,8 @@ templ Register(title string) {
 					required
 					onkeyup="this.setCustomValidity('')"
 					hx-on:htmx:validation:validate="
-						if (this.value !== htmx.find('#password').value) {
-							this.setCustomValidity('Passwords do not match.');
+						if (this.value.length < 8) {
+							this.setCustomValidity('Password must be at least 8 characters long.');
 							htmx.find('#form').reportValidity();
 						} else {
 							this.setCustomValidity('');
@@ -114,8 +105,4 @@ templ Register(title string) {
 		</div>
 	</form>
 </div>
-}
-
-templ RegisterError() {
-<p class="text-red-500">Invalid registration details</p>
 }

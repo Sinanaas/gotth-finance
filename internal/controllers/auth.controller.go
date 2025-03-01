@@ -13,26 +13,20 @@ func NewAuthController(authManager *managers.AuthManager) *AuthController {
 	return &AuthController{AuthManager: authManager}
 }
 
-func (ac *AuthController) SignUp(ctx *gin.Context) {
-	ret := ac.AuthManager.SignUp(ctx)
-	if ret {
-		ctx.Header("HX-Redirect", "/login")
-		ctx.Status(200)
-	} else {
-		ctx.Header("HX-Redirect", "/register")
-		ctx.Status(401)
+func (ac *AuthController) SignUp(ctx *gin.Context) error {
+	err := ac.AuthManager.SignUp(ctx)
+	if err != nil {
+		return err
 	}
+	return nil
 }
 
-func (ac *AuthController) SignIn(ctx *gin.Context) {
-	ret := ac.AuthManager.Login(ctx)
-	if ret {
-		ctx.Header("HX-Redirect", "/")
-		ctx.Status(200)
-	} else {
-		ctx.Header("HX-Redirect", "/login")
-		ctx.Status(401)
+func (ac *AuthController) SignIn(ctx *gin.Context) error {
+	err := ac.AuthManager.Login(ctx)
+	if err != nil {
+		return err
 	}
+	return nil
 }
 
 func (ac *AuthController) RefreshToken(ctx *gin.Context) {

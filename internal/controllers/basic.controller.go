@@ -19,14 +19,6 @@ func NewBasicController(bm *managers.BasicManager) *BasicController {
 
 // ACCOUNT methods
 
-func (bc *BasicController) GetAccountName(accountId string) (string, error) {
-	accountName, err := bc.BM.GetAccountName(accountId)
-	if err != nil {
-		return "", err
-	}
-	return accountName, nil
-}
-
 func (bc *BasicController) GetAccountBalance(ctx *gin.Context) {
 	accountID := ctx.DefaultQuery("Account", "")
 	if accountID == "" {
@@ -68,7 +60,7 @@ func (bc *BasicController) GetUserAccounts(userId string) ([]models.Account, err
 	return accounts, nil
 }
 
-func (bc *BasicController) CreateAccount(ctx *gin.Context) {
+func (bc *BasicController) CreateAccount(ctx *gin.Context) error {
 	var payload models.AccountRequest
 	var err error
 
@@ -76,7 +68,7 @@ func (bc *BasicController) CreateAccount(ctx *gin.Context) {
 	payload.Description = ctx.PostForm("Description")
 	payload.Balance, err = strconv.ParseFloat(ctx.PostForm("Balance"), 64)
 	if err != nil {
-		return
+		return err
 	}
 	session := sessions.Default(ctx)
 	var userId string
@@ -88,9 +80,10 @@ func (bc *BasicController) CreateAccount(ctx *gin.Context) {
 
 	err = bc.BM.CreateAccount(payload)
 	if err != nil {
-		return
+		return err
 	}
-	ctx.Header("HX-Redirect", "/accounts")
+
+	return nil
 }
 
 // CATEGORY methods
@@ -101,14 +94,6 @@ func (bc *BasicController) GetAllCategories() ([]models.Category, error) {
 		return nil, err
 	}
 	return categories, nil
-}
-
-func (bc *BasicController) GetCategoryName(categoryId string) (string, error) {
-	categoryName, err := bc.BM.GetCategoryName(categoryId)
-	if err != nil {
-		return "", err
-	}
-	return categoryName, nil
 }
 
 func (bc *BasicController) GetUserTopCategories(id string) ([]models.CategoryWithTotal, error) {
@@ -129,7 +114,7 @@ func (bc *BasicController) GetLoans(userId string) ([]models.Loan, error) {
 	return loans, nil
 }
 
-func (bc *BasicController) CreateLoan(ctx *gin.Context) {
+func (bc *BasicController) CreateLoan(ctx *gin.Context) error {
 	var payload models.LoanRequest
 	var err error
 
@@ -140,11 +125,11 @@ func (bc *BasicController) CreateLoan(ctx *gin.Context) {
 	payload.LoanDate = ctx.PostForm("Date")
 	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
 	if err != nil {
-		return
+		return err
 	}
 	payload.TransactionType, err = strconv.Atoi(ctx.PostForm("Type"))
 	if err != nil {
-		return
+		return err
 	}
 	payload.AccountID = ctx.PostForm("Account")
 	session := sessions.Default(ctx)
@@ -158,10 +143,10 @@ func (bc *BasicController) CreateLoan(ctx *gin.Context) {
 	err = bc.BM.CreateLoan(payload)
 
 	if err != nil {
-		return
+		return err
 	}
 
-	ctx.Header("HX-Redirect", "/loans")
+	return nil
 }
 
 func (bc *BasicController) FinishLoan(ctx *gin.Context) {
@@ -232,7 +217,7 @@ func (bc *BasicController) GetUserUpcomingRecurring(userId string) (models.Recur
 	return recurring, nil
 }
 
-func (bc *BasicController) CreateRecurring(ctx *gin.Context) {
+func (bc *BasicController) CreateRecurring(ctx *gin.Context) error {
 	var payload models.RecurringRequest
 	var err error
 
@@ -240,15 +225,15 @@ func (bc *BasicController) CreateRecurring(ctx *gin.Context) {
 	payload.CategoryID = ctx.PostForm("Category")
 	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
 	if err != nil {
-		return
+		return err
 	}
 	payload.Periodicity, err = strconv.Atoi(ctx.PostForm("Periodicity"))
 	if err != nil {
-		return
+		return err
 	}
 	payload.TransactionType, err = strconv.Atoi(ctx.PostForm("Type"))
 	if err != nil {
-		return
+		return err
 	}
 
 	payload.StartDate = ctx.PostForm("StartDate")
@@ -264,15 +249,15 @@ func (bc *BasicController) CreateRecurring(ctx *gin.Context) {
 	err = bc.BM.CreateRecurring(payload)
 
 	if err != nil {
-		return
+		return err
 	}
 
-	ctx.Header("HX-Redirect", "/recurring")
+	return nil
 }
 
 // TRANSACTION methods
 
-func (bc *BasicController) CreateTransaction(ctx *gin.Context) {
+func (bc *BasicController) CreateTransaction(ctx *gin.Context) error {
 	var payload models.TransactionRequest
 	var err error
 
@@ -280,12 +265,12 @@ func (bc *BasicController) CreateTransaction(ctx *gin.Context) {
 	payload.CategoryID = ctx.PostForm("Category")
 	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
 	if err != nil {
-		return
+		return err
 	}
 	payload.Date = ctx.PostForm("Date")
 	payload.Type, err = strconv.Atoi(ctx.PostForm("Type"))
 	if err != nil {
-		return
+		return err
 	}
 	payload.Account = ctx.PostForm("Account")
 	session := sessions.Default(ctx)
@@ -299,10 +284,10 @@ func (bc *BasicController) CreateTransaction(ctx *gin.Context) {
 	err = bc.BM.CreateTransaction(payload)
 
 	if err != nil {
-		return
+		return err
 	}
 
-	ctx.Header("HX-Redirect", "/transaction")
+	return nil
 }
 
 func (bc *BasicController) GetUserTransactions(userId string) ([]models.Transaction, error) {

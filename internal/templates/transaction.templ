@@ -15,6 +15,7 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                     hx-trigger="submit"
                     hx-target-401="#transaction-error"
                     hx-encoding="application/x-www-form-urlencoded"
+                    hx-swap="none"
                     class="flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4 fixed"
             >
                 <div class="flex justify-center items-center border-b border-slate-300 pb-4 mb-4">
@@ -72,6 +73,7 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                                 hx-get="/account/balance"
                                 hx-target="#balance"
                                 hx-params="Account"
+                                hx-swap="outerHTML"
                                 required
                                 oninvalid="this.setCustomValidity('Please select an account.')"
                                 oninput="this.setCustomValidity('')"
@@ -93,6 +95,7 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                                         value=""
                                         disabled
                                         class="rounded p-2 border border-slate-300"
+                                        hx-swap-oob="true"
                                 />
                             </div>
                         </div>
@@ -215,9 +218,14 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
                         <form
                                 hx-put="/transaction"
                                 hx-trigger="submit"
-                                hx-target="closest tr"
                                 hx-encoding="application/x-www-form-urlencoded"
                                 class="flex justify-center mb-0"
+                                confirm-with-sweet-alert='true'
+                                swal-title="Delete Transaction?"
+                                swal-text="This action is irreversible!"
+                                swal-icon="error"
+                                swal-buttons="true"
+                                swal-danger="true"
                         >
                             <input type="hidden" name="TransactionID" value={ fmt.Sprintf("%s", transaction.ID) }/>
                             <input type="hidden" name="AccountID" value={ fmt.Sprintf("%s", transaction.Account.ID) }/>

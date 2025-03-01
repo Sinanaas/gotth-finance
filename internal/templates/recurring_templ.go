@@ -305,14 +305,14 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><form hx-put=\"/recurring\" hx-trigger=\"submit\" hx-target=\"closest tr\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\"><input type=\"hidden\" name=\"RecurringID\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><form hx-put=\"/recurring\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Account?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"RecurringID\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", rec.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 247, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 252, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {

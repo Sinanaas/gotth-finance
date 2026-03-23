@@ -1,15 +1,17 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/routers"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron/v2"
-	"log"
 )
 
 var (
@@ -36,6 +38,15 @@ func init() {
 	}
 
 	initializers.ConnectDB(&config)
+	
+	initializers.DB.AutoMigrate(
+		&models.User{},
+  		&models.Category{},
+        &models.Recurring{},
+        &models.Transaction{},
+        &models.Account{},
+        &models.Loan{},
+	)
 
 	AuthManager = managers.NewAuthManager(initializers.DB, &config)
 	AuthController = controllers.NewAuthController(AuthManager)

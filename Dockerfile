@@ -1,25 +1,21 @@
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-RUN apk add --no-cache nodejs npm
-RUN go install github.com/a-h/templ/cmd/templ@latest
-
+RUN go install github.com/a-h/templ/cmd/templ@v0.2.793
 COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
 RUN templ generate
-RUN npx tailwindcss -i ./input.css -o ./static/output.css --minify
 
-RUN go build -o app .
+RUN go build -o app ./cmd/main.go
 
 FROM alpine:latest
 
 WORKDIR /app
 COPY --from=builder /app/app .
-COPY --from=builder /app/static ./static
 
 EXPOSE 8080
 CMD ["./app"]

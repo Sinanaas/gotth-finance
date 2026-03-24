@@ -21,5 +21,5 @@ func main() {
 	if err != nil {
 		return
 	}
-	fmt.Println("✅ Migration complete")
+	fmt.Println("Migration complete")
 }

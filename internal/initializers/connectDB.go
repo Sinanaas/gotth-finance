@@ -17,5 +17,6 @@ func ConnectDB(config *Config) {
 	if err != nil {
 		log.Fatal("❌ Failed to connect to the Database")
 	}
-	fmt.Println("✅ Connected Successfully to the Database")
+	DB.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
+	fmt.Println("Connected Successfully to the Database")
 }

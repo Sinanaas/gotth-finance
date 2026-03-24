@@ -1,8 +1,9 @@
 package initializers
 
 import (
+	"reflect"
 	"time"
-
+	"log"
 	"github.com/spf13/viper"
 )
 
@@ -35,11 +36,25 @@ func LoadConfig(path string) (config Config, err error) {
 	err = viper.ReadInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return
+			config = parseConfigFromEnv(config)
 		}
 		err = nil
 	}
 
 	err = viper.Unmarshal(&config)
 	return
+}
+
+func parseConfigFromEnv(config Config) Config {
+	r := reflect.TypeOf(config)
+	for r.Kind() == reflect.Ptr {
+		r = r.Elem()
+	}
+	for i := 0; i < r.NumField(); i++ {
+		env := r.Field(i).Tag.Get("mapstructure")
+		if err := viper.BindEnv(env); err != nil {
+			log.Fatal("? Failed to bind env variable:", err)
+		}
+	}
+	return config
 }

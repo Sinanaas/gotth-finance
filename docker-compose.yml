@@ -2,8 +2,6 @@ services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
-    environment:
-      POSTGRES_HOST_AUTH_METHOD: trust
     env_file:
       - app.env
     volumes:

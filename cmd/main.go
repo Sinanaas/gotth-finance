@@ -12,6 +12,7 @@ import (
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron/v2"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/seeders"
 )
 
 var (
@@ -47,6 +48,8 @@ func init() {
         &models.Account{},
         &models.Loan{},
 	)
+	
+	seeders.SeedCategories(initializers.DB)
 
 	AuthManager = managers.NewAuthManager(initializers.DB, &config)
 	AuthController = controllers.NewAuthController(AuthManager)

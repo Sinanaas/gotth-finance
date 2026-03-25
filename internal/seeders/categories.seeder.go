@@ -1,25 +1,24 @@
-package main
+package seeders
 
 import (
-	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"log"
+
+	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
+	"gorm.io/gorm"
 )
 
-func init() {
-	config, err := initializers.LoadConfig(".")
-	if err != nil {
-		log.Fatal("? Could not load environment variables")
+func SeedCategories(db *gorm.DB) {
+	var count int64
+	db.Model(&models.Category{}).Count(&count)
+	if count > 0 {
+		return
 	}
-	initializers.ConnectDB(&config)
-}
-func main() {
-	tx := initializers.DB.Begin()
 
+	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
-			log.Fatal("? Transaction failed and rolled back")
+			log.Fatal("❌ Transaction failed and rolled back")
 		}
 	}()
 
@@ -69,9 +68,9 @@ func main() {
 	for _, category := range categories {
 		if err := tx.Create(&category).Error; err != nil {
 			tx.Rollback()
-			log.Fatal("? Failed to seed categories")
+			log.Fatal("Failed to seed categories")
 		}
 	}
-
 	tx.Commit()
+	log.Println("Categories seeded")
 }

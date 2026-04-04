@@ -33,69 +33,69 @@ func Accounts(accounts []models.Account) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"container mx-auto p-4 min-h-full max-h-full h-full top-0\"><div class=\"flex flex-col md:flex-row gap-6\"><div hx-ext=\"response-targets\" class=\"w-full md:w-1/3\"><form hx-post=\"/account\" hx-trigger=\"submit\" hx-target-401=\"#account-error\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4\" id=\"account-form\"><div class=\"flex justify-center items-center border-b border-slate-300 pb-4 mb-4\"><h2 class=\"text-xl font-bold text-slate-700\">Add an Account</h2></div><div class=\"flex flex-col gap-2\"><label for=\"name\" class=\"text-slate-600 font-semibold\">Name</label> <input type=\"text\" name=\"Name\" id=\"name\" placeholder=\"Account Name\" class=\"rounded p-2 border border-slate-300\" required onkeyup=\"this.setCustomValidity('')\" hx-on:htmx:validation:validate=\"\n                            if (this.value.trim().length < 3) {\n                                this.setCustomValidity('Account name must be at least 3 characters long.');\n                                htmx.find('#account-form').reportValidity();\n                            } else {\n                                this.setCustomValidity('');\n                                htmx.find('#account-form').reportValidity();\n                            }\n                        \"></div><div class=\"flex flex-col gap-2\"><label for=\"balance\" class=\"text-slate-600 font-semibold\">Balance</label> <input type=\"number\" name=\"Balance\" id=\"balance\" placeholder=\"0.00\" class=\"rounded p-2 border border-slate-300\" min=\"0\" required onkeyup=\"this.setCustomValidity('')\" hx-on:htmx:validation:validate=\"\n                            if (this.value < 0) {\n                                this.setCustomValidity('Balance cannot be negative.');\n                                htmx.find('#account-form').reportValidity();\n                            } else {\n                                this.setCustomValidity('');\n                                htmx.find('#account-form').reportValidity();\n                            }\n                        \"></div><div class=\"flex flex-col gap-2\"><label for=\"description\" class=\"text-slate-600 font-semibold\">Description</label> <input type=\"text\" name=\"Description\" id=\"description\" placeholder=\"Account Description\" class=\"rounded p-2 border border-slate-300\" required onkeyup=\"this.setCustomValidity('')\" hx-on:htmx:validation:validate=\"\n                            if (this.value.trim().length < 5) {\n                                this.setCustomValidity('Description must be at least 5 characters long.');\n                                htmx.find('#account-form').reportValidity();\n                            } else {\n                                this.setCustomValidity('');\n                                htmx.find('#account-form').reportValidity();\n                            }\n                        \"></div><div class=\"flex justify-center\"><button type=\"submit\" class=\"bg-amber-400 hover:bg-amber-500 text-white font-semibold rounded p-2 w-full\">Add Account</button></div></form><div id=\"account-error\" class=\"text-red-500 text-center mt-4\"></div></div><div class=\"w-full md:w-2/3 h-full\"><div class=\"w-full flex justify-center items-center\"><h1 class=\"text-4xl font-bold text-white text-center mb-6\">Accounts</h1></div><div><div class=\"w-full h-5/6 rounded\"><div class=\"max-h-full overflow-auto w-full\"><table class=\"min-w-full divide-y divide-gray-200\"><thead class=\"bg-gray-50\"><tr><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Name</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Balance</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Description</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center sticky right-0 bg-gray-50 shadow-md z-10\">Action</th></tr></thead> <tbody class=\"bg-white divide-y divide-gray-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full h-full flex gap-6 p-4\"><!-- Left: Add Account Form --><div class=\"w-80 shrink-0\"><form hx-post=\"/account\" hx-trigger=\"submit\" hx-target-401=\"#account-error\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex flex-col bg-white rounded-xl shadow-md p-6 gap-4\" id=\"account-form\"><h2 class=\"text-lg font-bold text-gray-700 border-b border-gray-100 pb-3\">Add Account</h2><!-- Name --><div class=\"flex flex-col gap-1.5\"><label for=\"name\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Name</label> <input type=\"text\" name=\"Name\" id=\"name\" placeholder=\"Account Name\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required onkeyup=\"this.setCustomValidity('')\" hx-on:htmx:validation:validate=\"\n\t\t\t\t\t\tif (this.value.trim().length < 3) {\n\t\t\t\t\t\t\tthis.setCustomValidity('Account name must be at least 3 characters long.');\n\t\t\t\t\t\t\thtmx.find('#account-form').reportValidity();\n\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\tthis.setCustomValidity('');\n\t\t\t\t\t\t\thtmx.find('#account-form').reportValidity();\n\t\t\t\t\t\t}\n\t\t\t\t\t\"></div><!-- Balance --><div class=\"flex flex-col gap-1.5\"><label for=\"balance\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Balance</label><div class=\"flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-amber-400\"><span class=\"px-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 py-2\">Rp.</span> <input type=\"number\" name=\"Balance\" id=\"balance\" placeholder=\"0\" class=\"flex-1 p-2 text-sm outline-none\" min=\"0\" required onkeyup=\"this.setCustomValidity('')\" hx-on:htmx:validation:validate=\"\n\t\t\t\t\t\t\tif (this.value < 0) {\n\t\t\t\t\t\t\t\tthis.setCustomValidity('Balance cannot be negative.');\n\t\t\t\t\t\t\t\thtmx.find('#account-form').reportValidity();\n\t\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\t\tthis.setCustomValidity('');\n\t\t\t\t\t\t\t\thtmx.find('#account-form').reportValidity();\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\"></div></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label for=\"description\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" id=\"description\" placeholder=\"Account description\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required onkeyup=\"this.setCustomValidity('')\" hx-on:htmx:validation:validate=\"\n\t\t\t\t\t\tif (this.value.trim().length < 5) {\n\t\t\t\t\t\t\tthis.setCustomValidity('Description must be at least 5 characters long.');\n\t\t\t\t\t\t\thtmx.find('#account-form').reportValidity();\n\t\t\t\t\t\t} else {\n\t\t\t\t\t\t\tthis.setCustomValidity('');\n\t\t\t\t\t\t\thtmx.find('#account-form').reportValidity();\n\t\t\t\t\t\t}\n\t\t\t\t\t\"></div><button type=\"submit\" class=\"mt-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow transition text-sm\">&#10133; Add Account</button></form><div id=\"account-error\" class=\"text-red-500 text-center mt-4 text-sm\"></div></div><!-- Right: Accounts Table --><div class=\"flex-1 flex flex-col min-h-0\"><div class=\"bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-100\"><h2 class=\"text-lg font-bold text-gray-700\">All Accounts</h2></div><!-- Table --><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100\"><th class=\"px-6 py-3\">Name</th><th class=\"px-6 py-3\">Balance</th><th class=\"px-6 py-3\">Description</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody class=\"divide-y divide-gray-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, account := range accounts {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<tr><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<tr class=\"hover:bg-gray-50 transition\"><td class=\"px-6 py-3\"><div class=\"flex items-center gap-2\"><span class=\"w-1.5 h-6 rounded-full bg-amber-400 inline-block\"></span> <span class=\"text-sm font-semibold text-gray-700\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 132, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 128, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">Rp. ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span></div></td><td class=\"px-6 py-3 text-sm font-bold text-gray-800\">Rp. ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(account.Balance))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 135, Col: 114}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 131, Col: 103}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</td><td class=\"px-6 py-3 text-sm text-gray-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(account.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 139, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 132, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></td><td class=\"px-6 py-4 whitespace-nowrap sticky right-0 bg-white shadow-md z-10\"><form hx-put=\"/account\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Account?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"AccountID\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</td><td class=\"px-6 py-3 whitespace-nowrap sticky right-0 bg-white shadow-sm\"><div class=\"flex items-center justify-center gap-2\"><form hx-put=\"/account\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Account?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"AccountID\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 154, Col: 115}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/accounts.templ`, Line: 147, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"> <button type=\"submit\" class=\"text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300\">Delete</button></form></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\"> <button type=\"submit\" class=\"text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50\" title=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"></polyline> <path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"></path> <path d=\"M10 11v6M14 11v6\"></path> <path d=\"M9 6V4h6v2\"></path></svg></button></form></div></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</tbody></table></div></div></div></div></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</tbody></table></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

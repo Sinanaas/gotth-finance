@@ -7,290 +7,248 @@ import "fmt"
 import "strconv"
 
 templ Loans(categories []models.Category, loans []models.Loan, accounts []models.Account, transactionType []string) {
-<main class="container mx-auto p-4 min-h-full max-h-full h-full top-0">
-    <div class="flex flex-col md:flex-row gap-6 h-full">
-        <div hx-ext="response-targets" class="w-full md:w-1/3">
-            <form
-                    hx-post="/loan"
-                    hx-trigger="submit"
-                    hx-encoding="application/x-www-form-urlencoded"
-                    hx-swap="none"
-                    class="flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4"
-            >
-                <div class="flex justify-center items-center border-b border-slate-300 pb-4 mb-4">
-                    <h2 class="text-xl font-bold text-slate-700">
-                        Add a Loan
-                    </h2>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="amount" class="text-slate-600 font-semibold">Amount</label>
-                    <input
-                            type="number"
-                            name="Amount"
-                            id="amount"
-                            placeholder="0.00"
-                            class="rounded p-2 border border-slate-300"
-                            min="0"
-                            required
-                            onkeyup="this.setCustomValidity('')"
-                            hx-on:htmx:validation:validate="
-                            if (this.value < 0) {
-                                this.setCustomValidity('Amount cannot be negative.');
-                                htmx.find('#account-form').reportValidity();
-                            } else {
-                                this.setCustomValidity('');
-                                htmx.find('#account-form').reportValidity();
-                            }
-                        "
-                    />
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="type" class="text-slate-600 font-semibold">Type</label>
-                    <select
-                            name="Type"
-                            id="type"
-                            class="rounded p-2 border border-slate-300"
-                            required
-                            oninvalid="this.setCustomValidity('Please select a transaction type.')"
-                            oninput="this.setCustomValidity('')"
-                    >
-                        <option disabled selected value class="w-full text-slate-600">select a transaction type</option>
-                        for i := 0 ; i < len(transactionType) ; i++ {
-                        <option class="w-full" value={ strconv.Itoa(i) }>
-                            if transactionType[i] == "Expenses" {
-                            { transactionType[i] + " / Memberi Hutang" }
-                            } else {
-                            { transactionType[i] + " / Hutang" }
-                            }
-                        </option>
-                        }
-                    </select>
-                </div>
-                <div class="flex w-full justify-between gap-6">
-                    <div class="flex flex-col gap-2 w-1/2">
-                        <label for="account" class="text-slate-600 font-semibold">Account</label>
-                        <select
-                                name="Account"
-                                id="account"
-                                class="rounded p-2 w-full border border-slate-300"
-                                hx-get="/account/balance"
-                                hx-target="#balance"
-                                hx-params="Account"
-                                hx-swap="outerHTML"
-                                required
-                                oninvalid="this.setCustomValidity('Please select an account.')"
-                                oninput="this.setCustomValidity('')"
-                        >
-                            <option disabled selected value class="w-full text-slate-600">select an account</option>
-                            for _, account := range accounts {
-                            <option class="w-full" value={ fmt.Sprintf(
-                            "%s", account.ID) }>
-                            { account.Name }
-                            </option>
-                            }
-                        </select>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <label for="balance" class="text-slate-600 font-semibold">Balance</label>
-                        <div id="balance" class="text-sm text-gray-900">
-                            <div class="text-sm text-gray-900">
-                                <input
-                                        type="text"
-                                        value=""
-                                        disabled
-                                        class="rounded p-2 border border-slate-300"
-                                        hx-swap-oob="true"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="towhom" class="text-slate-600 font-semibold">To/From Whom</label>
-                    <input
-                            type="text"
-                            name="Towhom"
-                            id="towhom"
-                            placeholder="To/From Whom?"
-                            class="rounded p-2 border border-slate-300"
-                            required
-                            oninvalid="this.setCustomValidity('Please enter a name.')"
-                            oninput="this.setCustomValidity('')"
-                    />
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="description" class="text-slate-600 font-semibold">Description</label>
-                    <input
-                            type="text"
-                            name="Description"
-                            id="description"
-                            placeholder="Description"
-                            class="rounded p-2 border border-slate-300"
-                            required
-                            oninvalid="this.setCustomValidity('Please enter a description.')"
-                            oninput="this.setCustomValidity('')"
-                    />
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="date" class="text-slate-600 font-semibold">Loan Date</label>
-                    <input
-                            type="date"
-                            name="Date"
-                            id="date"
-                            class="rounded p-2 border border-slate-300"
-                            required
-                            oninvalid="this.setCustomValidity('Please select a date.')"
-                            oninput="this.setCustomValidity('')"
-                    />
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="category" class="text-slate-600 font-semibold">Category</label>
-                    <select
-                            name="Category"
-                            id="category"
-                            class="rounded p-2 border border-slate-300"
-                            required
-                            oninvalid="this.setCustomValidity('Please select a category.')"
-                            oninput="this.setCustomValidity('')"
-                    >
-                        <option disabled selected value class="w-full text-slate-600">select a category</option>
-                        for _, category := range categories {
-                        if category.Name != "Income" {
-                        <option value={ fmt.Sprintf(
-                        "%s", category.ID) }>{ category.Name }</option>
-                        }
-                        }
-                    </select>
-                </div>
-                <button type="submit"
-                        class="text-white bg-amber-400 hover:bg-amber-500 font-semibold p-2 rounded-lg shadow-md transition duration-300">
-                    Add Transaction
-                </button>
-            </form>
-        </div>
-        <div class="w-full md:w-2/3 h-full">
-            <div class="w-full flex justify-center items-center">
-                <h1 class="text-4xl text-white font-bold text-center mb-6">HUTANG</h1>
-            </div>
-            <div class="w-full h-5/6 rounded">
-                <div class="max-h-full overflow-auto w-full">
-                    <table class="min-w-full divide-y max-h-full divide-gray-200">
-                        <thead class="bg-gray-50">
-                        <tr>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Loan Tangggal
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Amount
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Description
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                To Whom
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Type
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Category
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Account
-                            </th>
-                            <th scope="col"
-                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center sticky right-0 bg-gray-50 shadow-md z-10">
-                                Actions
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                        for _, loan := range loans {
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{ loan.LoanDate.Format("2006-01-02") }</div>
-                            </td>
-                            if loan.TransactionType == constants.Income {
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-green-400">Rp. { utils.FormatCurrency(loan.Amount) }</div>
-                            </td>
-                            } else {
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-red-400">Rp. { utils.FormatCurrency(loan.Amount) }</div>
-                            </td>
-                            }
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{ loan.Description }</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{ loan.ToWhom }</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{ loan.TransactionType.ToString() }</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{ loan.Category.Name }</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{ loan.Account.Name }</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap sticky right-0 bg-white shadow-md z-10">
-                                <div class="flex gap-2">
-                                    <form
-                                            hx-post="/loan/finish"
-                                            hx-trigger="submit"
-                                            hx-encoding="application/x-www-form-urlencoded"
-                                            hx-swap="none"
-                                            class="flex justify-center mb-0"
-                                            confirm-with-sweet-alert="true"
-                                            swal-title="Finish Loan"
-                                            swal-text="Are you sure you want to finish this loan?"
-                                            swal-icon="warning"
-                                            swal-buttons="true"
-                                            swal-danger="true"
-                                    >
-                                        <input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) } />
-                                        <button
-                                                type="submit"
-                                                class="text-white bg-amber-400 px-2 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300"
-                                        >
-                                            Finish
-                                        </button>
-                                    </form>
-                                    <form
-                                            hx-put="/loan"
-                                            hx-trigger="submit"
-                                            hx-encoding="application/x-www-form-urlencoded"
-                                            class="flex justify-center mb-0"
-                                            confirm-with-sweet-alert="true"
-                                            swal-title="Delete Account?"
-                                            swal-text="This action is irreversible!"
-                                            swal-icon="error"
-                                            swal-buttons="true"
-                                            swal-danger="true"
-                                    >
-                                        <input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) }/>
-                                        <button type="submit"
-                                                class="text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
+<div class="w-full h-full flex gap-6 p-4">
+
+	<!-- Left: Add Loan Form -->
+	<div class="w-80 shrink-0">
+		<form
+			hx-post="/loan"
+			hx-trigger="submit"
+			hx-encoding="application/x-www-form-urlencoded"
+			hx-swap="none"
+			class="flex flex-col bg-white rounded-xl shadow-md p-6 gap-4"
+		>
+			<h2 class="text-lg font-bold text-gray-700 border-b border-gray-100 pb-3">Add Loan</h2>
+
+			<!-- Amount -->
+			<div class="flex flex-col gap-1.5">
+				<label for="amount" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Amount</label>
+				<div class="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-amber-400">
+					<span class="px-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 py-2">Rp.</span>
+					<input
+						type="number"
+						name="Amount"
+						id="amount"
+						placeholder="0"
+						class="flex-1 p-2 text-sm outline-none"
+						min="0"
+						required
+						onkeyup="this.setCustomValidity('')"
+					/>
+				</div>
+			</div>
+
+			<!-- Type Toggle -->
+			<div class="flex flex-col gap-1.5">
+				<label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</label>
+				<div class="flex rounded-lg overflow-hidden border border-gray-200">
+					for i := 0; i < len(transactionType); i++ {
+					<label class="flex-1 cursor-pointer text-center">
+						<input type="radio" name="Type" value={ strconv.Itoa(i) } class="hidden peer" required/>
+						<span class="block py-2 text-xs font-semibold text-gray-500 peer-checked:bg-amber-500 peer-checked:text-white hover:bg-gray-50 transition-colors select-none">
+							if transactionType[i] == "Expenses" {
+								{ "Expenses / Give Loan" }
+							} else {
+								{ transactionType[i] + " / Hutang" }
+							}
+						</span>
+					</label>
+					}
+				</div>
+			</div>
+
+			<!-- Account -->
+			<div class="flex flex-col gap-1.5">
+				<label for="account" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Account</label>
+				<select
+					name="Account"
+					id="account"
+					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+					hx-get="/account/balance"
+					hx-target="#balance"
+					hx-params="Account"
+					hx-swap="outerHTML"
+					required
+					oninvalid="this.setCustomValidity('Please select an account.')"
+					oninput="this.setCustomValidity('')"
+				>
+					<option disabled selected value class="text-gray-400">Select account...</option>
+					for _, account := range accounts {
+					<option value={ fmt.Sprintf("%s", account.ID) }>{ account.Name }</option>
+					}
+				</select>
+				<div id="balance" class="text-xs text-gray-400">
+					<div class="text-xs text-gray-400">
+						<input type="text" value="" disabled class="rounded p-1 border border-gray-100 text-xs w-full" hx-swap-oob="true"/>
+					</div>
+				</div>
+			</div>
+
+			<!-- To/From Whom -->
+			<div class="flex flex-col gap-1.5">
+				<label for="towhom" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">To / From Whom</label>
+				<input
+					type="text"
+					name="Towhom"
+					id="towhom"
+					placeholder="Person name"
+					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+					required
+					oninvalid="this.setCustomValidity('Please enter a name.')"
+					oninput="this.setCustomValidity('')"
+				/>
+			</div>
+
+			<!-- Description -->
+			<div class="flex flex-col gap-1.5">
+				<label for="description" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</label>
+				<input
+					type="text"
+					name="Description"
+					id="description"
+					placeholder="Description"
+					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+					required
+					oninvalid="this.setCustomValidity('Please enter a description.')"
+					oninput="this.setCustomValidity('')"
+				/>
+			</div>
+
+			<!-- Loan Date -->
+			<div class="flex flex-col gap-1.5">
+				<label for="date" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Loan Date</label>
+				<input
+					type="date"
+					name="Date"
+					id="date"
+					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+					required
+					oninvalid="this.setCustomValidity('Please select a date.')"
+					oninput="this.setCustomValidity('')"
+				/>
+			</div>
+
+			<!-- Category -->
+			<div class="flex flex-col gap-1.5">
+				<label for="category" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Category</label>
+				<select
+					name="Category"
+					id="category"
+					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+					required
+					oninvalid="this.setCustomValidity('Please select a category.')"
+					oninput="this.setCustomValidity('')"
+				>
+					<option disabled selected value class="text-gray-400">Select category...</option>
+					for _, category := range categories {
+					if category.Name != "Income" {
+					<option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+					}
+					}
+				</select>
+			</div>
+
+			<button type="submit" class="mt-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow transition text-sm">
+				&#10133; Add Loan
+			</button>
+		</form>
+	</div>
+
+	<!-- Right: Loans Table -->
+	<div class="flex-1 flex flex-col min-h-0">
+		<div class="bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden">
+			<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+				<h2 class="text-lg font-bold text-gray-700">Hutang</h2>
+			</div>
+			<div class="flex-1 overflow-auto">
+				<table class="min-w-full">
+					<thead class="sticky top-0 bg-white">
+						<tr class="text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
+							<th class="px-6 py-3">Date</th>
+							<th class="px-6 py-3">Amount</th>
+							<th class="px-6 py-3">Description</th>
+							<th class="px-6 py-3">To Whom</th>
+							<th class="px-6 py-3">Type</th>
+							<th class="px-6 py-3">Category</th>
+							<th class="px-6 py-3">Account</th>
+							<th class="px-6 py-3 text-center sticky right-0 bg-white shadow-sm">Actions</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-gray-50">
+					for _, loan := range loans {
+					<tr class="hover:bg-gray-50 transition">
+						<td class="px-6 py-3 text-xs text-gray-400 whitespace-nowrap">{ loan.LoanDate.Format("02 Jan '06") }</td>
+						<td class="px-6 py-3 whitespace-nowrap">
+							if loan.TransactionType == constants.Income {
+							<span class="text-sm font-bold text-green-600">Rp. { utils.FormatCurrency(loan.Amount) }</span>
+							} else {
+							<span class="text-sm font-bold text-red-500">Rp. { utils.FormatCurrency(loan.Amount) }</span>
+							}
+						</td>
+						<td class="px-6 py-3 text-sm text-gray-700">{ loan.Description }</td>
+						<td class="px-6 py-3 text-sm font-medium text-gray-700">{ loan.ToWhom }</td>
+						<td class="px-6 py-3">
+							if loan.TransactionType == constants.Income {
+							<span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold">{ loan.TransactionType.ToString() }</span>
+							} else {
+							<span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">{ loan.TransactionType.ToString() }</span>
+							}
+						</td>
+						<td class="px-6 py-3 text-sm text-gray-500">{ loan.Category.Name }</td>
+						<td class="px-6 py-3 text-sm text-gray-500">{ loan.Account.Name }</td>
+						<td class="px-6 py-3 whitespace-nowrap sticky right-0 bg-white shadow-sm">
+							<div class="flex items-center justify-center gap-2">
+								<form
+									hx-post="/loan/finish"
+									hx-trigger="submit"
+									hx-encoding="application/x-www-form-urlencoded"
+									hx-swap="none"
+									class="flex justify-center mb-0"
+									confirm-with-sweet-alert="true"
+									swal-title="Finish Loan"
+									swal-text="Are you sure you want to finish this loan?"
+									swal-icon="warning"
+									swal-buttons="true"
+									swal-danger="true"
+								>
+									<input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) }/>
+									<button type="submit" class="text-amber-500 hover:text-amber-700 transition p-1 rounded hover:bg-amber-50" title="Mark as finished">
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+											<polyline points="20 6 9 17 4 12"></polyline>
+										</svg>
+									</button>
+								</form>
+								<form
+									hx-put="/loan"
+									hx-trigger="submit"
+									hx-encoding="application/x-www-form-urlencoded"
+									class="flex justify-center mb-0"
+									confirm-with-sweet-alert="true"
+									swal-title="Delete Loan?"
+									swal-text="This action is irreversible!"
+									swal-icon="error"
+									swal-buttons="true"
+									swal-danger="true"
+								>
+									<input type="hidden" name="LoanID" value={ fmt.Sprintf("%s", loan.ID) }/>
+									<button type="submit" class="text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50" title="Delete">
+										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+											<polyline points="3 6 5 6 21 6"></polyline>
+											<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+											<path d="M10 11v6M14 11v6"></path>
+											<path d="M9 6V4h6v2"></path>
+										</svg>
+									</button>
+								</form>
+							</div>
+						</td>
+					</tr>
+					}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</div>
 }

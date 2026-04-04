@@ -134,8 +134,8 @@ func (am *AuthManager) RefreshToken(ctx *gin.Context) bool {
 		return false
 	}
 
-	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge, "/", "localhost", false, true)
-	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge, "/", "localhost", false, false)
+	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge*60, "/", "", false, true)
+	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "", false, false)
 	return true
 }
 

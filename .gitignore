@@ -24,3 +24,5 @@ app.env
 # Temporary files
 *.log
 tmp/
+.vscode
+.gomodcache

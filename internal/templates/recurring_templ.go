@@ -35,56 +35,55 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<main class=\"container mx-auto p-4 min-h-full max-h-full h-full top-0\"><div class=\"flex flex-col md:flex-row gap-6 h-full\"><div hx-ext=\"response-targets\" class=\"w-full md:w-1/3\"><form hx-post=\"/recurring\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex flex-col bg-slate-100 p-6 rounded-lg shadow-md gap-4\"><div class=\"flex justify-center items-center border-b border-slate-300 pb-4 mb-4\"><h2 class=\"text-xl font-bold text-slate-700\">Add a Recurring Transaction</h2></div><div class=\"flex flex-col gap-2\"><label for=\"amount\" class=\"text-slate-600 font-semibold\">Amount</label> <input type=\"number\" name=\"Amount\" id=\"amount\" placeholder=\"0.00\" class=\"rounded p-2 border border-slate-300\" min=\"0\" required onkeyup=\"this.setCustomValidity('')\" hx-on:htmx:validation:validate=\"\n                            if (this.value < 0) {\n                                this.setCustomValidity('Amount cannot be negative.');\n                                htmx.find('#account-form').reportValidity();\n                            } else {\n                                this.setCustomValidity('');\n                                htmx.find('#account-form').reportValidity();\n                            }\n                        \"></div><div class=\"flex flex-col gap-2\"><label for=\"type\" class=\"text-slate-600 font-semibold\">Type</label> <select name=\"Type\" id=\"type\" class=\"rounded p-2 border border-slate-300\" required oninvalid=\"this.setCustomValidity('Please select a transaction type.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"w-full text-slate-600\">select a transaction type</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full h-full flex gap-6 p-4\"><!-- Left: Add Recurring Form --><div class=\"w-80 shrink-0\"><form hx-post=\"/recurring\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex flex-col bg-white rounded-xl shadow-md p-6 gap-4\"><h2 class=\"text-lg font-bold text-gray-700 border-b border-gray-100 pb-3\">Add Recurring</h2><!-- Amount --><div class=\"flex flex-col gap-1.5\"><label for=\"amount\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Amount</label><div class=\"flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-amber-400\"><span class=\"px-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 py-2\">Rp.</span> <input type=\"number\" name=\"Amount\" id=\"amount\" placeholder=\"0\" class=\"flex-1 p-2 text-sm outline-none\" min=\"0\" required onkeyup=\"this.setCustomValidity('')\"></div></div><!-- Type Toggle --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Type</label><div class=\"flex rounded-lg overflow-hidden border border-gray-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for i := 0; i < len(transactionType); i++ {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<option class=\"w-full\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<label class=\"flex-1 cursor-pointer text-center\"><input type=\"radio\" name=\"Type\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 59, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 47, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" class=\"hidden peer\" required> <span class=\"block py-2 text-xs font-semibold text-gray-500 peer-checked:bg-amber-500 peer-checked:text-white hover:bg-gray-50 transition-colors select-none\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(transactionType[i])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 60, Col: 48}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 49, Col: 27}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</option>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></label>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</select></div><div class=\"flex flex-col gap-2\"><label for=\"start-date\" class=\"text-slate-600 font-semibold\">Start Date</label> <input type=\"date\" name=\"StartDate\" id=\"start-date\" class=\"rounded p-2 border border-slate-300\" required oninvalid=\"this.setCustomValidity('Please select a start date.')\" oninput=\"this.setCustomValidity('')\"></div><div class=\"flex w-full justify-between gap-6\"><div class=\"flex flex-col gap-2 w-1/2\"><label for=\"account\" class=\"text-slate-600 font-semibold\">Account</label> <select name=\"Account\" id=\"account\" class=\"rounded p-2 w-full border border-slate-300\" hx-get=\"/account/balance\" hx-target=\"#balance\" hx-params=\"Account\" hx-swap=\"outerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"w-full text-slate-600\">select an account</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><!-- Start Date --><div class=\"flex flex-col gap-1.5\"><label for=\"start-date\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Start Date</label> <input type=\"date\" name=\"StartDate\" id=\"start-date\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please select a start date.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Account --><div class=\"flex flex-col gap-1.5\"><label for=\"account\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" id=\"account\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" hx-get=\"/account/balance\" hx-target=\"#balance\" hx-params=\"Account\" hx-swap=\"outerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select account...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, account := range accounts {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<option class=\"w-full\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<option value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(
-				"%s", account.ID))
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 95, Col: 45}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 87, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -97,7 +96,7 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 96, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 87, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -108,7 +107,7 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select></div><div class=\"flex flex-col gap-2\"><label for=\"balance\" class=\"text-slate-600 font-semibold\">Balance</label><div id=\"balance\" class=\"text-sm text-gray-900\"><div class=\"text-sm text-gray-900\"><input type=\"text\" value=\"\" disabled class=\"rounded p-2 border border-slate-300\" hx-swap-oob=\"true\"></div></div></div></div><div class=\"flex flex-col gap-2\"><label for=\"name\" class=\"text-slate-600 font-semibold\">Name</label> <input type=\"text\" name=\"Name\" id=\"name\" placeholder=\"Name\" class=\"rounded p-2 border border-slate-300\" required oninvalid=\"this.setCustomValidity('Please enter a name.')\" oninput=\"this.setCustomValidity('')\"></div><div class=\"flex flex-col gap-2\"><label for=\"category\" class=\"text-slate-600 font-semibold\">Category</label> <select name=\"Category\" id=\"category\" class=\"rounded p-2 border border-slate-300\" required oninvalid=\"this.setCustomValidity('Please select a category.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"w-full text-slate-600\">select a category</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select><div id=\"balance\" class=\"text-xs text-gray-400\"><div class=\"text-xs text-gray-400\"><input type=\"text\" value=\"\" disabled class=\"rounded p-1 border border-gray-100 text-xs w-full\" hx-swap-oob=\"true\"></div></div></div><!-- Name --><div class=\"flex flex-col gap-1.5\"><label for=\"name\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Name</label> <input type=\"text\" name=\"Name\" id=\"name\" placeholder=\"Recurring name\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please enter a name.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Category --><div class=\"flex flex-col gap-1.5\"><label for=\"category\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Category</label> <select name=\"Category\" id=\"category\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required oninvalid=\"this.setCustomValidity('Please select a category.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select category...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -119,10 +118,9 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(
-					"%s", category.ID))
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", category.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 143, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 126, Col: 51}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
@@ -135,7 +133,7 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 143, Col: 60}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 126, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -147,19 +145,19 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</select></div><div class=\"flex flex-col gap-2\"><label for=\"periodicity\" class=\"text-slate-600 font-semibold\">Periodicity</label> <select name=\"Periodicity\" id=\"periodicity\" class=\"rounded p-2 border border-slate-300\" required oninvalid=\"this.setCustomValidity('Please select a periodicity type.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"w-full text-slate-600\">select a periodicity type</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</select></div><!-- Periodicity --><div class=\"flex flex-col gap-1.5\"><label for=\"periodicity\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Periodicity</label> <select name=\"Periodicity\" id=\"periodicity\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required oninvalid=\"this.setCustomValidity('Please select a periodicity type.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select periodicity...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for i := 0; i < len(periodicity); i++ {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<option class=\"w-full\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<option value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 160, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 145, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -172,7 +170,7 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(periodicity[i])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 161, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 145, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -183,149 +181,177 @@ func Recurring(categories []models.Category, recurring []models.Recurring, accou
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</select></div><button type=\"submit\" class=\"text-white bg-amber-400 hover:bg-amber-500 font-semibold p-2 rounded-lg shadow-md transition duration-300\">Add Recurring Transaction</button></form></div><div class=\"w-full md:w-2/3 h-full\"><div class=\"w-full flex justify-center items-center\"><h1 class=\"text-4xl text-white font-bold text-center mb-6\">Recurring Transaction</h1></div><div class=\"w-full h-5/6 rounded\"><div class=\"max-h-full overflow-auto w-full\"><table class=\"min-w-full divide-y max-h-full divide-gray-200\"><thead class=\"bg-gray-50\"><tr><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Name</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Amount</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Start Date</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Account</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Type</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Category</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider\">Periodicity</th><th scope=\"col\" class=\"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center sticky right-0 bg-gray-50 shadow-md z-10\">Action</th></tr></thead> <tbody class=\"bg-white divide-y divide-gray-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</select></div><button type=\"submit\" class=\"mt-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow transition text-sm\">&#10133; Add Recurring</button></form></div><!-- Right: Recurring Table --><div class=\"flex-1 flex flex-col min-h-0\"><div class=\"bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-100\"><h2 class=\"text-lg font-bold text-gray-700\">All Recurring</h2></div><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100\"><th class=\"px-6 py-3\">Name</th><th class=\"px-6 py-3\">Amount</th><th class=\"px-6 py-3\">Start Date</th><th class=\"px-6 py-3\">Account</th><th class=\"px-6 py-3\">Type</th><th class=\"px-6 py-3\">Category</th><th class=\"px-6 py-3\">Periodicity</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody class=\"divide-y divide-gray-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, rec := range recurring {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<tr><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<tr class=\"hover:bg-gray-50 transition\"><td class=\"px-6 py-3 text-sm font-medium text-gray-700\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(rec.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 219, Col: 77}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 179, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></td>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</td><td class=\"px-6 py-3 whitespace-nowrap\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if rec.TransactionType == constants.Income {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900 text-green-400\">Rp. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<span class=\"text-sm font-bold text-green-600\">+Rp. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(rec.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 223, Col: 120}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 182, Col: 93}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</div></td>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900 text-red-400\">Rp. ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<span class=\"text-sm font-bold text-red-500\">-Rp. ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(rec.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 229, Col: 118}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 184, Col: 91}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></td>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</td><td class=\"px-6 py-3 text-xs text-gray-400\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(rec.StartDate.Format("2006-01-02"))
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(rec.StartDate.Format("02 Jan '06"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 234, Col: 103}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 187, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</td><td class=\"px-6 py-3 text-sm text-gray-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(rec.Account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 237, Col: 85}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 188, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</td><td class=\"px-6 py-3\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(rec.TransactionType.ToString())
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 240, Col: 99}
+			if rec.TransactionType == constants.Income {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<span class=\"text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var15 string
+				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(rec.TransactionType.ToString())
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 191, Col: 128}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<span class=\"text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				var templ_7745c5c3_Var16 string
+				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(rec.TransactionType.ToString())
+				if templ_7745c5c3_Err != nil {
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 193, Col: 124}
+				}
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</span>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var16 string
-			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(rec.Category.Name)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 243, Col: 86}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</div></td><td class=\"px-6 py-4 whitespace-nowrap\"><div class=\"text-sm text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</td><td class=\"px-6 py-3 text-sm text-gray-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var17 string
-			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(rec.Periodicity.ToString())
+			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(rec.Category.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 246, Col: 95}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 196, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</div></td><td class=\"px-6 py-4 whitespace-nowrap sticky right-0 bg-white shadow-md z-10\"><form hx-put=\"/recurring\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Account?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"RecurringID\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</td><td class=\"px-6 py-3\"><span class=\"text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var18 string
-			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", rec.ID))
+			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(rec.Periodicity.ToString())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 261, Col: 109}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 198, Col: 122}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "\"> <button type=\"submit\" class=\"text-white bg-red-400 px-2 hover:bg-red-500 font-semibold p-1 rounded-lg shadow-md transition duration-300\">Delete</button></form></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "</span></td><td class=\"px-6 py-3 whitespace-nowrap sticky right-0 bg-white shadow-sm\"><div class=\"flex items-center justify-center gap-2\"><form hx-put=\"/recurring\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Recurring?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><input type=\"hidden\" name=\"RecurringID\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var19 string
+			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", rec.ID))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/recurring.templ`, Line: 214, Col: 82}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\"> <button type=\"submit\" class=\"text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50\" title=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"></polyline> <path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"></path> <path d=\"M10 11v6M14 11v6\"></path> <path d=\"M9 6V4h6v2\"></path></svg></button></form></div></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</tbody></table></div></div></div></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</tbody></table></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

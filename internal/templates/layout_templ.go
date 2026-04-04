@@ -87,17 +87,17 @@ func nav(user_id string) templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<nav class=\"container top-0 bg-primary-600 p-4 w-full fixed font-mono\"><div class=\"flex justify-between text-white text-xl underline font-normal\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<nav class=\"top-0 bg-amber-500 px-6 py-3 w-full fixed z-50 font-mono shadow-md\"><div class=\"flex justify-between items-center text-white\"><a href=\"/\" class=\"text-lg font-bold tracking-widest uppercase\">GOTTH FINANCIAL TRACKER</a> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if user_id == "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<ol class=\"flex space-x-5\"></ol><ol class=\"flex space-x-5\"><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/register\">Register</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/login\">Login</a></li></ol>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<ol class=\"flex items-center space-x-2\"><li><a href=\"/register\" class=\"px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Register</a></li><li><a href=\"/login\" class=\"px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Login</a></li></ol>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<ol class=\"flex space-x-5\"><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/\">Home</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/transaction\">Transaction</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/recurring\">Recurring</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/loans\">Hutang</a></li><li class=\"transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a href=\"/accounts\">Accounts</a></li></ol><ol class=\"flex space-x-5\"><li class=\"cursor-pointer transform transition-transform ease-in delay-[10ms] hover:translate-y-1\"><a hx-get=\"/logout\" hx-target=\"#modals-here\" hx-trigger=\"click\" confirm-with-sweet-alert=\"true\" swal-title=\"Logout\" swal-text=\"Logout from your account?\" swal-icon=\"warning\" swal-buttons=\"true\" swal-danger=\"true\">Logout</a></li></ol>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<ol class=\"flex items-center space-x-1\"><li><a href=\"/\" class=\"px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Home</a></li><li><a href=\"/transaction\" class=\"px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Transaction</a></li><li><a href=\"/recurring\" class=\"px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Recurring</a></li><li><a href=\"/loans\" class=\"px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Hutang</a></li><li><a href=\"/accounts\" class=\"px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Accounts</a></li><li><a hx-get=\"/logout\" hx-target=\"#modals-here\" hx-trigger=\"click\" confirm-with-sweet-alert=\"true\" swal-title=\"Logout\" swal-text=\"Logout from your account?\" swal-icon=\"warning\" swal-buttons=\"true\" swal-danger=\"true\" class=\"cursor-pointer px-3 py-1 rounded hover:bg-amber-600 transition text-sm\">Logout</a></li></ol>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -135,7 +135,7 @@ func Layout(contents templ.Component, user_id string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<body class=\"flex flex-col items-center h-full w-full bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 font-mono\"><div class=\"flex w-full container items-center justify-center flex-col\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<body class=\"flex flex-col items-center h-full w-full bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 font-mono\"><div class=\"flex w-full items-center justify-center flex-col\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

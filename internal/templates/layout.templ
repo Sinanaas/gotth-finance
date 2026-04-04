@@ -8,15 +8,12 @@ templ header() {
 		<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
 		<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 		<script src="https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js"></script>
-
 		<script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 		<script src="https://cdn.tailwindcss.com"></script>
 		<link rel="preconnect" href="https://fonts.gstatic.com"/>
 		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet"/>
-
 		<!--		SWAL         -->
 		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
 	</head>
 }
 
@@ -25,48 +22,47 @@ templ footer() {
 }
 
 templ nav(user_id string) {
-	<nav class="container top-0 bg-primary-600 p-4 w-full fixed font-mono">
-		<div class="flex justify-between text-white text-xl underline font-normal">
+	<nav class="top-0 bg-amber-500 px-6 py-3 w-full fixed z-50 font-mono shadow-md">
+		<div class="flex justify-between items-center text-white">
+			<a href="/" class="text-lg font-bold tracking-widest uppercase">GOTTH FINANCIAL TRACKER</a>
 			if user_id == "" {
-				<ol class="flex space-x-5"></ol>
-				<ol class="flex space-x-5">
-					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-						<a href="/register">Register</a>
+				<ol class="flex items-center space-x-2">
+					<li>
+						<a href="/register" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Register</a>
 					</li>
-					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-						<a href="/login">Login</a>
+					<li>
+						<a href="/login" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Login</a>
 					</li>
 				</ol>
 			} else {
-				<ol class="flex space-x-5">
-					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-						<a href="/">Home</a>
+				<ol class="flex items-center space-x-1">
+					<li>
+						<a href="/" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Home</a>
 					</li>
-					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-						<a href="/transaction">Transaction</a>
+					<li>
+						<a href="/transaction" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Transaction</a>
 					</li>
-                    <li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-                        <a href="/recurring">Recurring</a>
-                    </li>
-                    <li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-                        <a href="/loans">Hutang</a>
-                    </li>
-					<li class="transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
-						<a href="/accounts">Accounts</a>
+					<li>
+						<a href="/recurring" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Recurring</a>
 					</li>
-				</ol>
-				<ol class="flex space-x-5">
-					<li class="cursor-pointer transform transition-transform ease-in delay-[10ms] hover:translate-y-1">
+					<li>
+						<a href="/loans" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Hutang</a>
+					</li>
+					<li>
+						<a href="/accounts" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Accounts</a>
+					</li>
+					<li>
 						<a
-								hx-get="/logout"
-								hx-target="#modals-here"
-								hx-trigger="click"
-								confirm-with-sweet-alert="true"
-								swal-title="Logout"
-								swal-text="Logout from your account?"
-								swal-icon="warning"
-								swal-buttons="true"
-								swal-danger="true"
+							hx-get="/logout"
+							hx-target="#modals-here"
+							hx-trigger="click"
+							confirm-with-sweet-alert="true"
+							swal-title="Logout"
+							swal-text="Logout from your account?"
+							swal-icon="warning"
+							swal-buttons="true"
+							swal-danger="true"
+							class="cursor-pointer px-3 py-1 rounded hover:bg-amber-600 transition text-sm"
 						>
 							Logout
 						</a>
@@ -80,7 +76,7 @@ templ nav(user_id string) {
 templ Layout(contents templ.Component, user_id string) {
 	@header()
 	<body class="flex flex-col items-center h-full w-full bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 font-mono">
-		<div class="flex w-full container items-center justify-center flex-col">
+		<div class="flex w-full items-center justify-center flex-col">
 			@nav(user_id)
 			<main class="flex-1 pt-[10vh] min-h-[95vh] max-h-[95vh] items-center justify-center flex container" id="profile-container">
 				<div id="modals-here"></div>

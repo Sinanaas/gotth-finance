@@ -2,7 +2,7 @@ package templates
 
 templ header() {
 	<head>
-		<title>GOTTH FINANCIAL TRACKER</title>
+		<title>FinTrack</title>
 		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" name="referrer" content="strict-origin-when-cross-origin"/>
 		<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC" crossorigin="anonymous"></script>
@@ -10,64 +10,87 @@ templ header() {
 		<script src="https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js"></script>
 		<script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 		<script src="https://cdn.tailwindcss.com"></script>
+		<link rel="preconnect" href="https://fonts.googleapis.com"/>
 		<link rel="preconnect" href="https://fonts.gstatic.com"/>
-		<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet"/>
-		<!--		SWAL         -->
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<style>
+			* { font-family: 'Inter', sans-serif; }
+		</style>
 	</head>
 }
 
 templ footer() {
-	<footer class="p-4 "></footer>
+	<footer class="p-4"></footer>
 }
 
 templ nav(user_id string) {
-	<nav class="top-0 bg-amber-500 px-6 py-3 w-full fixed z-50 font-mono shadow-md">
-		<div class="flex justify-between items-center text-white">
-			<a href="/" class="text-lg font-bold tracking-widest uppercase">GOTTH FINANCIAL TRACKER</a>
+	<nav class="top-0 bg-white border-b border-gray-200 px-6 w-full fixed z-50 shadow-sm">
+		<div class="flex justify-between items-center h-14">
+			<a href="/" class="flex items-center gap-2">
+				<div class="w-7 h-7 bg-amber-500 rounded-lg flex items-center justify-center">
+					<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+					</svg>
+				</div>
+				<span class="text-gray-900 font-bold text-base tracking-tight">FinTrack</span>
+			</a>
 			if user_id == "" {
-				<ol class="flex items-center space-x-2">
-					<li>
-						<a href="/register" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Register</a>
-					</li>
-					<li>
-						<a href="/login" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Login</a>
-					</li>
-				</ol>
+				<div class="flex items-center gap-2">
+					<a href="/register" class="px-4 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition">Register</a>
+					<a href="/login" class="px-4 py-1.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition">Login</a>
+				</div>
 			} else {
-				<ol class="flex items-center space-x-1">
-					<li>
-						<a href="/" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Home</a>
-					</li>
-					<li>
-						<a href="/transaction" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Transaction</a>
-					</li>
-					<li>
-						<a href="/recurring" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Recurring</a>
-					</li>
-					<li>
-						<a href="/loans" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Hutang</a>
-					</li>
-					<li>
-						<a href="/accounts" class="px-3 py-1 rounded hover:bg-amber-600 transition text-sm">Accounts</a>
-					</li>
-					<li>
-						<a
-							hx-get="/logout"
-							hx-target="#modals-here"
-							hx-trigger="click"
-							confirm-with-sweet-alert="true"
-							swal-title="Logout"
-							swal-text="Logout from your account?"
-							swal-icon="warning"
-							swal-buttons="true"
-							swal-danger="true"
-							class="cursor-pointer px-3 py-1 rounded hover:bg-amber-600 transition text-sm"
-						>
-							Logout
-						</a>
-					</li>
-				</ol>
+				<div class="flex items-center gap-1">
+					<a href="/" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+						</svg>
+						Home
+					</a>
+					<a href="/transaction" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+						</svg>
+						Transactions
+					</a>
+					<a href="/recurring" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+						</svg>
+						Recurring
+					</a>
+					<a href="/loans" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+						</svg>
+						Loans
+					</a>
+					<a href="/accounts" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+						</svg>
+						Accounts
+					</a>
+					<div class="w-px h-5 bg-gray-200 mx-1"></div>
+					<a
+						hx-get="/logout"
+						hx-target="#modals-here"
+						hx-trigger="click"
+						confirm-with-sweet-alert="true"
+						swal-title="Logout"
+						swal-text="Logout from your account?"
+						swal-icon="warning"
+						swal-buttons="true"
+						swal-danger="true"
+						class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition cursor-pointer"
+					>
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+						</svg>
+						Logout
+					</a>
+				</div>
 			}
 		</div>
 	</nav>
@@ -75,7 +98,7 @@ templ nav(user_id string) {
 
 templ Layout(contents templ.Component, user_id string) {
 	@header()
-	<body class="flex flex-col items-center h-full w-full bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600 font-mono">
+	<body class="flex flex-col items-center h-full w-full bg-gray-100">
 		<div class="flex w-full items-center justify-center flex-col">
 			@nav(user_id)
 			<main class="flex-1 pt-[10vh] min-h-[95vh] max-h-[95vh] items-center justify-center flex container" id="profile-container">

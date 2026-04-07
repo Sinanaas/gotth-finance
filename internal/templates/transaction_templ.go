@@ -107,7 +107,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select></div><!-- Account --><div class=\"flex flex-col gap-1.5\"><label for=\"account\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" id=\"account\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" hx-get=\"/account/balance\" hx-target=\"#balance\" hx-params=\"Account\" hx-swap=\"outerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select account...</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select></div><!-- Account --><div class=\"flex flex-col gap-1.5\"><label for=\"account\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" id=\"account\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" hx-get=\"/account/balance\" hx-target=\"#balance\" hx-params=\"Account\" hx-swap=\"innerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select account...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -143,7 +143,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</select><div id=\"balance\" class=\"text-xs text-gray-400\"><div class=\"text-xs text-gray-400\"><input type=\"text\" value=\"\" disabled class=\"rounded p-1 border border-gray-100 text-xs w-full\" hx-swap-oob=\"true\"></div></div></div><!-- Date --><div class=\"flex flex-col gap-1.5\"><label for=\"date\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" id=\"date\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please select a date.')\" oninput=\"this.setCustomValidity('')\"></div><button type=\"submit\" class=\"mt-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow transition text-sm\">&#10133; Add Transaction</button></form></div><!-- Right: Transactions Table --><div class=\"flex-1 flex flex-col min-h-0\"><div class=\"bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-100\"><h2 class=\"text-lg font-bold text-gray-700\">All Transactions</h2><a href=\"/transaction\" class=\"text-xs text-amber-500 font-semibold hover:underline\">Latest Records</a></div><!-- Table --><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100\"><th class=\"px-6 py-3\">Date</th><th class=\"px-6 py-3\">Description</th><th class=\"px-6 py-3\">Category</th><th class=\"px-6 py-3\">Account</th><th class=\"px-6 py-3\">Amount</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody class=\"divide-y divide-gray-50\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</select><div id=\"balance\"></div></div><!-- Date --><div class=\"flex flex-col gap-1.5\"><label for=\"date\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" id=\"date\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please select a date.')\" oninput=\"this.setCustomValidity('')\"></div><button type=\"submit\" class=\"mt-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow transition text-sm\">&#10133; Add Transaction</button></form></div><!-- Right: Transactions Table --><div class=\"flex-1 flex flex-col min-h-0\"><div class=\"bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-100\"><h2 class=\"text-lg font-bold text-gray-700\">All Transactions</h2><a href=\"/transaction\" class=\"text-xs text-amber-500 font-semibold hover:underline\">Latest Records</a></div><!-- Table --><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100\"><th class=\"px-6 py-3\">Date</th><th class=\"px-6 py-3\">Description</th><th class=\"px-6 py-3\">Category</th><th class=\"px-6 py-3\">Account</th><th class=\"px-6 py-3\">Amount</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody class=\"divide-y divide-gray-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -155,7 +155,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(transaction.TransactionDate.Format("02 Jan '06"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 161, Col: 118}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 157, Col: 118}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -168,7 +168,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(transaction.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 163, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 159, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -186,7 +186,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(transaction.Category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 167, Col: 123}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 163, Col: 123}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -204,7 +204,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(transaction.Category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 169, Col: 123}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 165, Col: 123}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -222,7 +222,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(transaction.Account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 172, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 168, Col: 76}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -240,7 +240,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(transaction.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 175, Col: 101}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 171, Col: 101}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -258,7 +258,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(transaction.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 177, Col: 99}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 173, Col: 99}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -276,7 +276,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", transaction.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 194, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 190, Col: 92}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -289,7 +289,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", transaction.Account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 195, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 191, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {

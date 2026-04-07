@@ -47,7 +47,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 47, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 44, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -61,7 +61,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs("Expenses / Give Loan")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 50, Col: 32}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 47, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -71,7 +71,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(transactionType[i] + " / Hutang")
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 52, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 49, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -83,7 +83,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><!-- Account --><div class=\"flex flex-col gap-1.5\"><label for=\"account\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" id=\"account\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" hx-get=\"/account/balance\" hx-target=\"#balance\" hx-params=\"Account\" hx-swap=\"outerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select account...</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><!-- Account --><div class=\"flex flex-col\"><label for=\"account\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" id=\"account\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" hx-get=\"/account/balance\" hx-target=\"#balance\" hx-params=\"Account\" hx-swap=\"innerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select account...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -95,7 +95,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 77, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 73, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -108,7 +108,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 77, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 73, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -119,7 +119,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select><div id=\"balance\" class=\"text-xs text-gray-400\"><div class=\"text-xs text-gray-400\"><input type=\"text\" value=\"\" disabled class=\"rounded p-1 border border-gray-100 text-xs w-full\" hx-swap-oob=\"true\"></div></div></div><!-- To/From Whom --><div class=\"flex flex-col gap-1.5\"><label for=\"towhom\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">To / From Whom</label> <input type=\"text\" name=\"Towhom\" id=\"towhom\" placeholder=\"Person name\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please enter a name.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label for=\"description\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" id=\"description\" placeholder=\"Description\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please enter a description.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Loan Date --><div class=\"flex flex-col gap-1.5\"><label for=\"date\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Loan Date</label> <input type=\"date\" name=\"Date\" id=\"date\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please select a date.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Category --><div class=\"flex flex-col gap-1.5\"><label for=\"category\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Category</label> <select name=\"Category\" id=\"category\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required oninvalid=\"this.setCustomValidity('Please select a category.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select category...</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select><div id=\"balance\"></div></div><!-- To/From Whom --><div class=\"flex flex-col gap-1.5\"><label for=\"towhom\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">To / From Whom</label> <input type=\"text\" name=\"Towhom\" id=\"towhom\" placeholder=\"Person name\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please enter a name.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label for=\"description\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" id=\"description\" placeholder=\"Description\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please enter a description.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Loan Date --><div class=\"flex flex-col gap-1.5\"><label for=\"date\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Loan Date</label> <input type=\"date\" name=\"Date\" id=\"date\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please select a date.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Category --><div class=\"flex flex-col gap-1.5\"><label for=\"category\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Category</label> <select name=\"Category\" id=\"category\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required oninvalid=\"this.setCustomValidity('Please select a category.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-gray-400\">Select category...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -132,7 +132,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", category.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 145, Col: 51}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 133, Col: 54}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -145,7 +145,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 145, Col: 69}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 133, Col: 72}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -169,7 +169,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(loan.LoanDate.Format("02 Jan '06"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 180, Col: 104}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 166, Col: 107}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -187,7 +187,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(loan.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 183, Col: 93}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 169, Col: 97}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -205,7 +205,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(loan.Amount))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 185, Col: 91}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 171, Col: 95}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -223,7 +223,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(loan.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 188, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 174, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -236,7 +236,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(loan.ToWhom)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 189, Col: 75}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 175, Col: 78}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -254,7 +254,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(loan.TransactionType.ToString())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 192, Col: 129}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 178, Col: 133}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -272,7 +272,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(loan.TransactionType.ToString())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 194, Col: 125}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 180, Col: 129}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -290,7 +290,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var16 string
 			templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(loan.Category.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 197, Col: 70}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 183, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 			if templ_7745c5c3_Err != nil {
@@ -303,7 +303,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var17 string
 			templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(loan.Account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 198, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 184, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 			if templ_7745c5c3_Err != nil {
@@ -316,7 +316,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", loan.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 214, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 200, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -329,7 +329,7 @@ func Loans(categories []models.Category, loans []models.Loan, accounts []models.
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", loan.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 233, Col: 78}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/loan.templ`, Line: 219, Col: 81}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {

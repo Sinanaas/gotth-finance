@@ -389,7 +389,7 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</tbody></table></div></div><!-- Upcoming Recurring --><div class=\"col-span-1 row-start-4 bg-gradient-to-br from-green-400 to-green-600 rounded-xl p-5 shadow-md\"><h3 class=\"text-sm font-bold text-white mb-3 uppercase tracking-wide\">Upcoming Recurring</h3><a href=\"/recurring\" class=\"block bg-white/20 backdrop-blur rounded-lg p-3 hover:bg-white/30 transition\"><span class=\"block font-semibold text-white text-sm truncate\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "</tbody></table></div></div><!-- Upcoming Recurring --><div class=\"col-span-1 col-start-2 row-start-4 bg-gradient-to-br from-green-400 to-green-600 rounded-xl p-5 shadow-md\"><h3 class=\"text-sm font-bold text-white mb-3 uppercase tracking-wide\">Upcoming Recurring</h3><a href=\"/recurring\" class=\"block bg-white/20 backdrop-blur rounded-lg p-3 hover:bg-white/30 transition\"><span class=\"block font-semibold text-white text-sm truncate\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -415,7 +415,7 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, " days remaining</span></a></div><!-- Top Spending --><div class=\"col-span-1 row-start-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl p-5 shadow-md\"><h3 class=\"text-sm font-bold text-white mb-3 uppercase tracking-wide\">Top Spending</h3><div class=\"flex flex-col gap-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, " days remaining</span></a></div><!-- Top Spending --><div class=\"col-span-1 col-start-3 row-start-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl p-5 shadow-md\"><h3 class=\"text-sm font-bold text-white mb-3 uppercase tracking-wide\">Top Spending</h3><div class=\"flex flex-col gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

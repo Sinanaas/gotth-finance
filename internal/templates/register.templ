@@ -1,108 +1,150 @@
 package templates
 
 templ Register(title string) {
-<div hx-ext="response-targets" class="mt-[-12vh]">
-	<form
+<div hx-ext="response-targets" class="mt-[-4vh]">
+	<div class="w-[380px] bg-white rounded-2xl shadow-lg overflow-hidden">
+		<!-- Card header -->
+		<div class="bg-amber-500 px-8 py-6">
+			<div class="flex items-center gap-3">
+				<div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
+					<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+					</svg>
+				</div>
+				<div>
+					<p class="text-white font-bold text-lg leading-none">FinTrack</p>
+					<p class="text-amber-100 text-xs mt-0.5">Personal Finance Tracker</p>
+				</div>
+			</div>
+		</div>
+		<!-- Form -->
+		<form
 			hx-post="/register"
 			hx-trigger="submit"
 			hx-target-401="#register-error"
 			hx-swap="none"
 			hx-encoding="application/x-www-form-urlencoded"
-			class="flex flex-col w-[300px] bg-slate-100 p-4 pb-5 rounded-lg shadow-md gap-4"
-			id="form"
-	>
-		<div class="flex justify-center items-center border-b border-slate-300 pb-4">
-			<h1 class="text-xl font-bold text-slate-700">
-				Register
-			</h1>
-		</div>
-		<div id="register-error" class="text-red-500 text-sm"></div>
-		<div class="flex flex-col gap-1">
-			<label for="Email" class="text-slate-600 font-semibold">Email</label>
-			<input
-					type="email"
-					name="Email"
-					id="email"
-					placeholder="name@company.com"
-					autocomplete="email"
-					class="rounded p-1 border border-gray-300"
-					required
-			/>
-		</div>
-		<div class="flex flex-col gap-1">
-			<label for="Username" class="text-slate-600 font-semibold">Username</label>
-			<input
-					type="text"
-					name="Username"
-					id="username"
-					placeholder="username"
-					class="rounded p-1 border border-gray-300"
-					required
-					onkeyup="this.setCustomValidity('')"
-					hx-on:htmx:validation:validate="
-						if (this.value.trim().length < 4) {
-							this.setCustomValidity('Username must be at least 4 characters long.');
-							htmx.find('#form').reportValidity();
-						} else {
-							this.setCustomValidity('');
-							htmx.find('#form').reportValidity();
-						}
-					"
-			/>
-		</div>
-		<div class="flex flex-col gap-1">
-			<label for="Password" class="text-slate-600 font-semibold">Password</label>
-			<input
-					type="password"
-					name="Password"
-					id="password"
-					placeholder="••••••••"
-					autocomplete="new-password"
-					class="rounded p-1 border border-gray-300"
-					required
-					onkeyup="this.setCustomValidity('')"
-					hx-on:htmx:validation:validate="
-						if (this.value.length < 8) {
-							this.setCustomValidity('Password must be at least 8 characters long.');
-							htmx.find('#form').reportValidity();
-						} else {
-							this.setCustomValidity('');
-							htmx.find('#form').reportValidity();
-						}
-					"
-			/>
-		</div>
-		<div class="flex flex-col gap-1">
-			<label for="ConfirmPassword" class="text-slate-600 font-semibold">Confirm Password</label>
-			<input
-					type="password"
-					name="ConfirmPassword"
-					id="confirm-password"
-					placeholder="••••••••"
-					autocomplete="new-password"
-					class="rounded p-1 border border-gray-300"
-					required
-					onkeyup="this.setCustomValidity('')"
-					hx-on:htmx:validation:validate="
-						if (this.value.length < 8) {
-							this.setCustomValidity('Password must be at least 8 characters long.');
-							htmx.find('#form').reportValidity();
-						} else {
-							this.setCustomValidity('');
-							htmx.find('#form').reportValidity();
-						}
-					"
-			/>
-		</div>
-		<button type="submit" class="text-white bg-amber-400 hover:bg-amber-500 font-semibold p-1 rounded-lg shadow-md transition duration-300">
-			Register
-		</button>
-		<div class="flex justify-center text-center">
-			<p class="font-thin text-slate-600 text-sm">
+			class="flex flex-col px-8 py-6 gap-4"
+			id="register-form"
+		>
+			<div>
+				<h2 class="text-xl font-bold text-gray-900">Create account</h2>
+				<p class="text-sm text-gray-500 mt-0.5">Start tracking your finances today</p>
+			</div>
+			<div id="register-error" class="text-red-500 text-sm -mb-1"></div>
+			<div class="flex flex-col gap-1.5">
+				<label for="Email" class="text-sm font-medium text-gray-700">Email</label>
+				<div class="relative">
+					<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+						<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+						</svg>
+					</div>
+					<input
+						type="email"
+						name="Email"
+						id="email"
+						placeholder="name@company.com"
+						autocomplete="email"
+						class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+						required
+					/>
+				</div>
+			</div>
+			<div class="flex flex-col gap-1.5">
+				<label for="Username" class="text-sm font-medium text-gray-700">Username</label>
+				<div class="relative">
+					<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+						<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+						</svg>
+					</div>
+					<input
+						type="text"
+						name="Username"
+						id="username"
+						placeholder="username"
+						class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+						required
+						onkeyup="this.setCustomValidity('')"
+						hx-on:htmx:validation:validate="
+							if (this.value.trim().length < 4) {
+								this.setCustomValidity('Username must be at least 4 characters long.');
+								htmx.find('#register-form').reportValidity();
+							} else {
+								this.setCustomValidity('');
+								htmx.find('#register-form').reportValidity();
+							}
+						"
+					/>
+				</div>
+			</div>
+			<div class="flex flex-col gap-1.5">
+				<label for="Password" class="text-sm font-medium text-gray-700">Password</label>
+				<div class="relative">
+					<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+						<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+						</svg>
+					</div>
+					<input
+						type="password"
+						name="Password"
+						id="password"
+						placeholder="••••••••"
+						autocomplete="new-password"
+						class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+						required
+						onkeyup="this.setCustomValidity('')"
+						hx-on:htmx:validation:validate="
+							if (this.value.length < 8) {
+								this.setCustomValidity('Password must be at least 8 characters long.');
+								htmx.find('#register-form').reportValidity();
+							} else {
+								this.setCustomValidity('');
+								htmx.find('#register-form').reportValidity();
+							}
+						"
+					/>
+				</div>
+			</div>
+			<div class="flex flex-col gap-1.5">
+				<label for="ConfirmPassword" class="text-sm font-medium text-gray-700">Confirm Password</label>
+				<div class="relative">
+					<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+						<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+						</svg>
+					</div>
+					<input
+						type="password"
+						name="ConfirmPassword"
+						id="confirm-password"
+						placeholder="••••••••"
+						autocomplete="new-password"
+						class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
+						required
+						onkeyup="this.setCustomValidity('')"
+						hx-on:htmx:validation:validate="
+							if (this.value.length < 8) {
+								this.setCustomValidity('Password must be at least 8 characters long.');
+								htmx.find('#register-form').reportValidity();
+							} else {
+								this.setCustomValidity('');
+								htmx.find('#register-form').reportValidity();
+							}
+						"
+					/>
+				</div>
+			</div>
+			<button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow-sm transition text-sm mt-1">
+				Create account
+			</button>
+			<p class="text-center text-sm text-gray-500">
 				Already have an account?
-				<a href="/login" class="text-amber-600 underline">Login</a>
+				<a href="/login" class="text-amber-600 font-medium hover:underline">Login</a>
 			</p>
-		</div>
-	</form>
+		</form>
+	</div>
 </div>
 }

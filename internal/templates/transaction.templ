@@ -96,7 +96,7 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
 					hx-get="/account/balance"
 					hx-target="#balance"
 					hx-params="Account"
-					hx-swap="outerHTML"
+					hx-swap="innerHTML"
 					required
 					oninvalid="this.setCustomValidity('Please select an account.')"
 					oninput="this.setCustomValidity('')"
@@ -106,11 +106,7 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
 					<option value={ fmt.Sprintf("%s", account.ID) }>{ account.Name }</option>
 					}
 				</select>
-				<div id="balance" class="text-xs text-gray-400">
-					<div class="text-xs text-gray-400">
-						<input type="text" value="" disabled class="rounded p-1 border border-gray-100 text-xs w-full" hx-swap-oob="true"/>
-					</div>
-				</div>
+				<div id="balance"></div>
 			</div>
 
 			<!-- Date -->

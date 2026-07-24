@@ -898,6 +898,44 @@ func (m *BasicManager) GetUserMonthlyExpenses(id string) (float64, error) {
 	return total, nil
 }
 
+func (m *BasicManager) GetUserMonthlyTotals(userId string, year int, month time.Month) (income, expense float64, err error) {
+	userUUID, parseErr := uuid.Parse(userId)
+	if parseErr != nil {
+		return 0, 0, parseErr
+	}
+
+	startOfMonth := time.Date(year, month, 1, 0, 0, 0, 0, time.Local)
+	endOfMonth := startOfMonth.AddDate(0, 1, -1)
+
+	var transactions []models.Transaction
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+		return 0, 0, err
+	}
+
+	for _, t := range transactions {
+		if t.TransactionType == constants.Income {
+			income += t.Amount
+		} else {
+			expense += t.Amount
+		}
+	}
+	return income, expense, nil
+}
+
+func (m *BasicManager) GetAllUpcomingRecurring(userId string) ([]models.Recurring, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var recurrings []models.Recurring
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&recurrings).Error; err != nil {
+		return nil, err
+	}
+
+	return recurrings, nil
+}
+
 func (m *BasicManager) GetUserTotalBalance(userId string) float64 {
 	userUUID, _ := uuid.Parse(userId)
 	var accounts []models.Account

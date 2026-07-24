@@ -5,152 +5,283 @@ import "github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 import "github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 import "fmt"
 
-templ Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []models.Account, loans []models.Loan, transactions []models.Transaction, recurring models.Recurring, month string, totalBalance string, topCategories []models.CategoryWithTotal) {
-<div class="w-full h-full grid grid-cols-5 grid-rows-4 gap-4 p-4 bg-gray-100 rounded">
+func buildJSONArray(items []string) string      { return utils.BuildJSONArray(items) }
+func buildJSONFloatArray(items []float64) string { return utils.BuildJSONFloatArray(items) }
 
-	<!-- Income Card -->
-	<a href="/transaction" class="col-span-1 row-start-1 bg-gradient-to-br from-green-400 to-green-600 text-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow">
-		<p class="text-xs font-semibold uppercase tracking-wide text-green-100 mb-1">{ month } Income</p>
-		<p class="text-2xl font-extrabold">Rp. { utils.FormatCurrency(incomeMonthAmount) }</p>
-	</a>
+templ Home(
+	incomeMonthAmount float64,
+	expenseMonthAmount float64,
+	prevIncome float64,
+	prevExpense float64,
+	accounts []models.Account,
+	loans []models.Loan,
+	transactions []models.Transaction,
+	recurrings []models.Recurring,
+	month string,
+	totalBalance string,
+	topCategories []models.CategoryWithTotal,
+	monthlyLabels []string,
+	monthlyIncome []float64,
+	monthlyExpense []float64,
+) {
+<div class="flex flex-col gap-6 w-full">
 
-	<!-- Expense Card -->
-	<a href="/transaction" class="col-span-1 row-start-2 bg-gradient-to-br from-red-400 to-red-600 text-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow">
-		<p class="text-xs font-semibold uppercase tracking-wide text-red-100 mb-1">{ month } Expense</p>
-		<p class="text-2xl font-extrabold">Rp. { utils.FormatCurrency(expenseMonthAmount) }</p>
-	</a>
+	<!-- Hero row: Net Worth -->
+	<div class="grid grid-cols-4 gap-4">
 
-	<!-- Net Card -->
-	<a href="/transaction" class="col-span-1 row-start-3 bg-gradient-to-br from-blue-400 to-blue-600 text-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow">
-		if incomeMonthAmount - expenseMonthAmount > 0 {
-			<p class="text-xs font-semibold uppercase tracking-wide text-blue-100 mb-1">Net Income</p>
-		} else {
-			<p class="text-xs font-semibold uppercase tracking-wide text-blue-100 mb-1">Net Expense</p>
-		}
-		<p class="text-2xl font-extrabold">Rp. { utils.FormatCurrency(incomeMonthAmount - expenseMonthAmount) }</p>
-	</a>
-
-	<!-- Total Balance Card -->
-	<a href="/accounts" class="col-span-1 row-start-4 bg-gradient-to-br from-purple-400 to-purple-600 text-white rounded-xl shadow-md p-5 hover:shadow-lg transition-shadow">
-		<p class="text-xs font-semibold uppercase tracking-wide text-purple-100 mb-1">Total Balance</p>
-		<p class="text-2xl font-extrabold">Rp. { totalBalance }</p>
-	</a>
-
-	<!-- Accounts Section -->
-	<div class="col-span-2 row-span-2 col-start-2 bg-white rounded-xl shadow-md p-5">
-		<div class="flex items-center justify-between mb-4">
-			<h2 class="text-lg font-bold text-gray-700">Accounts</h2>
-			<a href="/accounts" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-1 rounded-full transition">+ Add</a>
-		</div>
-		<div class="flex flex-col gap-2">
-			for _, account := range accounts {
-			<a href="/accounts" class="flex items-center justify-between px-3 py-2 rounded-lg bg-gray-50 hover:bg-amber-50 border border-gray-100 transition">
-				<div class="flex items-center gap-2">
-					<span class="w-2 h-8 rounded-full bg-amber-400 inline-block"></span>
-					<span class="text-sm font-semibold text-gray-700">{ account.Name }</span>
-				</div>
-				<span class="text-sm font-bold text-gray-800">Rp. { utils.FormatCurrency(account.Balance) }</span>
-			</a>
-			}
-		</div>
-	</div>
-
-	<!-- Active Loans Section -->
-	<div class="col-span-2 row-span-1 col-start-2 row-start-3 bg-white rounded-xl shadow-md p-5">
-		<div class="flex items-center justify-between mb-4">
-			<h2 class="text-lg font-bold text-gray-700">Active Loans</h2>
-			<span class="text-xs font-semibold text-gray-400 bg-gray-100 px-2 py-1 rounded-full">{ fmt.Sprintf("%d", len(loans)) } ongoing</span>
-		</div>
-		<div class="flex flex-col gap-2">
-			for _, loan := range loans {
-			if loan.TransactionType == constants.Income {
-			<a href="/loans" class="flex items-center justify-between px-3 py-2 rounded-lg bg-red-50 hover:bg-red-100 border border-red-100 transition">
-				<div class="flex items-center gap-2">
-					<span class="w-2 h-8 rounded-full bg-red-400 inline-block"></span>
-					<span class="text-sm font-semibold text-gray-600">{ loan.ToWhom }</span>
-				</div>
-				<span class="text-sm font-bold text-red-500">Rp. { utils.FormatCurrency(loan.Amount) }</span>
-			</a>
-			} else {
-			<a href="/loans" class="flex items-center justify-between px-3 py-2 rounded-lg bg-green-50 hover:bg-green-100 border border-green-100 transition">
-				<div class="flex items-center gap-2">
-					<span class="w-2 h-8 rounded-full bg-green-400 inline-block"></span>
-					<span class="text-sm font-semibold text-gray-600">{ loan.ToWhom }</span>
-				</div>
-				<span class="text-sm font-bold text-green-600">Rp. { utils.FormatCurrency(loan.Amount) }</span>
-			</a>
-			}
-			}
-		</div>
-	</div>
-
-	<!-- Recent Transactions Section -->
-	<div class="col-span-3 row-span-4 col-start-4 bg-white rounded-xl shadow-md p-5 flex flex-col overflow-hidden">
-		<div class="flex items-center justify-between mb-4">
-			<h2 class="text-lg font-bold text-gray-700">Recent Transactions</h2>
-			<a href="/transaction" class="text-xs text-amber-500 font-semibold hover:underline">Latest Records</a>
-		</div>
-		<div class="flex-grow overflow-auto">
-			<table class="min-w-full">
-				<thead>
-					<tr class="text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
-						<th class="pb-2 pr-3">Date</th>
-						<th class="pb-2 pr-3">Description</th>
-						<th class="pb-2 pr-3">Category</th>
-						<th class="pb-2 pr-3">Account</th>
-						<th class="pb-2 text-right">Amount</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-gray-50">
-					for _, transaction := range transactions {
-					<tr class="hover:bg-gray-50 transition">
-						<td class="py-2 pr-3 text-xs text-gray-400 whitespace-nowrap">{ transaction.TransactionDate.Format("02 Jan '06") }</td>
-						<td class="py-2 pr-3">
-							<span class="text-sm font-medium text-gray-700">{ transaction.Description }</span>
-							<p class="text-xs text-gray-400">{ transaction.Account.Name }</p>
-						</td>
-						<td class="py-2 pr-3">
-							if transaction.TransactionType == constants.Income {
-							<span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold">{ transaction.Category.Name }</span>
-							} else {
-							<span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">{ transaction.Category.Name }</span>
-							}
-						</td>
-						<td class="py-2 pr-3 text-xs text-gray-500">{ transaction.Account.Name }</td>
-						<td class="py-2 text-right whitespace-nowrap">
-							if transaction.TransactionType == constants.Income {
-							<span class="text-sm font-bold text-green-600">+Rp. { utils.FormatCurrency(transaction.Amount) }</span>
-							} else {
-							<span class="text-sm font-bold text-red-500">-Rp. { utils.FormatCurrency(transaction.Amount) }</span>
-							}
-						</td>
-					</tr>
+		<!-- Net Worth card (spans 2 cols) -->
+		<div class="col-span-2 bg-gray-900 rounded-2xl p-6 flex flex-col justify-between shadow-lg">
+			<p class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Total Net Worth</p>
+			<div>
+				<p class="text-4xl font-extrabold text-white mt-2">Rp { totalBalance }</p>
+				<div class="flex items-center gap-2 mt-2">
+					if incomeMonthAmount - expenseMonthAmount >= prevIncome - prevExpense {
+					<span class="text-xs font-semibold text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">
+						↑ +Rp { utils.FormatCurrency((incomeMonthAmount - expenseMonthAmount) - (prevIncome - prevExpense)) } vs last month
+					</span>
+					} else {
+					<span class="text-xs font-semibold text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full">
+						↓ -Rp { utils.FormatCurrency((prevIncome - prevExpense) - (incomeMonthAmount - expenseMonthAmount)) } vs last month
+					</span>
 					}
-				</tbody>
-			</table>
+				</div>
+			</div>
+			<a href="/accounts" class="mt-4 text-xs text-amber-400 font-semibold hover:underline">View accounts →</a>
 		</div>
-	</div>
 
-	<!-- Upcoming Recurring -->
-	<div class="col-span-1 col-start-2 row-start-4 bg-gradient-to-br from-green-400 to-green-600 rounded-xl p-5 shadow-md">
-		<h3 class="text-sm font-bold text-white mb-3 uppercase tracking-wide">Upcoming Recurring</h3>
-		<a href="/recurring" class="block bg-white/20 backdrop-blur rounded-lg p-3 hover:bg-white/30 transition">
-			<span class="block font-semibold text-white text-sm truncate">{ recurring.Name }</span>
-			<span class="block text-xs text-green-100 mt-1">
-				{ fmt.Sprintf("%v", utils.GetRecurringDays(recurring.StartDate, recurring.Periodicity)) } days remaining
-			</span>
+		<!-- Income -->
+		<a href="/transaction" class="bg-white rounded-2xl p-5 shadow flex flex-col justify-between border border-gray-100 hover:shadow-md transition">
+			<div class="flex items-center justify-between">
+				<p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">{ month } Income</p>
+				<div class="w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center">
+					<svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+					</svg>
+				</div>
+			</div>
+			<p class="text-2xl font-extrabold text-gray-800 mt-4">Rp { utils.FormatCurrency(incomeMonthAmount) }</p>
+			if incomeMonthAmount >= prevIncome {
+			<p class="text-xs text-green-500 mt-1 font-medium">↑ vs last month</p>
+			} else {
+			<p class="text-xs text-red-400 mt-1 font-medium">↓ vs last month</p>
+			}
+		</a>
+
+		<!-- Expense -->
+		<a href="/transaction" class="bg-white rounded-2xl p-5 shadow flex flex-col justify-between border border-gray-100 hover:shadow-md transition">
+			<div class="flex items-center justify-between">
+				<p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">{ month } Expense</p>
+				<div class="w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center">
+					<svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+					</svg>
+				</div>
+			</div>
+			<p class="text-2xl font-extrabold text-gray-800 mt-4">Rp { utils.FormatCurrency(expenseMonthAmount) }</p>
+			if expenseMonthAmount <= prevExpense {
+			<p class="text-xs text-green-500 mt-1 font-medium">↓ lower than last month</p>
+			} else {
+			<p class="text-xs text-red-400 mt-1 font-medium">↑ higher than last month</p>
+			}
 		</a>
 	</div>
 
-	<!-- Top Spending -->
-	<div class="col-span-1 col-start-3 row-start-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-xl p-5 shadow-md">
-		<h3 class="text-sm font-bold text-white mb-3 uppercase tracking-wide">Top Spending</h3>
-		<div class="flex flex-col gap-2">
-			for _, category := range topCategories {
-			<a href="/transaction" class="block bg-white/20 backdrop-blur rounded-lg p-3 hover:bg-white/30 transition">
-				<span class="block font-semibold text-white text-sm">{ category.Name }</span>
-				<span class="block text-xs text-purple-100">Rp. { utils.FormatCurrency(category.Total) }</span>
+	<!-- Account cards row -->
+	<div>
+		<div class="flex items-center justify-between mb-3">
+			<h2 class="text-sm font-bold text-gray-700">Accounts</h2>
+			<a href="/accounts" class="text-xs text-amber-500 font-semibold hover:underline">Manage →</a>
+		</div>
+		<div class="flex gap-3 overflow-x-auto pb-1">
+			for _, account := range accounts {
+			<a href="/accounts" class="bg-white rounded-2xl p-4 shadow border border-gray-100 flex flex-col gap-2 min-w-44 hover:shadow-md transition shrink-0">
+				<div class="flex items-center gap-2">
+					<span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span>
+					<span class="text-xs font-semibold text-gray-500 truncate max-w-32">{ account.Name }</span>
+				</div>
+				<p class="text-base font-extrabold text-gray-800">Rp { utils.FormatCurrency(account.Balance) }</p>
 			</a>
+			}
+			if len(accounts) == 0 {
+			<a href="/accounts" class="bg-white rounded-2xl p-4 shadow border border-dashed border-gray-200 flex flex-col items-center justify-center min-w-44 min-h-20 hover:border-amber-400 transition shrink-0">
+				<span class="text-lg text-gray-300">+</span>
+				<span class="text-xs text-gray-400 font-medium mt-1">Add account</span>
+			</a>
+			}
+		</div>
+	</div>
+
+	<!-- Main content: chart + transactions + right column -->
+	<div class="grid grid-cols-3 gap-4">
+
+		<!-- Cash flow chart (2 cols) -->
+		<div class="col-span-2 bg-white rounded-2xl shadow p-5 border border-gray-100">
+			<div class="flex items-center justify-between mb-4">
+				<h2 class="text-sm font-bold text-gray-700">6-Month Cash Flow</h2>
+				<div class="flex items-center gap-3 text-xs text-gray-400">
+					<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span>Income</span>
+					<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-400 inline-block"></span>Expense</span>
+				</div>
+			</div>
+			<!-- Chart data passed via data attributes -->
+			<div id="chart-data"
+				data-labels={ buildJSONArray(monthlyLabels) }
+				data-income={ buildJSONFloatArray(monthlyIncome) }
+				data-expense={ buildJSONFloatArray(monthlyExpense) }
+				class="hidden"
+			></div>
+			<canvas id="cashflow-chart" height="120"></canvas>
+			<script>
+				(function() {
+					var el = document.getElementById('chart-data');
+					var labels = JSON.parse(el.dataset.labels);
+					var income = JSON.parse(el.dataset.income);
+					var expense = JSON.parse(el.dataset.expense);
+					var ctx = document.getElementById('cashflow-chart').getContext('2d');
+					new Chart(ctx, {
+						type: 'bar',
+						data: {
+							labels: labels,
+							datasets: [
+								{ label: 'Income', data: income, backgroundColor: 'rgba(74,222,128,0.7)', borderRadius: 4 },
+								{ label: 'Expense', data: expense, backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 4 }
+							]
+						},
+						options: {
+							responsive: true,
+							plugins: { legend: { display: false } },
+							scales: {
+								x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+								y: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, callback: function(v){ return 'Rp '+v.toLocaleString('id-ID'); } } }
+							}
+						}
+					});
+				})();
+			</script>
+		</div>
+
+		<!-- Right column: top categories + active loans -->
+		<div class="flex flex-col gap-4">
+
+			<!-- Top spending categories -->
+			<div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+				<h2 class="text-sm font-bold text-gray-700 mb-3">Top Spending</h2>
+				if len(topCategories) == 0 {
+				<p class="text-xs text-gray-400 text-center py-4">No data yet</p>
+				} else {
+				<div class="flex flex-col gap-2">
+					for _, cat := range topCategories {
+					<div class="flex items-center justify-between">
+						<span class="text-xs text-gray-600 font-medium truncate max-w-28">{ cat.Name }</span>
+						<span class="text-xs font-bold text-gray-800 whitespace-nowrap">Rp { utils.FormatCurrency(cat.Total) }</span>
+					</div>
+					}
+				</div>
+				}
+			</div>
+
+			<!-- Active loans summary -->
+			<div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+				<div class="flex items-center justify-between mb-3">
+					<h2 class="text-sm font-bold text-gray-700">Active Loans</h2>
+					<span class="text-xs text-gray-400">{ fmt.Sprintf("%d", len(loans)) }</span>
+				</div>
+				if len(loans) == 0 {
+				<p class="text-xs text-gray-400 text-center py-2">No active loans</p>
+				} else {
+				<div class="flex flex-col gap-2">
+					for _, loan := range loans {
+					<a href="/loans" class="flex items-center justify-between py-1 hover:opacity-80 transition">
+						<span class="text-xs text-gray-600 font-medium truncate max-w-24">{ loan.ToWhom }</span>
+						if loan.TransactionType == constants.Income {
+						<span class="text-xs font-bold text-red-500">-Rp { utils.FormatCurrency(loan.Amount) }</span>
+						} else {
+						<span class="text-xs font-bold text-green-600">+Rp { utils.FormatCurrency(loan.Amount) }</span>
+						}
+					</a>
+					}
+				</div>
+				}
+			</div>
+		</div>
+	</div>
+
+	<!-- Bottom: recent transactions + upcoming recurring -->
+	<div class="grid grid-cols-3 gap-4">
+
+		<!-- Recent transactions (2 cols) -->
+		<div class="col-span-2 bg-white rounded-2xl shadow p-5 border border-gray-100">
+			<div class="flex items-center justify-between mb-4">
+				<h2 class="text-sm font-bold text-gray-700">Recent Transactions</h2>
+				<a href="/transaction" class="text-xs text-amber-500 font-semibold hover:underline">View all →</a>
+			</div>
+			if len(transactions) == 0 {
+			<div class="flex flex-col items-center gap-2 py-6">
+				<svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+				</svg>
+				<p class="text-xs text-gray-400">No transactions yet</p>
+				<a href="/transaction" class="text-xs text-amber-500 font-semibold hover:underline">Add first transaction →</a>
+			</div>
+			} else {
+			<div class="flex flex-col divide-y divide-gray-50">
+				for _, t := range transactions {
+				<div class="flex items-center justify-between py-2.5">
+					<div class="flex items-center gap-3">
+						if t.TransactionType == constants.Income {
+						<div class="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+							<svg class="w-3.5 h-3.5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/></svg>
+						</div>
+						} else {
+						<div class="w-7 h-7 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+							<svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/></svg>
+						</div>
+						}
+						<div>
+							<p class="text-xs font-semibold text-gray-700">{ t.Description }</p>
+							<p class="text-xs text-gray-400">{ t.TransactionDate.Format("02 Jan '06") } · { t.Category.Name }</p>
+						</div>
+					</div>
+					if t.TransactionType == constants.Income {
+					<span class="text-sm font-bold text-green-600 whitespace-nowrap">+Rp { utils.FormatCurrency(t.Amount) }</span>
+					} else {
+					<span class="text-sm font-bold text-red-500 whitespace-nowrap">-Rp { utils.FormatCurrency(t.Amount) }</span>
+					}
+				</div>
+				}
+			</div>
+			}
+		</div>
+
+		<!-- Upcoming recurring -->
+		<div class="bg-white rounded-2xl shadow p-5 border border-gray-100">
+			<div class="flex items-center justify-between mb-4">
+				<h2 class="text-sm font-bold text-gray-700">Upcoming</h2>
+				<a href="/recurring" class="text-xs text-amber-500 font-semibold hover:underline">Manage →</a>
+			</div>
+			if len(recurrings) == 0 {
+			<div class="flex flex-col items-center gap-2 py-6">
+				<svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+				</svg>
+				<p class="text-xs text-gray-400">No recurring payments</p>
+			</div>
+			} else {
+			<div class="flex flex-col gap-2">
+				for _, r := range recurrings {
+				<a href="/recurring" class="flex items-center justify-between bg-gray-50 hover:bg-amber-50 rounded-xl px-3 py-2.5 transition">
+					<div>
+						<p class="text-xs font-semibold text-gray-700">{ r.Name }</p>
+						<p class="text-xs text-gray-400 mt-0.5">{ fmt.Sprintf("%d days", utils.GetRecurringDays(r.StartDate, r.Periodicity)) }</p>
+					</div>
+					if r.TransactionType == constants.Income {
+					<span class="text-xs font-bold text-green-600 whitespace-nowrap">+Rp { utils.FormatCurrency(r.Amount) }</span>
+					} else {
+					<span class="text-xs font-bold text-red-500 whitespace-nowrap">-Rp { utils.FormatCurrency(r.Amount) }</span>
+					}
+				</a>
+				}
+			</div>
 			}
 		</div>
 	</div>

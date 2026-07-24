@@ -29,7 +29,7 @@ func header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<head><title>FinTrack</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" name=\"referrer\" content=\"strict-origin-when-cross-origin\"><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/ws.js\"></script><script src=\"https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js\"></script><script src=\"https://unpkg.com/hyperscript.org@0.9.14\"></script><script src=\"https://cdn.tailwindcss.com\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/sweetalert/dist/sweetalert.min.js\"></script><style>\n\t\t\t* { font-family: 'Inter', sans-serif; }\n\t\t</style></head>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<head><title>FinTrack</title><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" name=\"referrer\" content=\"strict-origin-when-cross-origin\"><script src=\"https://unpkg.com/htmx.org@1.9.10\" integrity=\"sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC\" crossorigin=\"anonymous\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/ws.js\"></script><script src=\"https://unpkg.com/htmx-ext-multi-swap@2.0.0/multi-swap.js\"></script><script src=\"https://unpkg.com/hyperscript.org@0.9.14\"></script><script src=\"https://cdn.tailwindcss.com\"></script><script src=\"https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js\"></script><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\"><link href=\"https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800&display=swap\" rel=\"stylesheet\"><script src=\"https://unpkg.com/sweetalert/dist/sweetalert.min.js\"></script><style>\n\t\t\t* { font-family: 'Inter', sans-serif; }\n\t\t\t::-webkit-scrollbar { width: 4px; height: 4px; }\n\t\t\t::-webkit-scrollbar-track { background: transparent; }\n\t\t\t::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }\n\t\t</style></head>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -37,7 +37,7 @@ func header() templ.Component {
 	})
 }
 
-func footer() templ.Component {
+func sidebar(user_id string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -58,51 +58,22 @@ func footer() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<footer class=\"p-4\"></footer>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-func nav(user_id string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<nav class=\"top-0 bg-white border-b border-gray-200 px-6 w-full fixed z-50 shadow-sm\"><div class=\"flex justify-between items-center h-14\"><a href=\"/\" class=\"flex items-center gap-2\"><div class=\"w-7 h-7 bg-amber-500 rounded-lg flex items-center justify-center\"><svg class=\"w-4 h-4 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z\"></path></svg></div><span class=\"text-gray-900 font-bold text-base tracking-tight\">FinTrack</span></a> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<aside class=\"fixed left-0 top-0 h-full w-56 bg-gray-900 flex flex-col z-40 shadow-xl\"><!-- Logo --><div class=\"flex items-center gap-2.5 px-5 py-5 border-b border-gray-800\"><div class=\"w-8 h-8 bg-amber-500 rounded-xl flex items-center justify-center shrink-0\"><svg class=\"w-4 h-4 text-white\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z\"></path></svg></div><span class=\"text-white font-bold text-base tracking-tight\">FinTrack</span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if user_id == "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"flex items-center gap-2\"><a href=\"/register\" class=\"px-4 py-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition\">Register</a> <a href=\"/login\" class=\"px-4 py-1.5 text-sm font-semibold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition\">Login</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<!-- Guest nav --> <nav class=\"flex-1 px-3 py-4 flex flex-col gap-1\"><a href=\"/login\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition\">Login</a> <a href=\"/register\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition\">Register</a></nav>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"flex items-center gap-1\"><a href=\"/\" class=\"flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6\"></path></svg> Home</a> <a href=\"/transaction\" class=\"flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z\"></path></svg> Transactions</a> <a href=\"/recurring\" class=\"flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\"></path></svg> Recurring</a> <a href=\"/loans\" class=\"flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z\"></path></svg> Loans</a> <a href=\"/accounts\" class=\"flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg> Accounts</a><div class=\"w-px h-5 bg-gray-200 mx-1\"></div><a hx-get=\"/logout\" hx-target=\"#modals-here\" hx-trigger=\"click\" confirm-with-sweet-alert=\"true\" swal-title=\"Logout\" swal-text=\"Logout from your account?\" swal-icon=\"warning\" swal-buttons=\"true\" swal-danger=\"true\" class=\"flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-gray-500 hover:text-red-600 hover:bg-red-50 transition cursor-pointer\"><svg class=\"w-4 h-4\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1\"></path></svg> Logout</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<!-- Auth nav --> <nav class=\"flex-1 px-3 py-4 flex flex-col gap-1\"><a href=\"/\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition\"><svg class=\"w-4 h-4 shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6\"></path></svg> Dashboard</a> <a href=\"/transaction\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition\"><svg class=\"w-4 h-4 shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z\"></path></svg> Transactions</a> <a href=\"/accounts\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition\"><svg class=\"w-4 h-4 shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4\"></path></svg> Accounts</a> <a href=\"/recurring\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition\"><svg class=\"w-4 h-4 shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\"></path></svg> Recurring</a> <a href=\"/loans\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-800 transition\"><svg class=\"w-4 h-4 shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z\"></path></svg> Loans</a></nav><!-- Bottom: logout --> <div class=\"px-3 py-4 border-t border-gray-800\"><a hx-get=\"/logout\" hx-target=\"#modals-here\" hx-trigger=\"click\" confirm-with-sweet-alert=\"true\" swal-title=\"Logout\" swal-text=\"Logout from your account?\" swal-icon=\"warning\" swal-buttons=\"true\" swal-danger=\"true\" class=\"flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-950/30 transition cursor-pointer\"><svg class=\"w-4 h-4 shrink-0\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1\"></path></svg> Logout</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div></nav>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -126,24 +97,24 @@ func Layout(contents templ.Component, user_id string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var4 == nil {
-			templ_7745c5c3_Var4 = templ.NopComponent
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = header().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<body class=\"flex flex-col items-center h-full w-full bg-gray-100\"><div class=\"flex w-full items-center justify-center flex-col\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<body class=\"bg-gray-100 min-h-screen\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = nav(user_id).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = sidebar(user_id).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<main class=\"flex-1 pt-[10vh] min-h-[95vh] max-h-[95vh] items-center justify-center flex container\" id=\"profile-container\"><div id=\"modals-here\"></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"ml-56 min-h-screen flex flex-col\"><div id=\"modals-here\"></div><main class=\"flex-1 p-6 overflow-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -151,7 +122,7 @@ func Layout(contents templ.Component, user_id string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</main></div><script>\n\t\t\t// confirmation BEFORE request\n\t\t\tdocument.body.addEventListener('htmx:confirm', function (evt) {\n\t\t\t\tif (evt.target.matches(\"[confirm-with-sweet-alert='true']\")) {\n\t\t\t\t\tevt.preventDefault();\n\n\t\t\t\t\tlet title = evt.target.getAttribute(\"swal-title\") || \"Are you sure?\";\n\t\t\t\t\tlet text = evt.target.getAttribute(\"swal-text\") || \"Are you sure you are sure?\";\n\t\t\t\t\tlet icon = evt.target.getAttribute(\"swal-icon\") || \"warning\";\n\t\t\t\t\tlet buttons = evt.target.getAttribute(\"swal-buttons\") !== \"false\";\n\t\t\t\t\tlet dangerMode = evt.target.getAttribute(\"swal-danger\") === \"true\";\n\n\t\t\t\t\tswal({ title, text, icon, buttons, dangerMode }).then((confirmed) => {\n\t\t\t\t\t\tif (confirmed) {\n\t\t\t\t\t\t\tevt.detail.issueRequest();\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\n\t\t\t// notification AFTER request\n\t\t\tdocument.body.addEventListener('htmx:afterRequest', function (evt) {\n\t\t\t\tlet response = evt.detail.xhr.getResponseHeader(\"HX-Trigger\");\n\t\t\t\tconsole.log(\"HX-Trigger Response:\", response); // Debugging\n\t\t\t\tif (response) {\n\t\t\t\t\ttry {\n\t\t\t\t\t\tlet swalData = JSON.parse(response)[\"swal:alert\"];\n\t\t\t\t\t\tif (swalData) {\n\t\t\t\t\t\t\tswal(swalData).then(() => {\n\t\t\t\t\t\t\t\tif (swalData.redirect) {\n\t\t\t\t\t\t\t\t\twindow.location.href = swalData.redirect;\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t} catch (error) {\n\t\t\t\t\t\tconsole.error(\"Failed to parse SweetAlert response:\", error);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t</script></body>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</main></div><script>\n\t\t\tdocument.body.addEventListener('htmx:confirm', function (evt) {\n\t\t\t\tif (evt.target.matches(\"[confirm-with-sweet-alert='true']\")) {\n\t\t\t\t\tevt.preventDefault();\n\t\t\t\t\tlet title = evt.target.getAttribute(\"swal-title\") || \"Are you sure?\";\n\t\t\t\t\tlet text = evt.target.getAttribute(\"swal-text\") || \"Are you sure?\";\n\t\t\t\t\tlet icon = evt.target.getAttribute(\"swal-icon\") || \"warning\";\n\t\t\t\t\tlet buttons = evt.target.getAttribute(\"swal-buttons\") !== \"false\";\n\t\t\t\t\tlet dangerMode = evt.target.getAttribute(\"swal-danger\") === \"true\";\n\t\t\t\t\tswal({ title, text, icon, buttons, dangerMode }).then((confirmed) => {\n\t\t\t\t\t\tif (confirmed) { evt.detail.issueRequest(); }\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});\n\n\t\t\tdocument.body.addEventListener('htmx:afterRequest', function (evt) {\n\t\t\t\tlet response = evt.detail.xhr.getResponseHeader(\"HX-Trigger\");\n\t\t\t\tif (response) {\n\t\t\t\t\ttry {\n\t\t\t\t\t\tlet swalData = JSON.parse(response)[\"swal:alert\"];\n\t\t\t\t\t\tif (swalData) {\n\t\t\t\t\t\t\tswal(swalData).then(() => {\n\t\t\t\t\t\t\t\tif (swalData.redirect) { window.location.href = swalData.redirect; }\n\t\t\t\t\t\t\t});\n\t\t\t\t\t\t}\n\t\t\t\t\t} catch (error) {\n\t\t\t\t\t\tconsole.error(\"Failed to parse SweetAlert response:\", error);\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t});\n\t\t</script></body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

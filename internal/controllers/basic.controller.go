@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
@@ -406,6 +408,14 @@ func (bc *BasicController) GetUserMonthlyIncome(userId string) (float64, error) 
 		return -1, err
 	}
 	return income, nil
+}
+
+func (bc *BasicController) GetUserMonthlyTotals(userId string, year int, month time.Month) (float64, float64, error) {
+	return bc.BM.GetUserMonthlyTotals(userId, year, month)
+}
+
+func (bc *BasicController) GetAllUpcomingRecurring(userId string) ([]models.Recurring, error) {
+	return bc.BM.GetAllUpcomingRecurring(userId)
 }
 
 func (bc *BasicController) GetUserTotalBalance(userId string) float64 {

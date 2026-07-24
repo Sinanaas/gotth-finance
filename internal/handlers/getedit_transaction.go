@@ -27,7 +27,7 @@ func (h *GetEditTransactionHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	categories, err := h.BC.GetAllCategories()
+	categories, err := h.BC.GetUserCategories(userId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
 		return

@@ -21,7 +21,7 @@ func (h *GetRecurringHandler) ServeHTTP(ctx *gin.Context) {
 	cookie, _ := ctx.Cookie("access_token")
 	userId := utils.GetSessionUserID(ctx)
 
-	categories, err := h.BC.GetAllCategories()
+	categories, err := h.BC.GetUserCategories(userId)
 	if err != nil {
 		return
 	}

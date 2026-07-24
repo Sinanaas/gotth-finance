@@ -158,18 +158,46 @@ func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
 
 // CATEGORY methods
 
-func (m *BasicManager) GetAllCategories() ([]models.Category, error) {
+func (m *BasicManager) GetUserCategories(userId string) ([]models.Category, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, err
+	}
 	var categories []models.Category
-	// add soft delete
-	if err := m.DB.Where("deleted_at IS NULL").Find(&categories).Error; err != nil {
+	if err := m.DB.Where("deleted_at IS NULL AND (user_id IS NULL OR user_id = ?)", userUUID).Find(&categories).Error; err != nil {
 		return nil, err
 	}
 	return categories, nil
 }
 
+func (m *BasicManager) CreateUserCategory(userId, name, description string) error {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
+	category := models.Category{
+		Name:        name,
+		Description: description,
+		UserID:      &userUUID,
+	}
+	return m.DB.Create(&category).Error
+}
+
+func (m *BasicManager) DeleteUserCategory(categoryId, userId string) error {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
+	catUUID, err := uuid.Parse(categoryId)
+	if err != nil {
+		return err
+	}
+	return m.DB.Where("id = ? AND user_id = ?", catUUID, userUUID).Delete(&models.Category{}).Error
+}
+
 func (m *BasicManager) FindCategoryByName(name string) (models.Category, error) {
 	var category models.Category
-	if err := m.DB.Where("name = ? AND deleted_at IS NULL", name).First(&category).Error; err != nil {
+	if err := m.DB.Where("name = ? AND deleted_at IS NULL AND user_id IS NULL", name).First(&category).Error; err != nil {
 		return models.Category{}, err
 	}
 	return category, nil

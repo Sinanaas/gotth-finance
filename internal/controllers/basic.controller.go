@@ -91,12 +91,20 @@ func (bc *BasicController) CreateAccount(ctx *gin.Context) error {
 
 // CATEGORY methods
 
-func (bc *BasicController) GetAllCategories() ([]models.Category, error) {
-	categories, err := bc.BM.GetAllCategories()
+func (bc *BasicController) GetUserCategories(userId string) ([]models.Category, error) {
+	categories, err := bc.BM.GetUserCategories(userId)
 	if err != nil {
 		return nil, err
 	}
 	return categories, nil
+}
+
+func (bc *BasicController) CreateUserCategory(userId, name, description string) error {
+	return bc.BM.CreateUserCategory(userId, name, description)
+}
+
+func (bc *BasicController) DeleteUserCategory(categoryId, userId string) error {
+	return bc.BM.DeleteUserCategory(categoryId, userId)
 }
 
 func (bc *BasicController) GetUserTopCategories(id string) ([]models.CategoryWithTotal, error) {

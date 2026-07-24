@@ -38,4 +38,8 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bc *controllers.BasicCont
 	rg.PUT("/account", middleware.DeserializeUser(), handlers.NewDeleteAccountHandler(bc).ServeHTTP)
 	rg.PUT("/recurring", middleware.DeserializeUser(), handlers.NewDeleteRecurringHandler(bc).ServeHTTP)
 	rg.PUT("/loan", middleware.DeserializeUser(), handlers.NewDeleteLoanHandler(bc).ServeHTTP)
+
+	rg.GET("/categories", middleware.DeserializeUser(), handlers.NewGetCategoriesHandler(bc).ServeHTTP)
+	rg.POST("/categories", middleware.DeserializeUser(), handlers.NewPostCategoryHandler(bc).ServeHTTP)
+	rg.DELETE("/categories/:id", middleware.DeserializeUser(), handlers.NewDeleteCategoryHandler(bc).ServeHTTP)
 }

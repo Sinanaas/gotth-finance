@@ -22,7 +22,7 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 	cookie, _ := ctx.Cookie("access_token")
 	userId := utils.GetSessionUserID(ctx)
 
-	categories, err := h.BC.GetAllCategories()
+	categories, err := h.BC.GetUserCategories(userId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
 		return

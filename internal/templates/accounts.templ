@@ -106,6 +106,17 @@ templ Accounts(accounts []models.Account) {
 			<!-- Header -->
 			<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
 				<h2 class="text-lg font-bold text-gray-700">All Accounts</h2>
+				<button
+					hx-get="/accounts/transfer"
+					hx-target="#modals-here"
+					hx-swap="innerHTML"
+					class="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold rounded-lg shadow transition"
+				>
+					<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+					</svg>
+					Transfer
+				</button>
 			</div>
 
 			<!-- Table -->

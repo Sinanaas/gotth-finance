@@ -63,6 +63,14 @@ func SeedCategories(db *gorm.DB) {
 			Name:        "Initial",
 			Description: "Initial account balance",
 		},
+		{
+			Name:        "Transfer Out",
+			Description: "Money transferred out to another account",
+		},
+		{
+			Name:        "Transfer In",
+			Description: "Money transferred in from another account",
+		},
 	}
 
 	for _, category := range categories {

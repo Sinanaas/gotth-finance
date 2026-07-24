@@ -16,6 +16,8 @@ type Transaction struct {
 	TransactionDate time.Time `gorm:"type:date"`
 	// type enum
 	TransactionType constants.TransactionType `gorm:"type:int"`
+	// Links two transactions in a transfer pair (nullable)
+	TransferGroupID *uuid.UUID `gorm:"type:uuid;index"`
 	// Belongs to an account
 	AccountID uuid.UUID
 	Account   Account `gorm:"foreignKey:AccountID"`
@@ -25,6 +27,15 @@ type Transaction struct {
 	// Belongs to a category
 	CategoryID uuid.UUID
 	Category   Category `gorm:"foreignKey:CategoryID"`
+}
+
+type TransferRequest struct {
+	FromAccountID string
+	ToAccountID   string
+	Amount        float64
+	Date          string
+	Description   string
+	UserID        string
 }
 
 type TransactionRequest struct {

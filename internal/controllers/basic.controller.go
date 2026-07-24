@@ -291,6 +291,30 @@ func (bc *BasicController) CreateTransaction(ctx *gin.Context) error {
 	return nil
 }
 
+func (bc *BasicController) CreateTransfer(ctx *gin.Context) error {
+	var payload models.TransferRequest
+	var err error
+
+	payload.FromAccountID = ctx.PostForm("FromAccount")
+	payload.ToAccountID = ctx.PostForm("ToAccount")
+	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
+	if err != nil {
+		return err
+	}
+	payload.Date = ctx.PostForm("Date")
+	payload.Description = ctx.PostForm("Description")
+
+	session := sessions.Default(ctx)
+	var userId string
+	v := session.Get("user_id")
+	if v != nil {
+		userId = v.(string)
+	}
+	payload.UserID = userId
+
+	return bc.BM.CreateTransfer(payload)
+}
+
 func (bc *BasicController) FindTransactionById(id string) (models.Transaction, error) {
 	return bc.BM.FindTransactionById(id)
 }

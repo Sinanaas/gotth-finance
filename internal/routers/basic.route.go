@@ -33,6 +33,8 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bc *controllers.BasicCont
 	rg.GET("/transaction/:id/edit", middleware.DeserializeUser(), handlers.NewGetEditTransactionHandler(bc).ServeHTTP)
 	rg.PATCH("/transaction/:id", middleware.DeserializeUser(), handlers.NewPatchTransactionHandler(bc).ServeHTTP)
 	rg.PUT("/transaction", middleware.DeserializeUser(), handlers.NewDeleteTransactionHandler(bc).ServeHTTP)
+	rg.GET("/accounts/transfer", middleware.DeserializeUser(), handlers.NewGetTransferHandler(bc).ServeHTTP)
+	rg.POST("/accounts/transfer", middleware.DeserializeUser(), handlers.NewPostTransferHandler(bc).ServeHTTP)
 	rg.PUT("/account", middleware.DeserializeUser(), handlers.NewDeleteAccountHandler(bc).ServeHTTP)
 	rg.PUT("/recurring", middleware.DeserializeUser(), handlers.NewDeleteRecurringHandler(bc).ServeHTTP)
 	rg.PUT("/loan", middleware.DeserializeUser(), handlers.NewDeleteLoanHandler(bc).ServeHTTP)

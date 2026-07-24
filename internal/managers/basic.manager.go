@@ -632,6 +632,93 @@ func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Tra
 	return transactions, nil
 }
 
+func (m *BasicManager) CreateTransfer(payload models.TransferRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+	fromUUID, err := uuid.Parse(payload.FromAccountID)
+	if err != nil {
+		return err
+	}
+	toUUID, err := uuid.Parse(payload.ToAccountID)
+	if err != nil {
+		return err
+	}
+
+	transferDate, err := time.Parse("2006-01-02", payload.Date)
+	if err != nil {
+		return err
+	}
+
+	// Fetch system categories for Transfer Out / Transfer In
+	transferOutCat, err := m.FindCategoryByName("Transfer Out")
+	if err != nil {
+		return fmt.Errorf("system category 'Transfer Out' not found: seed it first")
+	}
+	transferInCat, err := m.FindCategoryByName("Transfer In")
+	if err != nil {
+		return fmt.Errorf("system category 'Transfer In' not found: seed it first")
+	}
+
+	groupID := uuid.New()
+	desc := payload.Description
+	if desc == "" {
+		desc = "Transfer"
+	}
+
+	tx := m.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// Debit from source account
+	outTx := models.Transaction{
+		UserID:          userUUID,
+		Amount:          payload.Amount,
+		TransactionType: constants.Expenses,
+		Description:     desc + " (out)",
+		CategoryID:      transferOutCat.ID,
+		TransactionDate: transferDate,
+		AccountID:       fromUUID,
+		TransferGroupID: &groupID,
+	}
+	if err := tx.Create(&outTx).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Credit to destination account
+	inTx := models.Transaction{
+		UserID:          userUUID,
+		Amount:          payload.Amount,
+		TransactionType: constants.Income,
+		Description:     desc + " (in)",
+		CategoryID:      transferInCat.ID,
+		TransactionDate: transferDate,
+		AccountID:       toUUID,
+		TransferGroupID: &groupID,
+	}
+	if err := tx.Create(&inTx).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+
+	// Recalculate both accounts
+	if err := m.RecalculateAccountBalance(payload.FromAccountID); err != nil {
+		return err
+	}
+	if err := m.RecalculateAccountBalance(payload.ToAccountID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *BasicManager) FindTransactionById(transactionId string) (models.Transaction, error) {
 	transactionUUID, err := uuid.Parse(transactionId)
 	if err != nil {

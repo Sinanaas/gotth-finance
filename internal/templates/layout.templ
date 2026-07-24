@@ -116,7 +116,24 @@ templ Layout(contents templ.Component, user_id string) {
 			</main>
 		</div>
 		<script>
-			document.body.addEventListener('htmx:confirm', function (evt) {
+			// Disable submit buttons during in-flight requests
+		document.body.addEventListener('htmx:beforeRequest', function (evt) {
+			var btn = evt.target.querySelector('button[type="submit"]');
+			if (btn) {
+				btn._origText = btn.innerHTML;
+				btn.disabled = true;
+				btn.innerHTML = '<svg class="w-4 h-4 animate-spin inline mr-1" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>Loading...';
+			}
+		});
+		document.body.addEventListener('htmx:afterRequest', function (evt) {
+			var btn = evt.target.querySelector('button[type="submit"]');
+			if (btn && btn._origText) {
+				btn.disabled = false;
+				btn.innerHTML = btn._origText;
+			}
+		});
+
+		document.body.addEventListener('htmx:confirm', function (evt) {
 				if (evt.target.matches("[confirm-with-sweet-alert='true']")) {
 					evt.preventDefault();
 					let title = evt.target.getAttribute("swal-title") || "Are you sure?";

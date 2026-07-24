@@ -46,7 +46,7 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
 									if transactionType[i] == "Expenses" {
 										{ "Expenses / Give Loan" }
 									} else {
-										{ transactionType[i] + " / Hutang" }
+										{ transactionType[i] + " / Borrowed" }
 									}
 								</span>
 							</label>
@@ -144,7 +144,7 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
 		<div class="flex-1 flex flex-col min-h-0">
 			<div class="bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden">
 				<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-					<h2 class="text-lg font-bold text-gray-700">Hutang</h2>
+					<h2 class="text-lg font-bold text-gray-700">Loans</h2>
 				</div>
 				<div class="flex-1 overflow-auto">
 					<table class="min-w-full">
@@ -161,6 +161,19 @@ templ Loans(categories []models.Category, loans []models.Loan, accounts []models
 							</tr>
 						</thead>
 						<tbody class="divide-y divide-gray-50">
+							if len(loans) == 0 {
+							<tr>
+								<td colspan="8" class="px-6 py-14 text-center">
+									<div class="flex flex-col items-center gap-2">
+										<svg class="w-10 h-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+										</svg>
+										<p class="text-sm text-gray-400 font-medium">No active loans</p>
+										<p class="text-xs text-gray-300">Record a loan using the form on the left</p>
+									</div>
+								</td>
+							</tr>
+							}
 							for _, loan := range loans {
 								<tr class="hover:bg-gray-50 transition">
 									<td class="px-6 py-3 text-xs text-gray-400 whitespace-nowrap">{ loan.LoanDate.Format("02 Jan '06") }</td>

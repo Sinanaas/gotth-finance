@@ -2,20 +2,29 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/gin-gonic/gin"
 )
 
 type PostFinishLoanHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewPostFinishLoanHandler(bc *controllers.BasicController) *PostFinishLoanHandler {
-	return &PostFinishLoanHandler{BC: bc}
+func NewPostFinishLoanHandler(bm *managers.BasicManager) *PostFinishLoanHandler {
+	return &PostFinishLoanHandler{BM: bm}
 }
 
 func (h *PostFinishLoanHandler) ServeHTTP(c *gin.Context) {
-	err := h.BC.FinishLoan(c)
+	loanID := c.PostForm("LoanID")
+	if loanID == "" {
+		c.JSON(400, gin.H{"error": "Loan ID is missing"})
+		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/loans"}}`, "Loan ID is missing"))
+		c.Status(400)
+		return
+	}
+
+	err := h.BM.FinishLoan(loanID)
 	if err != nil {
 		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/loans"}}`, err.Error()))
 		c.Status(400)

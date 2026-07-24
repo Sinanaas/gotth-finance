@@ -4,17 +4,17 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type PostCategoryHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewPostCategoryHandler(bc *controllers.BasicController) *PostCategoryHandler {
-	return &PostCategoryHandler{BC: bc}
+func NewPostCategoryHandler(bm *managers.BasicManager) *PostCategoryHandler {
+	return &PostCategoryHandler{BM: bm}
 }
 
 func (h *PostCategoryHandler) ServeHTTP(ctx *gin.Context) {
@@ -28,7 +28,7 @@ func (h *PostCategoryHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.BC.CreateUserCategory(userId, name, description); err != nil {
+	if err := h.BM.CreateUserCategory(userId, name, description); err != nil {
 		swalData, _ := json.Marshal(map[string]interface{}{
 			"swal:alert": map[string]interface{}{
 				"title":    "Error",

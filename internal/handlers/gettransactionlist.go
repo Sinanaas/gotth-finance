@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -13,11 +13,11 @@ import (
 const pageSize = 20
 
 type GetTransactionListHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetTransactionListHandler(bc *controllers.BasicController) *GetTransactionListHandler {
-	return &GetTransactionListHandler{BC: bc}
+func NewGetTransactionListHandler(bm *managers.BasicManager) *GetTransactionListHandler {
+	return &GetTransactionListHandler{BM: bm}
 }
 
 func (h *GetTransactionListHandler) ServeHTTP(ctx *gin.Context) {
@@ -40,7 +40,7 @@ func (h *GetTransactionListHandler) ServeHTTP(ctx *gin.Context) {
 		txType = -1
 	}
 
-	transactions, total, err := h.BC.FilterTransactions(userId, startDate, endDate, categoryID, accountID, search, txType, page, pageSize)
+	transactions, total, err := h.BM.FilterTransactions(userId, startDate, endDate, categoryID, accountID, search, txType, page, pageSize)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -3,37 +3,37 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type GetEditTransactionHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetEditTransactionHandler(bc *controllers.BasicController) *GetEditTransactionHandler {
-	return &GetEditTransactionHandler{BC: bc}
+func NewGetEditTransactionHandler(bm *managers.BasicManager) *GetEditTransactionHandler {
+	return &GetEditTransactionHandler{BM: bm}
 }
 
 func (h *GetEditTransactionHandler) ServeHTTP(ctx *gin.Context) {
 	id := ctx.Param("id")
 	userId := utils.GetSessionUserID(ctx)
 
-	transaction, err := h.BC.FindTransactionById(id)
+	transaction, err := h.BM.FindTransactionById(id)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "Transaction not found"})
 		return
 	}
 
-	categories, err := h.BC.GetUserCategories(userId)
+	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
 		return
 	}
 
-	accounts, err := h.BC.GetUserAccounts(userId)
+	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
 		return

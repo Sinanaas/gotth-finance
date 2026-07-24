@@ -2,20 +2,43 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"strconv"
+
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 type PostAccountHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewPostAccountHandler(bc *controllers.BasicController) *PostAccountHandler {
-	return &PostAccountHandler{BC: bc}
+func NewPostAccountHandler(bm *managers.BasicManager) *PostAccountHandler {
+	return &PostAccountHandler{BM: bm}
 }
 
 func (h *PostAccountHandler) ServeHTTP(c *gin.Context) {
-	err := h.BC.CreateAccount(c)
+	var payload models.AccountRequest
+	var err error
+
+	payload.Name = c.PostForm("Name")
+	payload.Description = c.PostForm("Description")
+	payload.Balance, err = strconv.ParseFloat(c.PostForm("Balance"), 64)
+	if err != nil {
+		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/accounts"}}`, err.Error()))
+		c.Status(400)
+		return
+	}
+	session := sessions.Default(c)
+	var userId string
+	v := session.Get("user_id")
+	if v != nil {
+		userId = v.(string)
+	}
+	payload.UserID = userId
+
+	err = h.BM.CreateAccount(payload)
 	if err != nil {
 		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/accounts"}}`, err.Error()))
 		c.Status(400)

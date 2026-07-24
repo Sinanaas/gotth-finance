@@ -1,23 +1,23 @@
 package handlers
 
 import (
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type GetAccountsHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetAccountsHandler(bc *controllers.BasicController) *GetAccountsHandler {
-	return &GetAccountsHandler{BC: bc}
+func NewGetAccountsHandler(bm *managers.BasicManager) *GetAccountsHandler {
+	return &GetAccountsHandler{BM: bm}
 }
 
 func (h *GetAccountsHandler) ServeHTTP(ctx *gin.Context) {
 	userId := utils.GetSessionUserID(ctx)
-	accounts, err := h.BC.GetUserAccounts(userId)
+	accounts, err := h.BM.GetUserAccounts(userId)
 	c := templates.Accounts(accounts)
 
 	cookie, _ := ctx.Cookie("access_token")

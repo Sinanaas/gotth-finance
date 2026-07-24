@@ -3,24 +3,24 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type GetTransferHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetTransferHandler(bc *controllers.BasicController) *GetTransferHandler {
-	return &GetTransferHandler{BC: bc}
+func NewGetTransferHandler(bm *managers.BasicManager) *GetTransferHandler {
+	return &GetTransferHandler{BM: bm}
 }
 
 func (h *GetTransferHandler) ServeHTTP(ctx *gin.Context) {
 	userId := utils.GetSessionUserID(ctx)
 
-	accounts, err := h.BC.GetUserAccounts(userId)
+	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
 		return

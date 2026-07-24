@@ -25,12 +25,12 @@ func (h *GetHomeHandler) ServeHTTP(ctx *gin.Context) {
 	}
 
 	thisMonthExpenses, err := h.BC.GetUserMonthlyExpenses(userId)
-	if err != nil && thisMonthExpenses > 0 {
+	if err != nil {
 		return
 	}
 
 	thisMonthIncome, err := h.BC.GetUserMonthlyIncome(userId)
-	if err != nil && thisMonthIncome > 0 {
+	if err != nil {
 		return
 	}
 

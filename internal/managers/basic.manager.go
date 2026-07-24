@@ -182,7 +182,7 @@ func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTot
 	}
 
 	var categories []models.CategoryWithTotal
-	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? AND t.deleted_at IS NULL GROUP BY c.name ORDER BY total DESC LIMIT 1", userUUID).Scan(&categories).Error; err != nil {
+	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? AND t.deleted_at IS NULL GROUP BY c.name ORDER BY total DESC LIMIT 5", userUUID).Scan(&categories).Error; err != nil {
 		return nil, err
 	}
 
@@ -255,9 +255,9 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 	transaction.Amount = payload.Amount
 	transaction.TransactionType = constants.TransactionType(payload.TransactionType)
 	if loan.TransactionType == constants.Expenses {
-		transaction.Description = "Memberi Hutang: " + payload.Description
+		transaction.Description = "Lent: " + payload.Description
 	} else {
-		transaction.Description = "Hutang: " + payload.Description
+		transaction.Description = "Borrowed: " + payload.Description
 	}
 	transaction.CategoryID = categoryUUID
 	transaction.TransactionDate = transactionDate
@@ -313,7 +313,7 @@ func (m *BasicManager) FinishLoan(id string) error {
 	} else if loan.TransactionType == constants.Expenses {
 		transaction.TransactionType = constants.Income
 	}
-	transaction.Description = "Bayar Hutang: " + loan.Description
+	transaction.Description = "Loan repaid: " + loan.Description
 	transaction.CategoryID = loan.CategoryID
 	transaction.TransactionDate = time.Now()
 	transaction.AccountID = loan.AccountID
@@ -616,8 +616,8 @@ func (m *BasicManager) CalculateBalance(accountId string, amount float64, transa
 	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
 		return err
 	}
-	transactions, err := m.FindAccountTransactions(accountId)
-	if transactionType == constants.Income && len(transactions) != 0 {
+	_, err = m.FindAccountTransactions(accountId)
+	if transactionType == constants.Income {
 		account.Balance += amount
 	} else if transactionType == constants.Expenses {
 		if account.Balance < amount {
@@ -787,14 +787,15 @@ func (m *BasicManager) LoadAndScheduleJobs() error {
 	}
 
 	for _, recurring := range recurrings {
+		r := recurring // capture loop variable
 		fn := constants.Fn(func() {
 			transactionRequest := models.TransactionRequest{
-				UserID:      recurring.UserID.String(),
-				Amount:      recurring.Amount,
-				Type:        int(recurring.TransactionType),
-				Description: recurring.Name,
-				CategoryID:  recurring.CategoryID.String(),
-				Account:     recurring.AccountID.String(),
+				UserID:      r.UserID.String(),
+				Amount:      r.Amount,
+				Type:        int(r.TransactionType),
+				Description: r.Name,
+				CategoryID:  r.CategoryID.String(),
+				Account:     r.AccountID.String(),
 				Date:        time.Now().Format("2006-01-02"),
 			}
 
@@ -803,7 +804,7 @@ func (m *BasicManager) LoadAndScheduleJobs() error {
 			}
 		})
 
-		if err := m.SetUserCRONJob(recurring, *m.GoCRON, fn); err != nil {
+		if err := m.SetUserCRONJob(r, *m.GoCRON, fn); err != nil {
 			return err
 		}
 	}

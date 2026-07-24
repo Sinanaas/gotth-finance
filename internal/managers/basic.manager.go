@@ -585,6 +585,87 @@ func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Tra
 	return transactions, nil
 }
 
+func (m *BasicManager) FindTransactionById(transactionId string) (models.Transaction, error) {
+	transactionUUID, err := uuid.Parse(transactionId)
+	if err != nil {
+		return models.Transaction{}, err
+	}
+
+	var transaction models.Transaction
+	if err := m.DB.Preload("Category").Preload("Account").Where("id = ? AND deleted_at IS NULL", transactionUUID).First(&transaction).Error; err != nil {
+		return models.Transaction{}, err
+	}
+	return transaction, nil
+}
+
+func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest) error {
+	transactionUUID, err := uuid.Parse(payload.ID)
+	if err != nil {
+		return err
+	}
+
+	categoryUUID, err := uuid.Parse(payload.CategoryID)
+	if err != nil {
+		return err
+	}
+
+	newAccountUUID, err := uuid.Parse(payload.NewAccountID)
+	if err != nil {
+		return err
+	}
+
+	transactionDate, err := time.Parse("2006-01-02", payload.Date)
+	if err != nil {
+		return err
+	}
+
+	var transaction models.Transaction
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", transactionUUID).First(&transaction).Error; err != nil {
+		return err
+	}
+
+	tx := m.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// Reverse old transaction effect on old account
+	if err := m.RecalculateAccountBalance(payload.OldAccountID); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	transaction.Amount = payload.Amount
+	transaction.TransactionType = constants.TransactionType(payload.Type)
+	transaction.Description = payload.Description
+	transaction.CategoryID = categoryUUID
+	transaction.TransactionDate = transactionDate
+	transaction.AccountID = newAccountUUID
+
+	if err := tx.Save(&transaction).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+
+	// Recalculate new account balance
+	if err := m.RecalculateAccountBalance(payload.NewAccountID); err != nil {
+		return err
+	}
+
+	// Recalculate old account if it changed
+	if payload.OldAccountID != payload.NewAccountID {
+		if err := m.RecalculateAccountBalance(payload.OldAccountID); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *BasicManager) DeleteTransactionById(transactionId string) error {
 	transactionUUID, err := uuid.Parse(transactionId)
 	if err != nil {

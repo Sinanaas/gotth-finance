@@ -291,6 +291,40 @@ func (bc *BasicController) CreateTransaction(ctx *gin.Context) error {
 	return nil
 }
 
+func (bc *BasicController) FindTransactionById(id string) (models.Transaction, error) {
+	return bc.BM.FindTransactionById(id)
+}
+
+func (bc *BasicController) UpdateTransaction(ctx *gin.Context) error {
+	var payload models.TransactionUpdateRequest
+	var err error
+
+	payload.ID = ctx.Param("id")
+	payload.Description = ctx.PostForm("Description")
+	payload.CategoryID = ctx.PostForm("Category")
+	payload.OldAccountID = ctx.PostForm("OldAccountID")
+	payload.NewAccountID = ctx.PostForm("Account")
+	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
+	if err != nil {
+		return err
+	}
+	payload.Date = ctx.PostForm("Date")
+	payload.Type, err = strconv.Atoi(ctx.PostForm("Type"))
+	if err != nil {
+		return err
+	}
+
+	session := sessions.Default(ctx)
+	var userId string
+	v := session.Get("user_id")
+	if v != nil {
+		userId = v.(string)
+	}
+	payload.UserID = userId
+
+	return bc.BM.UpdateTransaction(payload)
+}
+
 func (bc *BasicController) GetUserTransactions(userId string) ([]models.Transaction, error) {
 	transactions, err := bc.BM.GetUserTransactions(userId)
 	if err != nil {

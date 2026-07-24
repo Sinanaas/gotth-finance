@@ -549,6 +549,53 @@ func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) erro
 	return nil
 }
 
+func (m *BasicManager) FilterTransactions(userId, startDate, endDate, categoryID, accountID, search string, txType int, page, pageSize int) ([]models.Transaction, int64, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	query := m.DB.Preload("Category").Preload("Account").
+		Where("user_id = ? AND deleted_at IS NULL", userUUID)
+
+	if startDate != "" {
+		query = query.Where("transaction_date >= ?", startDate)
+	}
+	if endDate != "" {
+		query = query.Where("transaction_date <= ?", endDate)
+	}
+	if categoryID != "" {
+		catUUID, err := uuid.Parse(categoryID)
+		if err == nil {
+			query = query.Where("category_id = ?", catUUID)
+		}
+	}
+	if accountID != "" {
+		accUUID, err := uuid.Parse(accountID)
+		if err == nil {
+			query = query.Where("account_id = ?", accUUID)
+		}
+	}
+	if search != "" {
+		query = query.Where("description ILIKE ?", "%"+search+"%")
+	}
+	// txType: -1 = all, 0 = expenses, 1 = income
+	if txType >= 0 {
+		query = query.Where("transaction_type = ?", txType)
+	}
+
+	var total int64
+	query.Model(&models.Transaction{}).Count(&total)
+
+	offset := (page - 1) * pageSize
+	var transactions []models.Transaction
+	if err := query.Order("transaction_date desc").Limit(pageSize).Offset(offset).Find(&transactions).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return transactions, total, nil
+}
+
 func (m *BasicManager) GetUserTransactions(userId string) ([]models.Transaction, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {

@@ -29,6 +29,7 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bc *controllers.BasicCont
 	rg.POST("/loan", middleware.DeserializeUser(), handlers.NewPostLoanHandler(bc).ServeHTTP)
 	rg.POST("/loan/finish", middleware.DeserializeUser(), handlers.NewPostFinishLoanHandler(bc).ServeHTTP)
 
+	rg.GET("/transaction/list", middleware.DeserializeUser(), handlers.NewGetTransactionListHandler(bc).ServeHTTP)
 	rg.GET("/transaction/:id/edit", middleware.DeserializeUser(), handlers.NewGetEditTransactionHandler(bc).ServeHTTP)
 	rg.PATCH("/transaction/:id", middleware.DeserializeUser(), handlers.NewPatchTransactionHandler(bc).ServeHTTP)
 	rg.PUT("/transaction", middleware.DeserializeUser(), handlers.NewDeleteTransactionHandler(bc).ServeHTTP)

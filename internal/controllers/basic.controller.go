@@ -325,6 +325,10 @@ func (bc *BasicController) UpdateTransaction(ctx *gin.Context) error {
 	return bc.BM.UpdateTransaction(payload)
 }
 
+func (bc *BasicController) FilterTransactions(userId, startDate, endDate, categoryID, accountID, search string, txType int, page, pageSize int) ([]models.Transaction, int64, error) {
+	return bc.BM.FilterTransactions(userId, startDate, endDate, categoryID, accountID, search, txType, page, pageSize)
+}
+
 func (bc *BasicController) GetUserTransactions(userId string) ([]models.Transaction, error) {
 	transactions, err := bc.BM.GetUserTransactions(userId)
 	if err != nil {

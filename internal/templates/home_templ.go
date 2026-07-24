@@ -163,7 +163,7 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div><!-- Active Loans Section --><div class=\"col-span-2 row-span-2 col-start-2 row-start-3 bg-white rounded-xl shadow-md p-5\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-lg font-bold text-gray-700\">Active Loans</h2><span class=\"text-xs font-semibold text-gray-400 bg-gray-100 px-2 py-1 rounded-full\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div><!-- Active Loans Section --><div class=\"col-span-2 row-span-1 col-start-2 row-start-3 bg-white rounded-xl shadow-md p-5\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-lg font-bold text-gray-700\">Active Loans</h2><span class=\"text-xs font-semibold text-gray-400 bg-gray-100 px-2 py-1 rounded-full\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -245,7 +245,7 @@ func Home(incomeMonthAmount float64, expenseMonthAmount float64, accounts []mode
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div><!-- Recent Transactions Section --><div class=\"col-span-3 row-span-3 col-start-4 bg-white rounded-xl shadow-md p-5 flex flex-col overflow-hidden\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-lg font-bold text-gray-700\">Recent Transactions</h2><a href=\"/transaction\" class=\"text-xs text-amber-500 font-semibold hover:underline\">Latest Records</a></div><div class=\"flex-grow overflow-auto\"><table class=\"min-w-full\"><thead><tr class=\"text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100\"><th class=\"pb-2 pr-3\">Date</th><th class=\"pb-2 pr-3\">Description</th><th class=\"pb-2 pr-3\">Category</th><th class=\"pb-2 pr-3\">Account</th><th class=\"pb-2 text-right\">Amount</th></tr></thead> <tbody class=\"divide-y divide-gray-50\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div><!-- Recent Transactions Section --><div class=\"col-span-3 row-span-4 col-start-4 bg-white rounded-xl shadow-md p-5 flex flex-col overflow-hidden\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-lg font-bold text-gray-700\">Recent Transactions</h2><a href=\"/transaction\" class=\"text-xs text-amber-500 font-semibold hover:underline\">Latest Records</a></div><div class=\"flex-grow overflow-auto\"><table class=\"min-w-full\"><thead><tr class=\"text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100\"><th class=\"pb-2 pr-3\">Date</th><th class=\"pb-2 pr-3\">Description</th><th class=\"pb-2 pr-3\">Category</th><th class=\"pb-2 pr-3\">Account</th><th class=\"pb-2 text-right\">Amount</th></tr></thead> <tbody class=\"divide-y divide-gray-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

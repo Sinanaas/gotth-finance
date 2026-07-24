@@ -1,0 +1,71 @@
+name: Go CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gotth_finance
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@v0.2.793
+
+      - name: Generate templ files
+        run: templ generate
+
+      - name: Download dependencies
+        run: go mod download
+
+      - name: Build
+        run: go build -o app ./cmd/main.go
+
+      - name: Test
+        run: go test ./...
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: gotth_finance
+          POSTGRES_PORT: 5432
+          PORT: 8081
+          ACCESS_TOKEN_PRIVATE_KEY: ${{ secrets.ACCESS_TOKEN_PRIVATE_KEY }}
+          ACCESS_TOKEN_PUBLIC_KEY: ${{ secrets.ACCESS_TOKEN_PUBLIC_KEY }}
+          REFRESH_TOKEN_PRIVATE_KEY: ${{ secrets.REFRESH_TOKEN_PRIVATE_KEY }}
+          REFRESH_TOKEN_PUBLIC_KEY: ${{ secrets.REFRESH_TOKEN_PUBLIC_KEY }}
+          ACCESS_TOKEN_EXPIRED_IN: 15m
+          REFRESH_TOKEN_EXPIRED_IN: 24h
+          ACCESS_TOKEN_MAXAGE: 15
+          REFRESH_TOKEN_MAXAGE: 10080
+          SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gotth-finance-binary
+          path: app
+          retention-days: 7

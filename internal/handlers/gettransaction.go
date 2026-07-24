@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type GetTransactionHandler struct {
@@ -23,23 +24,26 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 
 	categories, err := h.BC.GetAllCategories()
 	if err != nil {
-		return
-	}
-
-	transactions, err := h.BC.GetUserTransactions(userId)
-	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
 		return
 	}
 
 	accounts, err := h.BC.GetUserAccounts(userId)
 	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
 		return
 	}
 
-	var transactionType constants.TransactionType
-	transactionTypeArray := transactionType.ToArrayString()
+	transactions, total, err := h.BC.FilterTransactions(userId, "", "", "", "", "", -1, 1, 20)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load transactions"})
+		return
+	}
 
-	c := templates.Transaction(categories, transactions, accounts, transactionTypeArray)
+	var txType constants.TransactionType
+	transactionTypeArray := txType.ToArrayString()
+
+	c := templates.Transaction(categories, transactions, accounts, transactionTypeArray, total)
 	err = templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

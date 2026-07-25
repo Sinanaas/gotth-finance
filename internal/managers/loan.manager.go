@@ -80,10 +80,6 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 	transaction.TransactionDate = transactionDate
 	transaction.AccountID = accountUUID
 
-	if err := m.CalculateBalance(loan.AccountID.String(), loan.Amount, loan.TransactionType); err != nil {
-		tx.Rollback()
-	}
-
 	if err := m.DB.Create(&transaction).Error; err != nil {
 		tx.Rollback()
 	}
@@ -95,7 +91,8 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 	}
 
 	tx.Commit()
-	return nil
+
+	return m.RecalculateAccountBalance(loan.AccountID.String())
 }
 
 func (m *BasicManager) FinishLoan(id string) error {
@@ -135,16 +132,13 @@ func (m *BasicManager) FinishLoan(id string) error {
 	transaction.TransactionDate = time.Now()
 	transaction.AccountID = loan.AccountID
 
-	if err := m.CalculateBalance(loan.AccountID.String(), loan.Amount, transaction.TransactionType); err != nil {
-		tx.Rollback()
-	}
-
 	if err := m.DB.Create(&transaction).Error; err != nil {
 		tx.Rollback()
 	}
 
 	tx.Commit()
-	return nil
+
+	return m.RecalculateAccountBalance(loan.AccountID.String())
 }
 
 func (m *BasicManager) GetUserActiveLoans(id string) ([]models.Loan, error) {

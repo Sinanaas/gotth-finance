@@ -40,15 +40,23 @@ func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) erro
 		AccountID:       accountUUID,
 	}
 
-	err = m.CalculateBalance(payload.Account, transaction.Amount, transaction.TransactionType)
-	if err != nil {
-		return err
+	// Guard overdraft on expense before recording it.
+	if transaction.TransactionType == constants.Expenses {
+		var account models.Account
+		if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
+			return err
+		}
+		if account.Balance < transaction.Amount {
+			return fmt.Errorf("insufficient balance")
+		}
 	}
+
 	if err := m.DB.Create(&transaction).Error; err != nil {
 		return err
 	}
 
-	return nil
+	// Balance is always derived from the transaction set, never mutated incrementally.
+	return m.RecalculateAccountBalance(payload.Account)
 }
 
 func (m *BasicManager) FilterTransactions(userId, startDate, endDate, categoryID, accountID, search string, txType int, page, pageSize int) ([]models.Transaction, int64, error) {
@@ -109,14 +117,6 @@ func (m *BasicManager) GetUserTransactions(userId string) ([]models.Transaction,
 		return nil, err
 	}
 
-	return transactions, nil
-}
-
-func (m *BasicManager) FindAccountTransactions(accountId string) ([]models.Transaction, error) {
-	var transactions []models.Transaction
-	if err := m.DB.Where("account_id = ? AND deleted_at IS NULL", accountId).First(&transactions).Error; err != nil {
-		return []models.Transaction{}, err
-	}
 	return transactions, nil
 }
 

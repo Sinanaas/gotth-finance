@@ -112,19 +112,24 @@ func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
 		return err
 	}
 
-	var total float64
-	for _, transaction := range transactions {
-		if transaction.TransactionType == constants.Income {
-			total += transaction.Amount
-		} else if transaction.TransactionType == constants.Expenses {
-			total -= transaction.Amount
-		}
-	}
-
-	account.Balance = total
+	account.Balance = SumBalance(transactions)
 	if err := m.DB.Save(&account).Error; err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// SumBalance derives an account balance from its transactions: income adds,
+// expense subtracts. This is the single source of truth for balances.
+func SumBalance(transactions []models.Transaction) float64 {
+	var total float64
+	for _, t := range transactions {
+		if t.TransactionType == constants.Income {
+			total += t.Amount
+		} else if t.TransactionType == constants.Expenses {
+			total -= t.Amount
+		}
+	}
+	return total
 }

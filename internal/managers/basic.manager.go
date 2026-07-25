@@ -1,7 +1,6 @@
 package managers
 
 import (
-	"fmt"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/go-co-op/gocron/v2"
@@ -20,33 +19,6 @@ func NewBasicManager(db *gorm.DB, goCRON *gocron.Scheduler) *BasicManager {
 		DB:     db,
 		GoCRON: goCRON,
 	}
-}
-
-func (m *BasicManager) CalculateBalance(accountId string, amount float64, transactionType constants.TransactionType) error {
-	accountUUID, err := uuid.Parse(accountId)
-	if err != nil {
-		return err
-	}
-
-	var account models.Account
-	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
-		return err
-	}
-	_, err = m.FindAccountTransactions(accountId)
-	if transactionType == constants.Income {
-		account.Balance += amount
-	} else if transactionType == constants.Expenses {
-		if account.Balance < amount {
-			return fmt.Errorf("insufficient balance")
-		}
-		account.Balance -= amount
-	}
-
-	if err := m.DB.Save(&account).Error; err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (m *BasicManager) GetUserMonthlyIncome(id string) (float64, error) {

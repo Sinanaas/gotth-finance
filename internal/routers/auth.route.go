@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"time"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/handlers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/middleware"
@@ -17,9 +19,12 @@ func NewAuthRouter(ac *controllers.AuthController, rg *gin.RouterGroup) *AuthRou
 }
 
 func (ar *AuthRouter) AuthRoute(rg *gin.RouterGroup, ac *controllers.AuthController) {
+	// Brute-force guard: 10 attempts per IP per minute on credential endpoints.
+	authLimit := middleware.RateLimit(10, time.Minute)
+
 	rg.GET("/login", handlers.NewGetLoginHandler().ServeHTTP)
-	rg.POST("/login", handlers.NewPostLoginHandler(ac).ServeHTTP)
+	rg.POST("/login", authLimit, handlers.NewPostLoginHandler(ac).ServeHTTP)
 	rg.GET("/register", handlers.NewGetRegisterHandler(ac).ServeHTTP)
-	rg.POST("/register", handlers.NewPostRegisterHandler(ac).ServeHTTP)
+	rg.POST("/register", authLimit, handlers.NewPostRegisterHandler(ac).ServeHTTP)
 	rg.GET("/logout", middleware.DeserializeUser(), handlers.NewGetLogoutHandler(ac).ServeHTTP)
 }

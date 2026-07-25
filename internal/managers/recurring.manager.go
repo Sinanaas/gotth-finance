@@ -84,6 +84,84 @@ func (m *BasicManager) CreateRecurring(payload models.RecurringRequest) error {
 	return nil
 }
 
+func (m *BasicManager) FindUserRecurringById(userId, id string) (models.Recurring, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return models.Recurring{}, err
+	}
+	recUUID, err := uuid.Parse(id)
+	if err != nil {
+		return models.Recurring{}, err
+	}
+	var rec models.Recurring
+	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", recUUID, userUUID).First(&rec).Error; err != nil {
+		return models.Recurring{}, err
+	}
+	return rec, nil
+}
+
+// UpdateRecurring edits the row (scoped to user) and replaces its scheduled job.
+func (m *BasicManager) UpdateRecurring(id string, payload models.RecurringRequest) error {
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+	recUUID, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+	categoryUUID, err := uuid.Parse(payload.CategoryID)
+	if err != nil {
+		return err
+	}
+	accountUUID, err := uuid.Parse(payload.AccountID)
+	if err != nil {
+		return err
+	}
+	startDate, err := time.Parse("2006-01-02", payload.StartDate)
+	if err != nil {
+		return err
+	}
+
+	var recurring models.Recurring
+	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", recUUID, userUUID).First(&recurring).Error; err != nil {
+		return err
+	}
+
+	// Drop the old schedule before applying the new one.
+	if err := m.RemoveCRONJob(recurring, *m.GoCRON); err != nil {
+		return err
+	}
+
+	recurring.Name = payload.Name
+	recurring.StartDate = startDate
+	recurring.Amount = payload.Amount
+	recurring.TransactionType = constants.TransactionType(payload.TransactionType)
+	recurring.Periodicity = constants.Periodicity(payload.Periodicity)
+	recurring.CategoryID = categoryUUID
+	recurring.AccountID = accountUUID
+
+	if err := m.DB.Save(&recurring).Error; err != nil {
+		return err
+	}
+
+	fn := constants.Fn(func() {
+		if err := m.CreateTransaction(models.TransactionRequest{
+			UserID:      payload.UserID,
+			Amount:      payload.Amount,
+			Type:        payload.TransactionType,
+			Description: payload.Name,
+			CategoryID:  payload.CategoryID,
+			Account:     payload.AccountID,
+			Date:        time.Now().Format("2006-01-02"),
+		}); err != nil {
+			log.Errorf(nil, "❌ failed to create recurring transaction: %v", err)
+		}
+	})
+
+	return m.SetUserCRONJob(recurring, *m.GoCRON, fn)
+}
+
 func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring, error) {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {

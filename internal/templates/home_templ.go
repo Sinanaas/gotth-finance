@@ -52,14 +52,14 @@ func Home(
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-6 w-full\"><!-- Hero row: Net Worth --><div class=\"grid grid-cols-4 gap-4\"><!-- Net Worth card (spans 2 cols) --><div class=\"col-span-2 bg-gray-900 rounded-2xl p-6 flex flex-col justify-between shadow-lg\"><p class=\"text-xs font-semibold text-gray-400 uppercase tracking-widest\">Total Net Worth</p><div><p class=\"text-4xl font-extrabold text-white mt-2\">Rp ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex flex-col gap-6 w-full stagger\"><!-- Hero row: Net Worth --><div class=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4\"><!-- Net Worth card (spans 2 cols) --><div class=\"sm:col-span-2 rounded-2xl p-6 flex flex-col justify-between shadow-lg relative overflow-hidden\" style=\"background: radial-gradient(130% 130% at 100% 0%, rgba(184,134,47,0.22), transparent 55%), #1b1712;\"><p class=\"text-xs font-semibold text-brand-300/80 uppercase tracking-[0.2em]\">Total Net Worth</p><div><p class=\"font-display text-5xl font-semibold text-white mt-3 tracking-tight tnum\">Rp ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(totalBalance)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 36, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 36, Col: 104}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -106,27 +106,27 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><a href=\"/accounts\" class=\"mt-4 text-xs text-amber-400 font-semibold hover:underline\">View accounts →</a></div><!-- Income --><a href=\"/transaction\" class=\"bg-white rounded-2xl p-5 shadow flex flex-col justify-between border border-gray-100 hover:shadow-md transition\"><div class=\"flex items-center justify-between\"><p class=\"text-xs font-semibold text-gray-400 uppercase tracking-wide\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><a href=\"/accounts\" class=\"mt-4 text-xs text-brand-400 font-semibold hover:underline\">View accounts →</a></div><!-- Income --><a href=\"/transaction\" class=\"bg-white rounded-2xl p-5 shadow flex flex-col justify-between border border-stone-100 hover:shadow-md transition lift\"><div class=\"flex items-center justify-between\"><p class=\"text-xs font-semibold text-stone-400 uppercase tracking-wide\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 55, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 55, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " Income</p><div class=\"w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center\"><svg class=\"w-4 h-4 text-green-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 11l5-5m0 0l5 5m-5-5v12\"></path></svg></div></div><p class=\"text-2xl font-extrabold text-gray-800 mt-4\">Rp ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, " Income</p><div class=\"w-8 h-8 rounded-xl bg-green-100 flex items-center justify-center\"><svg class=\"w-4 h-4 text-green-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M7 11l5-5m0 0l5 5m-5-5v12\"></path></svg></div></div><p class=\"font-mono text-2xl font-semibold text-stone-800 mt-4 tracking-tight\">Rp ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(incomeMonthAmount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 62, Col: 101}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 62, Col: 126}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -147,27 +147,27 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</a><!-- Expense --><a href=\"/transaction\" class=\"bg-white rounded-2xl p-5 shadow flex flex-col justify-between border border-gray-100 hover:shadow-md transition\"><div class=\"flex items-center justify-between\"><p class=\"text-xs font-semibold text-gray-400 uppercase tracking-wide\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</a><!-- Expense --><a href=\"/transaction\" class=\"bg-white rounded-2xl p-5 shadow flex flex-col justify-between border border-stone-100 hover:shadow-md transition lift\"><div class=\"flex items-center justify-between\"><p class=\"text-xs font-semibold text-stone-400 uppercase tracking-wide\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 73, Col: 82}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 73, Col: 83}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " Expense</p><div class=\"w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center\"><svg class=\"w-4 h-4 text-red-500\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 13l-5 5m0 0l-5-5m5 5V6\"></path></svg></div></div><p class=\"text-2xl font-extrabold text-gray-800 mt-4\">Rp ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, " Expense</p><div class=\"w-8 h-8 rounded-xl bg-red-100 flex items-center justify-center\"><svg class=\"w-4 h-4 text-red-500\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M17 13l-5 5m0 0l-5-5m5 5V6\"></path></svg></div></div><p class=\"font-mono text-2xl font-semibold text-stone-800 mt-4 tracking-tight\">Rp ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(expenseMonthAmount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 80, Col: 102}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 80, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -188,32 +188,32 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</a></div><!-- Account cards row --><div><div class=\"flex items-center justify-between mb-3\"><h2 class=\"text-sm font-bold text-gray-700\">Accounts</h2><a href=\"/accounts\" class=\"text-xs text-amber-500 font-semibold hover:underline\">Manage →</a></div><div class=\"flex gap-3 overflow-x-auto pb-1\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</a></div><!-- Account cards row --><div><div class=\"flex items-center justify-between mb-3\"><h2 class=\"text-base font-semibold font-display text-stone-800\">Accounts</h2><a href=\"/accounts\" class=\"text-xs text-brand-500 font-semibold hover:underline\">Manage →</a></div><div class=\"flex gap-3 overflow-x-auto pb-1\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, account := range accounts {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<a href=\"/accounts\" class=\"bg-white rounded-2xl p-4 shadow border border-gray-100 flex flex-col gap-2 min-w-44 hover:shadow-md transition shrink-0\"><div class=\"flex items-center gap-2\"><span class=\"w-2.5 h-2.5 rounded-full bg-amber-400 inline-block\"></span> <span class=\"text-xs font-semibold text-gray-500 truncate max-w-32\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<a href=\"/accounts\" class=\"bg-white rounded-2xl p-4 shadow border border-stone-100 flex flex-col gap-2 min-w-44 hover:shadow-md transition lift shrink-0\"><div class=\"flex items-center gap-2\"><span class=\"w-2.5 h-2.5 rounded-full bg-brand-400 inline-block\"></span> <span class=\"text-xs font-semibold text-stone-500 truncate max-w-32\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 100, Col: 87}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 100, Col: 88}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span></div><p class=\"text-base font-extrabold text-gray-800\">Rp ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</span></div><p class=\"font-mono text-base font-semibold text-stone-800\">Rp ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(account.Balance))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 102, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 102, Col: 106}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -225,12 +225,12 @@ func Home(
 			}
 		}
 		if len(accounts) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<a href=\"/accounts\" class=\"bg-white rounded-2xl p-4 shadow border border-dashed border-gray-200 flex flex-col items-center justify-center min-w-44 min-h-20 hover:border-amber-400 transition shrink-0\"><span class=\"text-lg text-gray-300\">+</span> <span class=\"text-xs text-gray-400 font-medium mt-1\">Add account</span></a>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<a href=\"/accounts\" class=\"bg-white rounded-2xl p-4 shadow border border-dashed border-stone-200 flex flex-col items-center justify-center min-w-44 min-h-20 hover:border-brand-400 transition shrink-0\"><span class=\"text-lg text-stone-300\">+</span> <span class=\"text-xs text-stone-400 font-medium mt-1\">Add account</span></a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div><!-- Main content: chart + transactions + right column --><div class=\"grid grid-cols-3 gap-4\"><!-- Cash flow chart (2 cols) --><div class=\"col-span-2 bg-white rounded-2xl shadow p-5 border border-gray-100\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-sm font-bold text-gray-700\">6-Month Cash Flow</h2><div class=\"flex items-center gap-3 text-xs text-gray-400\"><span class=\"flex items-center gap-1\"><span class=\"w-2 h-2 rounded-full bg-green-400 inline-block\"></span>Income</span> <span class=\"flex items-center gap-1\"><span class=\"w-2 h-2 rounded-full bg-red-400 inline-block\"></span>Expense</span></div></div><!-- Chart data passed via data attributes --><div id=\"chart-data\" data-labels=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div><!-- Main content: chart + transactions + right column --><div class=\"grid grid-cols-1 lg:grid-cols-3 gap-4\"><!-- Cash flow chart (2 cols) --><div class=\"lg:col-span-2 bg-white rounded-2xl shadow p-5 border border-stone-100\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-base font-semibold font-display text-stone-800\">6-Month Cash Flow</h2><div class=\"flex items-center gap-3 text-xs text-stone-400\"><span class=\"flex items-center gap-1\"><span class=\"w-2 h-2 rounded-full bg-green-400 inline-block\"></span>Income</span> <span class=\"flex items-center gap-1\"><span class=\"w-2 h-2 rounded-full bg-red-400 inline-block\"></span>Expense</span></div></div><!-- Chart data passed via data attributes --><div id=\"chart-data\" data-labels=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -269,12 +269,12 @@ func Home(
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" class=\"hidden\"></div><canvas id=\"cashflow-chart\" height=\"120\"></canvas><script>\n\t\t\t\t(function() {\n\t\t\t\t\tvar el = document.getElementById('chart-data');\n\t\t\t\t\tvar labels = JSON.parse(el.dataset.labels);\n\t\t\t\t\tvar income = JSON.parse(el.dataset.income);\n\t\t\t\t\tvar expense = JSON.parse(el.dataset.expense);\n\t\t\t\t\tvar ctx = document.getElementById('cashflow-chart').getContext('2d');\n\t\t\t\t\tnew Chart(ctx, {\n\t\t\t\t\t\ttype: 'bar',\n\t\t\t\t\t\tdata: {\n\t\t\t\t\t\t\tlabels: labels,\n\t\t\t\t\t\t\tdatasets: [\n\t\t\t\t\t\t\t\t{ label: 'Income', data: income, backgroundColor: 'rgba(74,222,128,0.7)', borderRadius: 4 },\n\t\t\t\t\t\t\t\t{ label: 'Expense', data: expense, backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 4 }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\toptions: {\n\t\t\t\t\t\t\tresponsive: true,\n\t\t\t\t\t\t\tplugins: { legend: { display: false } },\n\t\t\t\t\t\t\tscales: {\n\t\t\t\t\t\t\t\tx: { grid: { display: false }, ticks: { font: { size: 11 } } },\n\t\t\t\t\t\t\t\ty: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 11 }, callback: function(v){ return 'Rp '+v.toLocaleString('id-ID'); } } }\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t})();\n\t\t\t</script></div><!-- Right column: top categories + active loans --><div class=\"flex flex-col gap-4\"><!-- Top spending categories --><div class=\"bg-white rounded-2xl shadow p-5 border border-gray-100\"><h2 class=\"text-sm font-bold text-gray-700 mb-3\">Top Spending</h2>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "\" class=\"hidden\"></div><canvas id=\"cashflow-chart\" height=\"120\"></canvas><script>\n\t\t\t\t(function() {\n\t\t\t\t\tvar el = document.getElementById('chart-data');\n\t\t\t\t\tvar labels = JSON.parse(el.dataset.labels);\n\t\t\t\t\tvar income = JSON.parse(el.dataset.income);\n\t\t\t\t\tvar expense = JSON.parse(el.dataset.expense);\n\t\t\t\t\tvar ctx = document.getElementById('cashflow-chart').getContext('2d');\n\t\t\t\t\tnew Chart(ctx, {\n\t\t\t\t\t\ttype: 'bar',\n\t\t\t\t\t\tdata: {\n\t\t\t\t\t\t\tlabels: labels,\n\t\t\t\t\t\t\tdatasets: [\n\t\t\t\t\t\t\t\t{ label: 'Income', data: income, backgroundColor: 'rgba(74,222,128,0.7)', borderRadius: 4 },\n\t\t\t\t\t\t\t\t{ label: 'Expense', data: expense, backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 4 }\n\t\t\t\t\t\t\t]\n\t\t\t\t\t\t},\n\t\t\t\t\t\toptions: {\n\t\t\t\t\t\t\tresponsive: true,\n\t\t\t\t\t\t\tplugins: { legend: { display: false } },\n\t\t\t\t\t\t\tscales: {\n\t\t\t\t\t\t\t\tx: { grid: { display: false }, ticks: { font: { size: 11 } } },\n\t\t\t\t\t\t\t\ty: { grid: { color: '#ece5d8' }, ticks: { font: { size: 11 }, callback: function(v){ return 'Rp '+v.toLocaleString('id-ID'); } } }\n\t\t\t\t\t\t\t}\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t})();\n\t\t\t</script></div><!-- Right column: top categories + active loans --><div class=\"flex flex-col gap-4\"><!-- Top spending categories --><div class=\"bg-white rounded-2xl shadow p-5 border border-stone-100\"><h2 class=\"text-base font-semibold font-display text-stone-800 mb-3\">Top Spending</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(topCategories) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<p class=\"text-xs text-gray-400 text-center py-4\">No data yet</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<p class=\"text-xs text-stone-400 text-center py-4\">No data yet</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -284,27 +284,27 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 			for _, cat := range topCategories {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"flex items-center justify-between\"><span class=\"text-xs text-gray-600 font-medium truncate max-w-28\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"flex items-center justify-between\"><span class=\"text-xs text-stone-600 font-medium truncate max-w-28\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(cat.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 175, Col: 82}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 175, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</span> <span class=\"text-xs font-bold text-gray-800 whitespace-nowrap\">Rp ")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</span> <span class=\"text-xs font-bold font-mono text-stone-800 whitespace-nowrap\">Rp ")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(cat.Total))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 176, Col: 106}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 176, Col: 117}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -320,14 +320,14 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><!-- Active loans summary --><div class=\"bg-white rounded-2xl shadow p-5 border border-gray-100\"><div class=\"flex items-center justify-between mb-3\"><h2 class=\"text-sm font-bold text-gray-700\">Active Loans</h2><span class=\"text-xs text-gray-400\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "</div><!-- Active loans summary --><div class=\"bg-white rounded-2xl shadow p-5 border border-stone-100\"><div class=\"flex items-center justify-between mb-3\"><h2 class=\"text-base font-semibold font-display text-stone-800\">Active Loans</h2><span class=\"text-xs text-stone-400\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", len(loans)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 187, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 187, Col: 73}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -338,7 +338,7 @@ func Home(
 			return templ_7745c5c3_Err
 		}
 		if len(loans) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<p class=\"text-xs text-gray-400 text-center py-2\">No active loans</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<p class=\"text-xs text-stone-400 text-center py-2\">No active loans</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -348,14 +348,14 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 			for _, loan := range loans {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<a href=\"/loans\" class=\"flex items-center justify-between py-1 hover:opacity-80 transition\"><span class=\"text-xs text-gray-600 font-medium truncate max-w-24\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<a href=\"/loans\" class=\"flex items-center justify-between py-1 hover:opacity-80 transition\"><span class=\"text-xs text-stone-600 font-medium truncate max-w-24\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(loan.ToWhom)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 195, Col: 85}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 195, Col: 86}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -366,14 +366,14 @@ func Home(
 					return templ_7745c5c3_Err
 				}
 				if loan.TransactionType == constants.Income {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"text-xs font-bold text-red-500\">-Rp ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<span class=\"text-xs font-bold font-mono text-red-500\">-Rp ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(loan.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 197, Col: 90}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 197, Col: 100}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -384,14 +384,14 @@ func Home(
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<span class=\"text-xs font-bold text-green-600\">+Rp ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<span class=\"text-xs font-bold font-mono text-green-600\">+Rp ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var19 string
 					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(loan.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 199, Col: 92}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 199, Col: 102}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 					if templ_7745c5c3_Err != nil {
@@ -412,17 +412,17 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</div></div></div><!-- Bottom: recent transactions + upcoming recurring --><div class=\"grid grid-cols-3 gap-4\"><!-- Recent transactions (2 cols) --><div class=\"col-span-2 bg-white rounded-2xl shadow p-5 border border-gray-100\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-sm font-bold text-gray-700\">Recent Transactions</h2><a href=\"/transaction\" class=\"text-xs text-amber-500 font-semibold hover:underline\">View all →</a></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</div></div></div><!-- Bottom: recent transactions + upcoming recurring --><div class=\"grid grid-cols-1 lg:grid-cols-3 gap-4\"><!-- Recent transactions (2 cols) --><div class=\"lg:col-span-2 bg-white rounded-2xl shadow p-5 border border-stone-100\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-base font-semibold font-display text-stone-800\">Recent Transactions</h2><a href=\"/transaction\" class=\"text-xs text-brand-500 font-semibold hover:underline\">View all →</a></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(transactions) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"flex flex-col items-center gap-2 py-6\"><svg class=\"w-8 h-8 text-gray-300\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2\"></path></svg><p class=\"text-xs text-gray-400\">No transactions yet</p><a href=\"/transaction\" class=\"text-xs text-amber-500 font-semibold hover:underline\">Add first transaction →</a></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "<div class=\"flex flex-col items-center gap-2 py-6\"><svg class=\"w-8 h-8 text-stone-300\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2\"></path></svg><p class=\"text-xs text-stone-400\">No transactions yet</p><a href=\"/transaction\" class=\"text-xs text-brand-500 font-semibold hover:underline\">Add first transaction →</a></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"flex flex-col divide-y divide-gray-50\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 46, "<div class=\"flex flex-col divide-y divide-stone-50\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -442,27 +442,27 @@ func Home(
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<div><p class=\"text-xs font-semibold text-gray-700\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "<div><p class=\"text-xs font-semibold text-stone-700\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var20 string
 				templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(t.Description)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 241, Col: 69}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 241, Col: 70}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</p><p class=\"text-xs text-gray-400\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</p><p class=\"text-xs text-stone-400\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var21 string
 				templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(t.TransactionDate.Format("02 Jan '06"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 242, Col: 80}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 242, Col: 81}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 				if templ_7745c5c3_Err != nil {
@@ -475,7 +475,7 @@ func Home(
 				var templ_7745c5c3_Var22 string
 				templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(t.Category.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 242, Col: 103}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 242, Col: 104}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 				if templ_7745c5c3_Err != nil {
@@ -486,14 +486,14 @@ func Home(
 					return templ_7745c5c3_Err
 				}
 				if t.TransactionType == constants.Income {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<span class=\"text-sm font-bold text-green-600 whitespace-nowrap\">+Rp ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<span class=\"text-sm font-bold font-mono text-green-600 whitespace-nowrap\">+Rp ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var23 string
 					templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(t.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 246, Col: 106}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 246, Col: 116}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 					if templ_7745c5c3_Err != nil {
@@ -504,14 +504,14 @@ func Home(
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<span class=\"text-sm font-bold text-red-500 whitespace-nowrap\">-Rp ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "<span class=\"text-sm font-bold font-mono text-red-500 whitespace-nowrap\">-Rp ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var24 string
 					templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(t.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 248, Col: 104}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 248, Col: 114}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 					if templ_7745c5c3_Err != nil {
@@ -532,12 +532,12 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</div><!-- Upcoming recurring --><div class=\"bg-white rounded-2xl shadow p-5 border border-gray-100\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-sm font-bold text-gray-700\">Upcoming</h2><a href=\"/recurring\" class=\"text-xs text-amber-500 font-semibold hover:underline\">Manage →</a></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "</div><!-- Upcoming recurring --><div class=\"bg-white rounded-2xl shadow p-5 border border-stone-100\"><div class=\"flex items-center justify-between mb-4\"><h2 class=\"text-base font-semibold font-display text-stone-800\">Upcoming</h2><a href=\"/recurring\" class=\"text-xs text-brand-500 font-semibold hover:underline\">Manage →</a></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(recurrings) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<div class=\"flex flex-col items-center gap-2 py-6\"><svg class=\"w-8 h-8 text-gray-300\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\"></path></svg><p class=\"text-xs text-gray-400\">No recurring payments</p></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<div class=\"flex flex-col items-center gap-2 py-6\"><svg class=\"w-8 h-8 text-stone-300\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15\"></path></svg><p class=\"text-xs text-stone-400\">No recurring payments</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -547,27 +547,27 @@ func Home(
 				return templ_7745c5c3_Err
 			}
 			for _, r := range recurrings {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<a href=\"/recurring\" class=\"flex items-center justify-between bg-gray-50 hover:bg-amber-50 rounded-xl px-3 py-2.5 transition\"><div><p class=\"text-xs font-semibold text-gray-700\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "<a href=\"/recurring\" class=\"flex items-center justify-between bg-stone-50 hover:bg-brand-50 rounded-xl px-3 py-2.5 transition\"><div><p class=\"text-xs font-semibold text-stone-700\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var25 string
 				templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(r.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 274, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 274, Col: 62}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</p><p class=\"text-xs text-gray-400 mt-0.5\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</p><p class=\"text-xs text-stone-400 mt-0.5\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var26 string
 				templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d days", utils.GetRecurringDays(r.StartDate, r.Periodicity)))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 275, Col: 122}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 275, Col: 123}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 				if templ_7745c5c3_Err != nil {
@@ -578,14 +578,14 @@ func Home(
 					return templ_7745c5c3_Err
 				}
 				if r.TransactionType == constants.Income {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<span class=\"text-xs font-bold text-green-600 whitespace-nowrap\">+Rp ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "<span class=\"text-xs font-bold font-mono text-green-600 whitespace-nowrap\">+Rp ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var27 string
 					templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(r.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 278, Col: 106}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 278, Col: 116}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 					if templ_7745c5c3_Err != nil {
@@ -596,14 +596,14 @@ func Home(
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<span class=\"text-xs font-bold text-red-500 whitespace-nowrap\">-Rp ")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "<span class=\"text-xs font-bold font-mono text-red-500 whitespace-nowrap\">-Rp ")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 					var templ_7745c5c3_Var28 string
 					templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(utils.FormatCurrency(r.Amount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 280, Col: 104}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/home.templ`, Line: 280, Col: 114}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 					if templ_7745c5c3_Err != nil {

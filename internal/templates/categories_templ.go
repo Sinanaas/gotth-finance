@@ -32,92 +32,162 @@ func Categories(categories []models.Category) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full h-full flex gap-6 p-4\"><!-- Left: Add Category Form --><div class=\"w-80 shrink-0\"><form hx-post=\"/categories\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex flex-col bg-white rounded-xl shadow-md p-6 gap-4\"><h2 class=\"text-lg font-bold text-gray-700 border-b border-gray-100 pb-3\">Add Category</h2><!-- Name --><div class=\"flex flex-col gap-1.5\"><label for=\"name\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Name</label> <input type=\"text\" name=\"Name\" id=\"name\" placeholder=\"Category name\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required oninvalid=\"this.setCustomValidity('Please enter a category name.')\" oninput=\"this.setCustomValidity('')\"></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label for=\"description\" class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" id=\"description\" placeholder=\"Short description\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\"></div><button type=\"submit\" class=\"mt-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow transition text-sm\">&#10133; Add Category</button></form></div><!-- Right: Categories Table --><div class=\"flex-1 flex flex-col min-h-0\"><div class=\"bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-100\"><h2 class=\"text-lg font-bold text-gray-700\">All Categories</h2><p class=\"text-xs text-gray-400\">System categories are read-only</p></div><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100\"><th class=\"px-6 py-3\">Name</th><th class=\"px-6 py-3\">Description</th><th class=\"px-6 py-3\">Type</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody class=\"divide-y divide-gray-50\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full h-full p-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = CategoriesPanel(categories).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = addCategoryModal().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func addCategoryModal() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var2 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var2 == nil {
+			templ_7745c5c3_Var2 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div id=\"category-modal\" data-modal class=\"fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in\" onclick=\"if(event.target===this)closeModal('category-modal')\"><div class=\"bg-white rounded-2xl shadow-soft w-full max-w-md animate-pop-in overflow-hidden\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-stone-100\"><h2 class=\"text-base font-semibold font-display text-stone-800\">New Category</h2><button type=\"button\" onclick=\"closeModal('category-modal')\" class=\"text-stone-400 hover:text-stone-600 transition\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><form hx-post=\"/categories\" hx-trigger=\"submit\" hx-target=\"#categories-panel\" hx-swap=\"outerHTML\" hx-encoding=\"application/x-www-form-urlencoded\" hx-on::after-request=\"if(event.detail.successful){ closeModal('category-modal'); this.reset(); }\" class=\"px-6 py-5 flex flex-col gap-4\"><div class=\"flex flex-col gap-1.5\"><label for=\"name\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Name</label> <input type=\"text\" name=\"Name\" id=\"name\" placeholder=\"Category name\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required oninvalid=\"this.setCustomValidity('Please enter a category name.')\" oninput=\"this.setCustomValidity('')\"></div><div class=\"flex flex-col gap-1.5\"><label for=\"description\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" id=\"description\" placeholder=\"Short description\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\"></div><div class=\"flex gap-3 pt-1\"><button type=\"button\" onclick=\"closeModal('category-modal')\" class=\"flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow transition\">Add Category</button></div></form></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func CategoriesPanel(categories []models.Category) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"flex flex-col min-h-0 h-full animate-fade-in\" id=\"categories-panel\"><div class=\"bg-white rounded-xl shadow-card flex flex-col h-full overflow-hidden\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-stone-100\"><div><h2 class=\"text-lg font-semibold font-display text-stone-800\">All Categories</h2><p class=\"text-xs text-stone-400 mt-0.5\">System categories are read-only</p></div><button type=\"button\" onclick=\"openModal('category-modal')\" class=\"flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg shadow transition\"><svg class=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg> New Category</button></div><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-stone-400 uppercase tracking-wider border-b border-stone-100\"><th class=\"px-6 py-3\">Name</th><th class=\"px-6 py-3\">Description</th><th class=\"px-6 py-3\">Type</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody class=\"divide-y divide-stone-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if len(categories) == 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<tr><td colspan=\"4\" class=\"px-6 py-14 text-center\"><div class=\"flex flex-col items-center gap-2\"><svg class=\"w-10 h-10 text-gray-300\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z\"></path></svg><p class=\"text-sm text-gray-400 font-medium\">No categories yet</p><p class=\"text-xs text-gray-300\">Add a custom category using the form on the left</p></div></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<tr><td colspan=\"4\" class=\"px-6 py-14 text-center\"><div class=\"flex flex-col items-center gap-2\"><svg class=\"w-10 h-10 text-stone-300\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.5\" d=\"M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z\"></path></svg><p class=\"text-sm text-stone-400 font-medium\">No categories yet</p><p class=\"text-xs text-stone-300\">Add a custom category with the button above</p></div></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		for _, category := range categories {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<tr class=\"hover:bg-gray-50 transition\"><td class=\"px-6 py-3\"><div class=\"flex items-center gap-2\"><span class=\"w-1.5 h-5 rounded-full bg-amber-400 inline-block\"></span> <span class=\"text-sm font-semibold text-gray-700\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<tr class=\"hover:bg-stone-50 transition\"><td class=\"px-6 py-3\"><div class=\"flex items-center gap-2\"><span class=\"w-1.5 h-5 rounded-full bg-brand-400 inline-block\"></span> <span class=\"text-sm font-semibold text-stone-700\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/categories.templ`, Line: 85, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/categories.templ`, Line: 114, Col: 76}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></div></td><td class=\"px-6 py-3 text-sm text-gray-500\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(category.Description)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/categories.templ`, Line: 88, Col: 75}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div></td><td class=\"px-6 py-3 text-sm text-stone-500\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</td><td class=\"px-6 py-3\">")
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(category.Description)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/categories.templ`, Line: 117, Col: 75}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</td><td class=\"px-6 py-3\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if category.UserID == nil {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<span class=\"text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 font-semibold\">System</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span class=\"text-xs px-2 py-0.5 rounded-full bg-stone-100 text-stone-500 font-semibold\">System</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<span class=\"text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold\">Custom</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<span class=\"text-xs px-2 py-0.5 rounded-full bg-brand-100 text-brand-700 font-semibold\">Custom</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</td><td class=\"px-6 py-3 whitespace-nowrap sticky right-0 bg-white shadow-sm\"><div class=\"flex items-center justify-center gap-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</td><td class=\"px-6 py-3 whitespace-nowrap sticky right-0 bg-white shadow-sm\"><div class=\"flex items-center justify-center gap-2\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if category.UserID != nil {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<form hx-delete=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<form hx-delete=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/categories/%s", category.ID))
+				var templ_7745c5c3_Var6 string
+				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/categories/%s", category.ID))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/categories.templ`, Line: 100, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/categories.templ`, Line: 129, Col: 66}
 				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-swap=\"none\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Category?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><button type=\"submit\" class=\"text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50\" title=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"></polyline> <path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"></path> <path d=\"M10 11v6M14 11v6\"></path> <path d=\"M9 6V4h6v2\"></path></svg></button></form>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "\" hx-trigger=\"submit\" hx-target=\"#categories-panel\" hx-swap=\"outerHTML\" hx-encoding=\"application/x-www-form-urlencoded\" class=\"flex justify-center mb-0\" confirm-with-sweet-alert=\"true\" swal-title=\"Delete Category?\" swal-text=\"This action is irreversible!\" swal-icon=\"error\" swal-buttons=\"true\" swal-danger=\"true\"><button type=\"submit\" class=\"text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50\" title=\"Delete\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"w-4 h-4\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"></polyline> <path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"></path> <path d=\"M10 11v6M14 11v6\"></path> <path d=\"M9 6V4h6v2\"></path></svg></button></form>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span class=\"text-xs text-gray-300 px-2\">—</span>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<span class=\"text-xs text-stone-300 px-2\">—</span>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div></td></tr>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</div></td></tr>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</tbody></table></div></div></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</tbody></table></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

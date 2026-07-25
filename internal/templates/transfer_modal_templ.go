@@ -32,7 +32,7 @@ func TransferModal(accounts []models.Account) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"transfer-modal-backdrop\" class=\"fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm\" onclick=\"if(event.target===this)document.getElementById('transfer-modal-backdrop').remove()\"><div class=\"bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden\" onclick=\"event.stopPropagation()\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-100\"><h2 class=\"text-base font-bold text-gray-800\">Transfer Between Accounts</h2><button type=\"button\" class=\"text-gray-400 hover:text-gray-600 transition\" onclick=\"document.getElementById('transfer-modal-backdrop').remove()\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><form hx-post=\"/accounts/transfer\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-on::after-request=\"if(event.detail.successful){document.getElementById('transfer-modal-backdrop').remove();window.location.href='/accounts'}\" class=\"px-6 py-5 flex flex-col gap-4\"><!-- From Account --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">From Account</label> <select name=\"FromAccount\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required><option disabled selected value>Select source account...</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"transfer-modal-backdrop\" class=\"fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm animate-fade-in\" onclick=\"if(event.target===this)document.getElementById('transfer-modal-backdrop').remove()\"><div class=\"bg-white rounded-2xl shadow-2xl w-full max-w-md animate-pop-in mx-4 overflow-hidden\" onclick=\"event.stopPropagation()\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-stone-100\"><h2 class=\"text-base font-semibold font-display text-stone-800\">Transfer Between Accounts</h2><button type=\"button\" class=\"text-stone-400 hover:text-stone-600 transition\" onclick=\"document.getElementById('transfer-modal-backdrop').remove()\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><form hx-post=\"/accounts/transfer\" hx-trigger=\"submit\" hx-target=\"#accounts-panel\" hx-swap=\"outerHTML\" hx-encoding=\"application/x-www-form-urlencoded\" hx-on::after-request=\"if(event.detail.successful) document.getElementById('transfer-modal-backdrop').remove()\" class=\"px-6 py-5 flex flex-col gap-4\"><!-- From Account --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">From Account</label> <select name=\"FromAccount\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" required><option disabled selected value>Select source account...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -44,7 +44,7 @@ func TransferModal(accounts []models.Account) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 42, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 44, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -57,7 +57,7 @@ func TransferModal(accounts []models.Account) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 42, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 44, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -68,7 +68,7 @@ func TransferModal(accounts []models.Account) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</select></div><!-- To Account --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">To Account</label> <select name=\"ToAccount\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required><option disabled selected value>Select destination account...</option> ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</select></div><!-- To Account --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">To Account</label> <select name=\"ToAccount\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" required><option disabled selected value>Select destination account...</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,7 +80,7 @@ func TransferModal(accounts []models.Account) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 57, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 59, Col: 50}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -93,7 +93,7 @@ func TransferModal(accounts []models.Account) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 57, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transfer_modal.templ`, Line: 59, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -104,7 +104,7 @@ func TransferModal(accounts []models.Account) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select></div><!-- Amount --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Amount</label><div class=\"flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-amber-400\"><span class=\"px-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 py-2\">Rp.</span> <input type=\"number\" name=\"Amount\" placeholder=\"0\" class=\"flex-1 p-2 text-sm outline-none\" min=\"1\" required></div></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Description (optional)</label> <input type=\"text\" name=\"Description\" placeholder=\"e.g. Moving funds to savings\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\"></div><!-- Date --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required></div><div class=\"flex gap-3 pt-2\"><button type=\"button\" onclick=\"document.getElementById('transfer-modal-backdrop').remove()\" class=\"flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold shadow transition\">Transfer</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</select></div><!-- Amount --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Amount</label><div class=\"flex items-center border border-stone-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-brand-400\"><span class=\"px-3 text-sm text-stone-400 bg-stone-50 border-r border-stone-200 py-2\">Rp.</span> <input type=\"number\" name=\"Amount\" placeholder=\"0\" class=\"flex-1 p-2 text-sm outline-none\" min=\"1\" required></div></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Description (optional)</label> <input type=\"text\" name=\"Description\" placeholder=\"e.g. Moving funds to savings\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\"></div><!-- Date --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required></div><div class=\"flex gap-3 pt-2\"><button type=\"button\" onclick=\"document.getElementById('transfer-modal-backdrop').remove()\" class=\"flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold shadow transition\">Transfer</button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

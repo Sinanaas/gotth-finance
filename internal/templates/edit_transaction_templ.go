@@ -34,7 +34,7 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"edit-modal-backdrop\" class=\"fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm\" onclick=\"if(event.target===this)document.getElementById('edit-modal-backdrop').remove()\"><div class=\"bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden\" onclick=\"event.stopPropagation()\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-gray-100\"><h2 class=\"text-base font-bold text-gray-800\">Edit Transaction</h2><button type=\"button\" class=\"text-gray-400 hover:text-gray-600 transition\" onclick=\"document.getElementById('edit-modal-backdrop').remove()\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><!-- Form --><form hx-patch=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"edit-modal-backdrop\" class=\"fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm animate-fade-in\" onclick=\"if(event.target===this)document.getElementById('edit-modal-backdrop').remove()\"><div class=\"bg-white rounded-2xl shadow-2xl w-full max-w-md animate-pop-in mx-4 overflow-hidden\" onclick=\"event.stopPropagation()\"><!-- Header --><div class=\"flex items-center justify-between px-6 py-4 border-b border-stone-100\"><h2 class=\"text-base font-semibold font-display text-stone-800\">Edit Transaction</h2><button type=\"button\" class=\"text-stone-400 hover:text-stone-600 transition\" onclick=\"document.getElementById('edit-modal-backdrop').remove()\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><!-- Form --><form hx-patch=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,20 +47,20 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"submit\" hx-encoding=\"application/x-www-form-urlencoded\" hx-on::after-request=\"document.getElementById('edit-modal-backdrop').remove()\" class=\"px-6 py-5 flex flex-col gap-4\"><input type=\"hidden\" name=\"OldAccountID\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-trigger=\"submit\" hx-target=\"#tx-table-body\" hx-swap=\"innerHTML\" hx-encoding=\"application/x-www-form-urlencoded\" hx-on::after-request=\"if(event.detail.successful) document.getElementById('edit-modal-backdrop').remove()\" class=\"px-6 py-5 flex flex-col gap-4\"><input type=\"hidden\" name=\"OldAccountID\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", transaction.AccountID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 36, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 38, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><!-- Type --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Type</label><div class=\"flex rounded-lg overflow-hidden border border-gray-200\"><label class=\"flex-1 cursor-pointer text-center\"><input type=\"radio\" name=\"Type\" value=\"0\" class=\"hidden peer\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><!-- Type --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Type</label><div class=\"flex rounded-lg overflow-hidden border border-stone-200\"><label class=\"flex-1 cursor-pointer text-center\"><input type=\"radio\" name=\"Type\" value=\"0\" class=\"hidden peer\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -70,7 +70,7 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "> <span class=\"block py-2 text-xs font-semibold text-gray-500 peer-checked:bg-amber-500 peer-checked:text-white hover:bg-gray-50 transition-colors select-none\">Expense</span></label> <label class=\"flex-1 cursor-pointer text-center\"><input type=\"radio\" name=\"Type\" value=\"1\" class=\"hidden peer\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "> <span class=\"block py-2 text-xs font-semibold text-stone-500 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-stone-50 transition-colors select-none\">Expense</span></label> <label class=\"flex-1 cursor-pointer text-center\"><input type=\"radio\" name=\"Type\" value=\"1\" class=\"hidden peer\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -80,33 +80,33 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "> <span class=\"block py-2 text-xs font-semibold text-gray-500 peer-checked:bg-amber-500 peer-checked:text-white hover:bg-gray-50 transition-colors select-none\">Income</span></label></div></div><!-- Amount --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Amount</label><div class=\"flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-amber-400\"><span class=\"px-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 py-2\">Rp.</span> <input type=\"number\" name=\"Amount\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "> <span class=\"block py-2 text-xs font-semibold text-stone-500 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-stone-50 transition-colors select-none\">Income</span></label></div></div><!-- Amount --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Amount</label><div class=\"flex items-center border border-stone-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-brand-400\"><span class=\"px-3 text-sm text-stone-400 bg-stone-50 border-r border-stone-200 py-2\">Rp.</span> <input type=\"number\" name=\"Amount\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.FormatFloat(transaction.Amount, 'f', 0, 64))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 77, Col: 65}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 79, Col: 65}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"flex-1 p-2 text-sm outline-none\" min=\"0\" required></div></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" class=\"flex-1 p-2 text-sm outline-none\" min=\"0\" required></div></div><!-- Description --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(transaction.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 91, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 93, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required></div><!-- Category --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Category</label> <select name=\"Category\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required></div><!-- Category --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Category</label> <select name=\"Category\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" required>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -118,7 +118,7 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", category.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 107, Col: 44}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 109, Col: 44}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -141,7 +141,7 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 111, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 113, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -152,7 +152,7 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</select></div><!-- Account --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white\" required>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</select></div><!-- Account --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" required>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -164,7 +164,7 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 126, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 128, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -187,7 +187,7 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 130, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 132, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -198,20 +198,20 @@ func EditTransactionModal(transaction models.Transaction, categories []models.Ca
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</select></div><!-- Date --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-gray-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" value=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</select></div><!-- Date --><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(transaction.TransactionDate.Format("2006-01-02"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 141, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/edit_transaction.templ`, Line: 143, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" class=\"rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400\" required></div><!-- Actions --><div class=\"flex gap-3 pt-2\"><button type=\"button\" onclick=\"document.getElementById('edit-modal-backdrop').remove()\" class=\"flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold shadow transition\">Save Changes</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required></div><!-- Actions --><div class=\"flex gap-3 pt-2\"><button type=\"button\" onclick=\"document.getElementById('edit-modal-backdrop').remove()\" class=\"flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-white text-sm font-semibold shadow transition\">Save Changes</button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

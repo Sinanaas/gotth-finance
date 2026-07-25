@@ -25,7 +25,7 @@ func (h *PostFinishLoanHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.BM.FinishLoan(loanId); err != nil {
+	if err := h.BM.FinishLoan(loanId, userId); err != nil {
 		swalError(ctx, err.Error())
 		return
 	}

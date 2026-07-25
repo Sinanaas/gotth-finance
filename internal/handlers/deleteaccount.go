@@ -25,7 +25,7 @@ func (h *DeleteAccountHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.BM.DeleteAccountById(accountId); err != nil {
+	if err := h.BM.DeleteAccountById(accountId, userId); err != nil {
 		swalError(ctx, "Failed to delete account")
 		return
 	}

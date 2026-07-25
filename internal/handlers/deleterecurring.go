@@ -25,7 +25,7 @@ func (h *DeleteRecurringHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.BM.DeleteRecurringById(recurringId); err != nil {
+	if err := h.BM.DeleteRecurringById(recurringId, userId); err != nil {
 		swalError(ctx, "Failed to delete recurring payment")
 		return
 	}

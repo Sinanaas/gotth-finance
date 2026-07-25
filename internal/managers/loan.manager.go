@@ -85,13 +85,17 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 	return m.RecalculateAccountBalance(loan.AccountID.String())
 }
 
-func (m *BasicManager) FinishLoan(id string) error {
+func (m *BasicManager) FinishLoan(id, userId string) error {
 	loanUUID, err := uuid.Parse(id)
 	if err != nil {
 		return err
 	}
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
 	var loan models.Loan
-	if err := m.DB.Where("id = ?", loanUUID).First(&loan).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", loanUUID, userUUID).First(&loan).Error; err != nil {
 		return err
 	}
 
@@ -138,18 +142,22 @@ func (m *BasicManager) GetUserActiveLoans(id string) ([]models.Loan, error) {
 	return loans, nil
 }
 
-func (m *BasicManager) DeleteLoanById(loadId string) error {
+func (m *BasicManager) DeleteLoanById(loadId, userId string) error {
 	loanUUID, err := uuid.Parse(loadId)
+	if err != nil {
+		return err
+	}
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return err
 	}
 
 	var loan models.Loan
-	if err := m.DB.Where("id = ?", loanUUID).First(&loan).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", loanUUID, userUUID).First(&loan).Error; err != nil {
 		return err
 	}
 
-	if err := m.DeleteTransactionById(loan.InitialTransactionID.String()); err != nil {
+	if err := m.DeleteTransactionById(loan.InitialTransactionID.String(), userId); err != nil {
 		return err
 	}
 

@@ -119,14 +119,18 @@ func (m *BasicManager) GetUserUpcomingRecurring(userId string) (models.Recurring
 	return closestRecurring, nil
 }
 
-func (m *BasicManager) DeleteRecurringById(recurringId string) error {
+func (m *BasicManager) DeleteRecurringById(recurringId, userId string) error {
 	recurringUUID, err := uuid.Parse(recurringId)
+	if err != nil {
+		return err
+	}
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return err
 	}
 
 	var recurring models.Recurring
-	if err := m.DB.Where("id = ?", recurringUUID).First(&recurring).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", recurringUUID, userUUID).First(&recurring).Error; err != nil {
 		return err
 	}
 

@@ -25,7 +25,7 @@ func (h *DeleteLoanHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.BM.DeleteLoanById(loanId); err != nil {
+	if err := h.BM.DeleteLoanById(loanId, userId); err != nil {
 		swalError(ctx, "Failed to delete loan")
 		return
 	}

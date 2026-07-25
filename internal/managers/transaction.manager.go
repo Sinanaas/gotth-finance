@@ -258,13 +258,18 @@ func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest
 		return err
 	}
 
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+
 	transactionDate, err := time.Parse("2006-01-02", payload.Date)
 	if err != nil {
 		return err
 	}
 
 	var transaction models.Transaction
-	if err := m.DB.Where("id = ? AND deleted_at IS NULL", transactionUUID).First(&transaction).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", transactionUUID, userUUID).First(&transaction).Error; err != nil {
 		return err
 	}
 
@@ -310,14 +315,18 @@ func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest
 	return nil
 }
 
-func (m *BasicManager) DeleteTransactionById(transactionId string) error {
+func (m *BasicManager) DeleteTransactionById(transactionId, userId string) error {
 	transactionUUID, err := uuid.Parse(transactionId)
+	if err != nil {
+		return err
+	}
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return err
 	}
 
 	var transaction models.Transaction
-	if err := m.DB.Where("id = ?", transactionUUID).First(&transaction).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", transactionUUID, userUUID).First(&transaction).Error; err != nil {
 		return err
 	}
 

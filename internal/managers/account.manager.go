@@ -77,14 +77,18 @@ func (m *BasicManager) FindAccountById(accountId string) (models.Account, error)
 	return account, nil
 }
 
-func (m *BasicManager) DeleteAccountById(accountId string) error {
+func (m *BasicManager) DeleteAccountById(accountId, userId string) error {
 	accountUUID, err := uuid.Parse(accountId)
+	if err != nil {
+		return err
+	}
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return err
 	}
 
 	var account models.Account
-	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", accountUUID, userUUID).First(&account).Error; err != nil {
 		return err
 	}
 

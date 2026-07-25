@@ -118,7 +118,7 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span></div><div class=\"flex items-center gap-2\"><a href=\"/transactions/export\" class=\"flex items-center gap-1.5 px-3 py-1.5 border border-stone-200 hover:bg-stone-50 text-stone-600 text-xs font-semibold rounded-lg transition\" title=\"Download all transactions as CSV\"><svg class=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3\"></path></svg> Export</a> <button type=\"button\" onclick=\"openModal('transaction-modal')\" class=\"flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg shadow transition\"><svg class=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg> New Transaction</button></div></div><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-stone-400 uppercase tracking-wider border-b border-stone-100\"><th class=\"px-6 py-3\">Date</th><th class=\"px-6 py-3\">Description</th><th class=\"px-6 py-3\">Category</th><th class=\"px-6 py-3\">Account</th><th class=\"px-6 py-3\">Amount</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody id=\"tx-table-body\" class=\"divide-y divide-stone-50\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span></div><div class=\"flex items-center gap-2\"><a href=\"/transactions/export\" class=\"flex items-center gap-1.5 px-3 py-1.5 border border-stone-200 hover:bg-stone-50 text-stone-600 text-xs font-semibold rounded-lg transition\" title=\"Download all transactions as CSV\"><svg class=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V3\"></path></svg> Export</a> <button type=\"button\" onclick=\"openModal('import-modal')\" class=\"flex items-center gap-1.5 px-3 py-1.5 border border-stone-200 hover:bg-stone-50 text-stone-600 text-xs font-semibold rounded-lg transition\" title=\"Import transactions from CSV\"><svg class=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M17 8l-5-5m0 0L7 8m5-5v12\"></path></svg> Import</button> <button type=\"button\" onclick=\"openModal('transaction-modal')\" class=\"flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg shadow transition\"><svg class=\"w-3.5 h-3.5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 4v16m8-8H4\"></path></svg> New Transaction</button></div></div><div class=\"flex-1 overflow-auto\"><table class=\"min-w-full\"><thead class=\"sticky top-0 bg-white\"><tr class=\"text-left text-xs text-stone-400 uppercase tracking-wider border-b border-stone-100\"><th class=\"px-6 py-3\">Date</th><th class=\"px-6 py-3\">Description</th><th class=\"px-6 py-3\">Category</th><th class=\"px-6 py-3\">Account</th><th class=\"px-6 py-3\">Amount</th><th class=\"px-6 py-3 text-center sticky right-0 bg-white shadow-sm\">Action</th></tr></thead> <tbody id=\"tx-table-body\" class=\"divide-y divide-stone-50\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -134,7 +134,40 @@ func Transaction(categories []models.Category, transactions []models.Transaction
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		templ_7745c5c3_Err = importTransactionsModal().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+func importTransactionsModal() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var7 == nil {
+			templ_7745c5c3_Var7 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"import-modal\" data-modal class=\"fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in\" onclick=\"if(event.target===this)closeModal('import-modal')\"><div class=\"bg-white rounded-2xl shadow-soft w-full max-w-md animate-pop-in overflow-hidden\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-stone-100\"><h2 class=\"text-base font-semibold font-display text-stone-800\">Import Transactions</h2><button type=\"button\" onclick=\"closeModal('import-modal')\" class=\"text-stone-400 hover:text-stone-600 transition\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><form hx-post=\"/transactions/import\" hx-trigger=\"submit\" hx-encoding=\"multipart/form-data\" hx-swap=\"none\" class=\"px-6 py-5 flex flex-col gap-4\"><p class=\"text-xs text-stone-500 leading-relaxed\">Upload a CSV with columns <span class=\"font-mono text-stone-700\">date, type, description, category, account, amount</span> — the same format as Export. Category and account must already exist.</p><input type=\"file\" name=\"file\" accept=\".csv\" required class=\"text-sm text-stone-600 file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border-0 file:bg-brand-100 file:text-brand-700 file:text-xs file:font-semibold hover:file:bg-brand-200\"><div class=\"flex gap-3 pt-1\"><button type=\"button\" onclick=\"closeModal('import-modal')\" class=\"flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow transition\">Import</button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -158,120 +191,120 @@ func addTransactionModal(categories []models.Category, accounts []models.Account
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"transaction-modal\" data-modal class=\"fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in\" onclick=\"if(event.target===this)closeModal('transaction-modal')\"><div class=\"bg-white rounded-2xl shadow-soft w-full max-w-md animate-pop-in overflow-hidden max-h-[90vh] flex flex-col\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-stone-100 shrink-0\"><h2 class=\"text-base font-semibold font-display text-stone-800\">New Transaction</h2><button type=\"button\" onclick=\"closeModal('transaction-modal')\" class=\"text-stone-400 hover:text-stone-600 transition\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><form hx-post=\"/transaction\" hx-trigger=\"submit\" hx-target=\"#tx-table-body\" hx-swap=\"innerHTML\" hx-encoding=\"application/x-www-form-urlencoded\" hx-on::after-request=\"if(event.detail.successful){ closeModal('transaction-modal'); this.reset(); }\" class=\"px-6 py-5 flex flex-col gap-4 overflow-y-auto\"><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Type</label><div class=\"flex rounded-lg overflow-hidden border border-stone-200\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<div id=\"transaction-modal\" data-modal class=\"fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in\" onclick=\"if(event.target===this)closeModal('transaction-modal')\"><div class=\"bg-white rounded-2xl shadow-soft w-full max-w-md animate-pop-in overflow-hidden max-h-[90vh] flex flex-col\"><div class=\"flex items-center justify-between px-6 py-4 border-b border-stone-100 shrink-0\"><h2 class=\"text-base font-semibold font-display text-stone-800\">New Transaction</h2><button type=\"button\" onclick=\"closeModal('transaction-modal')\" class=\"text-stone-400 hover:text-stone-600 transition\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div><form hx-post=\"/transaction\" hx-trigger=\"submit\" hx-target=\"#tx-table-body\" hx-swap=\"innerHTML\" hx-encoding=\"application/x-www-form-urlencoded\" hx-on::after-request=\"if(event.detail.successful){ closeModal('transaction-modal'); this.reset(); }\" class=\"px-6 py-5 flex flex-col gap-4 overflow-y-auto\"><div class=\"flex flex-col gap-1.5\"><label class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Type</label><div class=\"flex rounded-lg overflow-hidden border border-stone-200\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for i := 0; i < len(transactionType); i++ {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<label class=\"flex-1 cursor-pointer text-center\"><input type=\"radio\" name=\"Type\" value=\"")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i))
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 148, Col: 63}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\" class=\"hidden peer\" required> <span class=\"block py-2 text-xs font-semibold text-stone-500 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-stone-50 transition-colors select-none\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<label class=\"flex-1 cursor-pointer text-center\"><input type=\"radio\" name=\"Type\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
-			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(transactionType[i])
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(strconv.Itoa(i))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 150, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 188, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</span></label>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-amount\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Amount</label><div class=\"flex items-center border border-stone-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-brand-400\"><span class=\"px-3 text-sm text-stone-400 bg-stone-50 border-r border-stone-200 py-2\">Rp.</span> <input type=\"number\" name=\"Amount\" id=\"tx-amount\" placeholder=\"0\" class=\"flex-1 p-2 text-sm outline-none\" min=\"0\" required onkeyup=\"this.setCustomValidity('')\"></div></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-description\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" id=\"tx-description\" placeholder=\"Enter description\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required oninvalid=\"this.setCustomValidity('Please enter a description.')\" oninput=\"this.setCustomValidity('')\"></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-category\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Category</label> <select name=\"Category\" id=\"tx-category\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" required oninvalid=\"this.setCustomValidity('Please select a category.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-stone-400\">Select category...</option> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, category := range categories {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<option value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "\" class=\"hidden peer\" required> <span class=\"block py-2 text-xs font-semibold text-stone-500 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-stone-50 transition-colors select-none\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", category.ID))
+			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(transactionType[i])
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 172, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 190, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</span></label>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-amount\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Amount</label><div class=\"flex items-center border border-stone-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-brand-400\"><span class=\"px-3 text-sm text-stone-400 bg-stone-50 border-r border-stone-200 py-2\">Rp.</span> <input type=\"number\" name=\"Amount\" id=\"tx-amount\" placeholder=\"0\" class=\"flex-1 p-2 text-sm outline-none\" min=\"0\" required onkeyup=\"this.setCustomValidity('')\"></div></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-description\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Description</label> <input type=\"text\" name=\"Description\" id=\"tx-description\" placeholder=\"Enter description\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required oninvalid=\"this.setCustomValidity('Please enter a description.')\" oninput=\"this.setCustomValidity('')\"></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-category\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Category</label> <select name=\"Category\" id=\"tx-category\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" required oninvalid=\"this.setCustomValidity('Please select a category.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-stone-400\">Select category...</option> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, category := range categories {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<option value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
-			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", category.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 172, Col: 71}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 212, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</option>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</select></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-account\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" id=\"tx-account\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" hx-get=\"/account/balance\" hx-target=\"#tx-balance\" hx-params=\"Account\" hx-swap=\"innerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-stone-400\">Select account...</option> ")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		for _, account := range accounts {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<option value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 string
-			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
+			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(category.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 192, Col: 52}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 212, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "</option>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</select></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-account\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Account</label> <select name=\"Account\" id=\"tx-account\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white\" hx-get=\"/account/balance\" hx-target=\"#tx-balance\" hx-params=\"Account\" hx-swap=\"innerHTML\" required oninvalid=\"this.setCustomValidity('Please select an account.')\" oninput=\"this.setCustomValidity('')\"><option disabled selected value class=\"text-stone-400\">Select account...</option> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for _, account := range accounts {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<option value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
-			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
+			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s", account.ID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 192, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 232, Col: 52}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</option>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var14 string
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(account.Name)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/transaction.templ`, Line: 232, Col: 69}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</option>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</select><div id=\"tx-balance\"></div></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-date\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" id=\"tx-date\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required oninvalid=\"this.setCustomValidity('Please select a date.')\" oninput=\"this.setCustomValidity('')\"></div><div class=\"flex gap-3 pt-1\"><button type=\"button\" onclick=\"closeModal('transaction-modal')\" class=\"flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow transition\">Add Transaction</button></div></form></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</select><div id=\"tx-balance\"></div></div><div class=\"flex flex-col gap-1.5\"><label for=\"tx-date\" class=\"text-xs font-semibold text-stone-500 uppercase tracking-wide\">Date</label> <input type=\"date\" name=\"Date\" id=\"tx-date\" class=\"rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400\" required oninvalid=\"this.setCustomValidity('Please select a date.')\" oninput=\"this.setCustomValidity('')\"></div><div class=\"flex gap-3 pt-1\"><button type=\"button\" onclick=\"closeModal('transaction-modal')\" class=\"flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition\">Cancel</button> <button type=\"submit\" class=\"flex-1 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow transition\">Add Transaction</button></div></form></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -2,6 +2,7 @@ package managers
 
 import (
 	"fmt"
+	"strconv"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/google/uuid"
@@ -336,4 +337,119 @@ func (m *BasicManager) DeleteTransactionById(transactionId, userId string) error
 	}
 
 	return nil
+}
+
+// ImportResult summarizes a CSV import.
+type ImportResult struct {
+	Imported int
+	Skipped  []string // human-readable "row N: reason"
+}
+
+// ImportTransactions bulk-creates transactions from parsed CSV rows (excluding
+// the header). Category and account are resolved by name (owned by the user),
+// matching the export format. Valid rows are inserted atomically; invalid rows
+// are reported and skipped. Affected account balances are recomputed after.
+func (m *BasicManager) ImportTransactions(userId string, records [][]string) (ImportResult, error) {
+	var result ImportResult
+
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return result, err
+	}
+
+	// Build name -> id maps for this user's categories and accounts.
+	var categories []models.Category
+	if err := m.DB.Where("deleted_at IS NULL AND (user_id IS NULL OR user_id = ?)", userUUID).Find(&categories).Error; err != nil {
+		return result, err
+	}
+	catByName := map[string]uuid.UUID{}
+	for _, c := range categories {
+		catByName[c.Name] = c.ID
+	}
+	var accounts []models.Account
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&accounts).Error; err != nil {
+		return result, err
+	}
+	accByName := map[string]uuid.UUID{}
+	for _, a := range accounts {
+		accByName[a.Name] = a.ID
+	}
+
+	var toInsert []models.Transaction
+	affected := map[uuid.UUID]bool{}
+
+	for i, row := range records {
+		if i == 0 {
+			continue // header
+		}
+		lineNo := i + 1
+		if len(row) < 6 {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: expected 6 columns", lineNo))
+			continue
+		}
+		dateStr, typeStr, desc, catName, accName, amountStr := row[0], row[1], row[2], row[3], row[4], row[5]
+
+		date, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: invalid date %q", lineNo, dateStr))
+			continue
+		}
+		var txType constants.TransactionType
+		switch typeStr {
+		case "Income":
+			txType = constants.Income
+		case "Expenses":
+			txType = constants.Expenses
+		default:
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: unknown type %q", lineNo, typeStr))
+			continue
+		}
+		amount, err := strconv.ParseFloat(amountStr, 64)
+		if err != nil || amount <= 0 {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: invalid amount %q", lineNo, amountStr))
+			continue
+		}
+		catID, ok := catByName[catName]
+		if !ok {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: unknown category %q", lineNo, catName))
+			continue
+		}
+		accID, ok := accByName[accName]
+		if !ok {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: unknown account %q", lineNo, accName))
+			continue
+		}
+
+		toInsert = append(toInsert, models.Transaction{
+			UserID:          userUUID,
+			Amount:          amount,
+			TransactionType: txType,
+			Description:     desc,
+			CategoryID:      catID,
+			TransactionDate: date,
+			AccountID:       accID,
+		})
+		affected[accID] = true
+	}
+
+	if len(toInsert) > 0 {
+		if err := m.DB.Transaction(func(tx *gorm.DB) error {
+			for idx := range toInsert {
+				if err := tx.Create(&toInsert[idx]).Error; err != nil {
+					return err
+				}
+			}
+			return nil
+		}); err != nil {
+			return result, err
+		}
+		for accID := range affected {
+			if err := m.RecalculateAccountBalance(accID.String()); err != nil {
+				return result, err
+			}
+		}
+	}
+
+	result.Imported = len(toInsert)
+	return result, nil
 }

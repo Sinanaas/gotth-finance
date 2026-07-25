@@ -1,10 +1,13 @@
 package initializers
 
 import (
-	"github.com/spf13/viper"
+	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -28,6 +31,34 @@ type Config struct {
 	// Hosting / security flags (default false when absent).
 	AllowRegistration bool `mapstructure:"ALLOW_REGISTRATION"`
 	CookieSecure      bool `mapstructure:"COOKIE_SECURE"`
+}
+
+// Validate fails fast on missing required configuration so the server never
+// boots half-configured (e.g. no session secret or signing keys).
+func (c Config) Validate() error {
+	required := map[string]string{
+		"POSTGRES_HOST":             c.DBHost,
+		"POSTGRES_USER":             c.DBUserName,
+		"POSTGRES_PASSWORD":         c.DBUserPassword,
+		"POSTGRES_DB":               c.DBName,
+		"POSTGRES_PORT":             c.DBPort,
+		"PORT":                      c.ServerPort,
+		"SESSION_SECRET_KEY":        c.SessionSecretKey,
+		"ACCESS_TOKEN_PRIVATE_KEY":  c.AccessTokenPrivateKey,
+		"ACCESS_TOKEN_PUBLIC_KEY":   c.AccessTokenPublicKey,
+		"REFRESH_TOKEN_PRIVATE_KEY": c.RefreshTokenPrivateKey,
+		"REFRESH_TOKEN_PUBLIC_KEY":  c.RefreshTokenPublicKey,
+	}
+	var missing []string
+	for name, value := range required {
+		if strings.TrimSpace(value) == "" {
+			missing = append(missing, name)
+		}
+	}
+	if len(missing) > 0 {
+		return fmt.Errorf("missing required config: %s", strings.Join(missing, ", "))
+	}
+	return nil
 }
 
 func LoadConfig(path string) (config Config, err error) {

@@ -25,7 +25,12 @@ func (h *PostGoalHandler) ServeHTTP(ctx *gin.Context) {
 		swalError(ctx, err.Error())
 		return
 	}
-	if err := h.BM.CreateGoal(models.GoalRequest{Name: name, TargetAmount: target, UserID: userId}); err != nil {
+	accountId, err := validation.UUIDField(ctx.PostForm("Account"), "account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	if err := h.BM.CreateGoal(models.GoalRequest{Name: name, TargetAmount: target, AccountID: accountId, UserID: userId}); err != nil {
 		swalError(ctx, err.Error())
 		return
 	}
@@ -38,6 +43,11 @@ func renderGoalsPanel(ctx *gin.Context, bm *managers.BasicManager, userId string
 		swalError(ctx, "Failed to reload goals")
 		return
 	}
+	accounts, err := bm.GetUserAccounts(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload accounts")
+		return
+	}
 	ctx.Status(200)
-	_ = templates.GoalsPanel(statuses).Render(ctx.Request.Context(), ctx.Writer)
+	_ = templates.GoalsPanel(statuses, accounts).Render(ctx.Request.Context(), ctx.Writer)
 }

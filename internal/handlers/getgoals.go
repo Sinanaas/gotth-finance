@@ -19,7 +19,12 @@ func (h *GetGoalsHandler) ServeHTTP(ctx *gin.Context) {
 		renderErrorPage(ctx, cookie, "Failed to load goals")
 		return
 	}
-	if err := templates.Layout(templates.Goals(statuses), cookie).Render(ctx.Request.Context(), ctx.Writer); err != nil {
+	accounts, err := h.BM.GetUserAccounts(userId)
+	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
+		return
+	}
+	if err := templates.Layout(templates.Goals(statuses, accounts), cookie).Render(ctx.Request.Context(), ctx.Writer); err != nil {
 		renderErrorPage(ctx, cookie, "Failed to render page")
 	}
 }

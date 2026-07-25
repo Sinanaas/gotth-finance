@@ -20,13 +20,18 @@ func (h *PostGoalContributeHandler) ServeHTTP(ctx *gin.Context) {
 		swalError(ctx, err.Error())
 		return
 	}
+	fromAccount, err := validation.UUIDField(ctx.PostForm("FromAccount"), "source account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
 	amount, err := validation.Amount(ctx.PostForm("Amount"))
 	if err != nil {
 		swalError(ctx, err.Error())
 		return
 	}
-	if err := h.BM.AddToGoal(id, userId, amount); err != nil {
-		swalError(ctx, "Failed to add contribution")
+	if err := h.BM.ContributeToGoal(id, userId, fromAccount, amount); err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
 	renderGoalsPanel(ctx, h.BM, userId)

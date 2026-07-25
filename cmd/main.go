@@ -2,17 +2,18 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/routers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/seeders"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron/v2"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/seeders"
 )
 
 var (
@@ -21,9 +22,8 @@ var (
 	config initializers.Config
 	err    error
 
-	BasicController *controllers.BasicController
-	BasicManager    *managers.BasicManager
-	BasicRouter     *routers.BasicRouter
+	BasicManager *managers.BasicManager
+	BasicRouter  *routers.BasicRouter
 
 	AuthController *controllers.AuthController
 	AuthManager    *managers.AuthManager
@@ -39,16 +39,16 @@ func init() {
 	}
 
 	initializers.ConnectDB(&config)
-	
+
 	initializers.DB.AutoMigrate(
 		&models.User{},
-  		&models.Category{},
-        &models.Recurring{},
-        &models.Transaction{},
-        &models.Account{},
-        &models.Loan{},
+		&models.Category{},
+		&models.Recurring{},
+		&models.Transaction{},
+		&models.Account{},
+		&models.Loan{},
 	)
-	
+
 	seeders.SeedCategories(initializers.DB)
 
 	AuthManager = managers.NewAuthManager(initializers.DB, &config)
@@ -56,16 +56,16 @@ func init() {
 	AuthRouter = routers.NewAuthRouter(AuthController, router)
 
 	BasicManager = managers.NewBasicManager(initializers.DB, &goCRON)
-	BasicController = controllers.NewBasicController(BasicManager)
-	BasicRouter = routers.NewBasicRouter(BasicController, router)
+	BasicRouter = routers.NewBasicRouter(BasicManager, router)
 
 	server = gin.Default()
 	store := cookie.NewStore([]byte(config.SessionSecretKey))
+	store.Options(sessions.Options{Path: "/", MaxAge: 86400 * 7, HttpOnly: true, SameSite: http.SameSiteLaxMode})
 	server.Use(sessions.Sessions("mysession", store))
 
 	router = server.Group("/")
 
-	BasicRouter.BasicRoute(router, BasicController)
+	BasicRouter.BasicRoute(router, BasicManager)
 	AuthRouter.AuthRoute(router, AuthController)
 
 	goCRON, err = gocron.NewScheduler()

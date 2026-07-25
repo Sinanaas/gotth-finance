@@ -1,148 +1,93 @@
 package templates
 
 import "github.com/Sinanaas/gotth-financial-tracker/internal/models"
-import "github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 import "fmt"
 import "strconv"
-import "github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 
-templ Transaction(categories []models.Category, transactions []models.Transaction, accounts []models.Account, transactionType []string) {
-<div class="w-full h-full flex gap-6 p-4">
+templ Transaction(categories []models.Category, transactions []models.Transaction, accounts []models.Account, transactionType []string, total int64) {
+	<div class="w-full h-full flex flex-col gap-3 p-4">
 
-	<!-- Left: Add Transaction Form -->
-	<div class="w-80 shrink-0">
+		<!-- Filter bar -->
 		<form
-			hx-post="/transaction"
-			hx-trigger="submit"
-			hx-encoding="application/x-www-form-urlencoded"
-			hx-swap="none"
-			class="flex flex-col bg-white rounded-xl shadow-md p-6 gap-4"
+			id="filter-form"
+			hx-get="/transaction/list"
+			hx-target="#tx-table-body"
+			hx-swap="innerHTML"
+			hx-trigger="change, input delay:400ms from:[name='Search']"
+			class="bg-white rounded-xl shadow-card px-5 py-3 flex flex-wrap gap-3 items-end"
 		>
-			<h2 class="text-lg font-bold text-gray-700 border-b border-gray-100 pb-3">Add Transaction</h2>
-
-			<!-- Type Toggle -->
-			<div class="flex flex-col gap-1.5">
-				<label class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</label>
-				<div class="flex rounded-lg overflow-hidden border border-gray-200">
-					for i := 0; i < len(transactionType); i++ {
-					<label class="flex-1 cursor-pointer text-center">
-						<input type="radio" name="Type" value={ strconv.Itoa(i) } class="hidden peer" required/>
-						<span class="block py-2 text-xs font-semibold text-gray-500 peer-checked:bg-amber-500 peer-checked:text-white hover:bg-gray-50 transition-colors select-none">
-							{ transactionType[i] }
-						</span>
-					</label>
-					}
-				</div>
-			</div>
-
-			<!-- Amount -->
-			<div class="flex flex-col gap-1.5">
-				<label for="amount" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Amount</label>
-				<div class="flex items-center border border-gray-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-amber-400">
-					<span class="px-3 text-sm text-gray-400 bg-gray-50 border-r border-gray-200 py-2">Rp.</span>
-					<input
-						type="number"
-						name="Amount"
-						id="amount"
-						placeholder="0"
-						class="flex-1 p-2 text-sm outline-none"
-						min="0"
-						required
-						onkeyup="this.setCustomValidity('')"
-					/>
-				</div>
-			</div>
-
-			<!-- Description -->
-			<div class="flex flex-col gap-1.5">
-				<label for="description" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Description</label>
+			<div class="flex flex-col gap-1 flex-1 min-w-36">
+				<label class="text-xs font-semibold text-stone-400 uppercase tracking-wide">Search</label>
 				<input
 					type="text"
-					name="Description"
-					id="description"
-					placeholder="Enter description"
-					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-					required
-					oninvalid="this.setCustomValidity('Please enter a description.')"
-					oninput="this.setCustomValidity('')"
+					name="Search"
+					placeholder="Description..."
+					class="rounded-lg border border-stone-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
 				/>
 			</div>
-
-			<!-- Category -->
-			<div class="flex flex-col gap-1.5">
-				<label for="category" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Category</label>
-				<select
-					name="Category"
-					id="category"
-					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
-					required
-					oninvalid="this.setCustomValidity('Please select a category.')"
-					oninput="this.setCustomValidity('')"
-				>
-					<option disabled selected value class="text-gray-400">Select category...</option>
+			<div class="flex flex-col gap-1">
+				<label class="text-xs font-semibold text-stone-400 uppercase tracking-wide">Type</label>
+				<select name="Type" class="rounded-lg border border-stone-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white">
+					<option value="-1">All</option>
+					<option value="1">Income</option>
+					<option value="0">Expense</option>
+				</select>
+			</div>
+			<div class="flex flex-col gap-1">
+				<label class="text-xs font-semibold text-stone-400 uppercase tracking-wide">Category</label>
+				<select name="Category" class="rounded-lg border border-stone-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white">
+					<option value="">All categories</option>
 					for _, category := range categories {
 					<option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
 					}
 				</select>
 			</div>
-
-			<!-- Account -->
-			<div class="flex flex-col gap-1.5">
-				<label for="account" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Account</label>
-				<select
-					name="Account"
-					id="account"
-					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
-					hx-get="/account/balance"
-					hx-target="#balance"
-					hx-params="Account"
-					hx-swap="innerHTML"
-					required
-					oninvalid="this.setCustomValidity('Please select an account.')"
-					oninput="this.setCustomValidity('')"
-				>
-					<option disabled selected value class="text-gray-400">Select account...</option>
+			<div class="flex flex-col gap-1">
+				<label class="text-xs font-semibold text-stone-400 uppercase tracking-wide">Account</label>
+				<select name="Account" class="rounded-lg border border-stone-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white">
+					<option value="">All accounts</option>
 					for _, account := range accounts {
 					<option value={ fmt.Sprintf("%s", account.ID) }>{ account.Name }</option>
 					}
 				</select>
-				<div id="balance"></div>
 			</div>
-
-			<!-- Date -->
-			<div class="flex flex-col gap-1.5">
-				<label for="date" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</label>
-				<input
-					type="date"
-					name="Date"
-					id="date"
-					class="rounded-lg p-2 border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-					required
-					oninvalid="this.setCustomValidity('Please select a date.')"
-					oninput="this.setCustomValidity('')"
-				/>
+			<div class="flex flex-col gap-1">
+				<label class="text-xs font-semibold text-stone-400 uppercase tracking-wide">From</label>
+				<input type="date" name="StartDate" class="rounded-lg border border-stone-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"/>
 			</div>
-
-			<button type="submit" class="mt-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-lg shadow transition text-sm">
-				&#10133; Add Transaction
-			</button>
+			<div class="flex flex-col gap-1">
+				<label class="text-xs font-semibold text-stone-400 uppercase tracking-wide">To</label>
+				<input type="date" name="EndDate" class="rounded-lg border border-stone-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"/>
+			</div>
+			<button
+				type="reset"
+				class="px-4 py-1.5 text-sm font-semibold text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition"
+				hx-get="/transaction/list"
+				hx-target="#tx-table-body"
+				hx-swap="innerHTML"
+			>Clear</button>
 		</form>
-	</div>
 
-	<!-- Right: Transactions Table -->
-	<div class="flex-1 flex flex-col min-h-0">
-		<div class="bg-white rounded-xl shadow-md flex flex-col h-full overflow-hidden">
-			<!-- Header -->
-			<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-				<h2 class="text-lg font-bold text-gray-700">All Transactions</h2>
-				<a href="/transaction" class="text-xs text-amber-500 font-semibold hover:underline">Latest Records</a>
+		<!-- Table -->
+		<div class="bg-white rounded-xl shadow-card flex flex-col flex-1 overflow-hidden">
+			<div class="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+				<div class="flex items-center gap-3">
+					<h2 class="text-lg font-semibold font-display text-stone-800">All Transactions</h2>
+					<span class="text-xs text-stone-400">{ fmt.Sprintf("%d total", total) }</span>
+				</div>
+				<button
+					type="button"
+					onclick="openModal('transaction-modal')"
+					class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg shadow transition"
+				>
+					<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+					New Transaction
+				</button>
 			</div>
-
-			<!-- Table -->
 			<div class="flex-1 overflow-auto">
 				<table class="min-w-full">
 					<thead class="sticky top-0 bg-white">
-						<tr class="text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
+						<tr class="text-left text-xs text-stone-400 uppercase tracking-wider border-b border-stone-100">
 							<th class="px-6 py-3">Date</th>
 							<th class="px-6 py-3">Description</th>
 							<th class="px-6 py-3">Category</th>
@@ -151,62 +96,103 @@ templ Transaction(categories []models.Category, transactions []models.Transactio
 							<th class="px-6 py-3 text-center sticky right-0 bg-white shadow-sm">Action</th>
 						</tr>
 					</thead>
-					<tbody class="divide-y divide-gray-50">
-					for _, transaction := range transactions {
-					<tr class="hover:bg-gray-50 transition">
-						<td class="px-6 py-3 whitespace-nowrap text-xs text-gray-400">{ transaction.TransactionDate.Format("02 Jan '06") }</td>
-						<td class="px-6 py-3">
-							<span class="text-sm font-medium text-gray-700">{ transaction.Description }</span>
-						</td>
-						<td class="px-6 py-3">
-							if transaction.TransactionType == constants.Income {
-							<span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-semibold">{ transaction.Category.Name }</span>
-							} else {
-							<span class="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">{ transaction.Category.Name }</span>
-							}
-						</td>
-						<td class="px-6 py-3 text-sm text-gray-500">{ transaction.Account.Name }</td>
-						<td class="px-6 py-3 whitespace-nowrap">
-							if transaction.TransactionType == constants.Income {
-							<span class="text-sm font-bold text-green-600">+Rp. { utils.FormatCurrency(transaction.Amount) }</span>
-							} else {
-							<span class="text-sm font-bold text-red-500">-Rp. { utils.FormatCurrency(transaction.Amount) }</span>
-							}
-						</td>
-						<td class="px-6 py-3 whitespace-nowrap sticky right-0 bg-white shadow-sm">
-							<div class="flex items-center justify-center gap-2">
-								<form
-									hx-put="/transaction"
-									hx-trigger="submit"
-									hx-encoding="application/x-www-form-urlencoded"
-									class="flex justify-center mb-0"
-									confirm-with-sweet-alert="true"
-									swal-title="Delete Transaction?"
-									swal-text="This action is irreversible!"
-									swal-icon="error"
-									swal-buttons="true"
-									swal-danger="true"
-								>
-									<input type="hidden" name="TransactionID" value={ fmt.Sprintf("%s", transaction.ID) }/>
-									<input type="hidden" name="AccountID" value={ fmt.Sprintf("%s", transaction.Account.ID) }/>
-									<button type="submit" class="text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50" title="Delete">
-										<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-											<polyline points="3 6 5 6 21 6"></polyline>
-											<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-											<path d="M10 11v6M14 11v6"></path>
-											<path d="M9 6V4h6v2"></path>
-										</svg>
-									</button>
-								</form>
-							</div>
-						</td>
-					</tr>
-					}
+					<tbody id="tx-table-body" class="divide-y divide-stone-50">
+						@TransactionListBody(transactions, total, 1, 20)
 					</tbody>
 				</table>
 			</div>
 		</div>
-	</div>
 
-</div>
+		@addTransactionModal(categories, accounts, transactionType)
+	</div>
+}
+
+templ addTransactionModal(categories []models.Category, accounts []models.Account, transactionType []string) {
+	<div
+		id="transaction-modal"
+		data-modal
+		class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in"
+		onclick="if(event.target===this)closeModal('transaction-modal')"
+	>
+		<div class="bg-white rounded-2xl shadow-soft w-full max-w-md animate-pop-in overflow-hidden max-h-[90vh] flex flex-col">
+			<div class="flex items-center justify-between px-6 py-4 border-b border-stone-100 shrink-0">
+				<h2 class="text-base font-semibold font-display text-stone-800">New Transaction</h2>
+				<button type="button" onclick="closeModal('transaction-modal')" class="text-stone-400 hover:text-stone-600 transition">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+				</button>
+			</div>
+			<form
+				hx-post="/transaction"
+				hx-trigger="submit"
+				hx-target="#tx-table-body"
+				hx-swap="innerHTML"
+				hx-encoding="application/x-www-form-urlencoded"
+				hx-on::after-request="if(event.detail.successful){ closeModal('transaction-modal'); this.reset(); }"
+				class="px-6 py-5 flex flex-col gap-4 overflow-y-auto"
+			>
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Type</label>
+					<div class="flex rounded-lg overflow-hidden border border-stone-200">
+						for i := 0; i < len(transactionType); i++ {
+							<label class="flex-1 cursor-pointer text-center">
+								<input type="radio" name="Type" value={ strconv.Itoa(i) } class="hidden peer" required/>
+								<span class="block py-2 text-xs font-semibold text-stone-500 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-stone-50 transition-colors select-none">
+									{ transactionType[i] }
+								</span>
+							</label>
+						}
+					</div>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<label for="tx-amount" class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Amount</label>
+					<div class="flex items-center border border-stone-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-brand-400">
+						<span class="px-3 text-sm text-stone-400 bg-stone-50 border-r border-stone-200 py-2">Rp.</span>
+						<input type="number" name="Amount" id="tx-amount" placeholder="0" class="flex-1 p-2 text-sm outline-none" min="0" required onkeyup="this.setCustomValidity('')"/>
+					</div>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<label for="tx-description" class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Description</label>
+					<input type="text" name="Description" id="tx-description" placeholder="Enter description" class="rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400" required oninvalid="this.setCustomValidity('Please enter a description.')" oninput="this.setCustomValidity('')"/>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<label for="tx-category" class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Category</label>
+					<select name="Category" id="tx-category" class="rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white" required oninvalid="this.setCustomValidity('Please select a category.')" oninput="this.setCustomValidity('')">
+						<option disabled selected value class="text-stone-400">Select category...</option>
+						for _, category := range categories {
+							<option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+						}
+					</select>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<label for="tx-account" class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Account</label>
+					<select
+						name="Account"
+						id="tx-account"
+						class="rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white"
+						hx-get="/account/balance"
+						hx-target="#tx-balance"
+						hx-params="Account"
+						hx-swap="innerHTML"
+						required
+						oninvalid="this.setCustomValidity('Please select an account.')"
+						oninput="this.setCustomValidity('')"
+					>
+						<option disabled selected value class="text-stone-400">Select account...</option>
+						for _, account := range accounts {
+							<option value={ fmt.Sprintf("%s", account.ID) }>{ account.Name }</option>
+						}
+					</select>
+					<div id="tx-balance"></div>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<label for="tx-date" class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Date</label>
+					<input type="date" name="Date" id="tx-date" class="rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400" required oninvalid="this.setCustomValidity('Please select a date.')" oninput="this.setCustomValidity('')"/>
+				</div>
+				<div class="flex gap-3 pt-1">
+					<button type="button" onclick="closeModal('transaction-modal')" class="flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition">Cancel</button>
+					<button type="submit" class="flex-1 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow transition">Add Transaction</button>
+				</div>
+			</form>
+		</div>
+	</div>
 }

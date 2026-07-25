@@ -8,20 +8,6 @@ import (
 )
 
 func SeedCategories(db *gorm.DB) {
-	var count int64
-	db.Model(&models.Category{}).Count(&count)
-	if count > 0 {
-		return
-	}
-
-	tx := db.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-			log.Fatal("❌ Transaction failed and rolled back")
-		}
-	}()
-
 	categories := []models.Category{
 		{
 			Name:        "Healthcare",
@@ -63,14 +49,36 @@ func SeedCategories(db *gorm.DB) {
 			Name:        "Initial",
 			Description: "Initial account balance",
 		},
+		{
+			Name:        "Transfer Out",
+			Description: "Money transferred out to another account",
+		},
+		{
+			Name:        "Transfer In",
+			Description: "Money transferred in from another account",
+		},
 	}
 
+	// Idempotent: only insert system categories (user_id IS NULL) that don't exist yet,
+	// so new system categories reach databases seeded by older versions.
+	seeded := 0
 	for _, category := range categories {
-		if err := tx.Create(&category).Error; err != nil {
-			tx.Rollback()
-			log.Fatal("Failed to seed categories")
+		var existing models.Category
+		err := db.Where("name = ? AND user_id IS NULL AND deleted_at IS NULL", category.Name).First(&existing).Error
+		if err == nil {
+			continue
 		}
+		if err != gorm.ErrRecordNotFound {
+			log.Printf("❌ Failed to check category %q: %v", category.Name, err)
+			continue
+		}
+		if err := db.Create(&category).Error; err != nil {
+			log.Printf("❌ Failed to seed category %q: %v", category.Name, err)
+			continue
+		}
+		seeded++
 	}
-	tx.Commit()
-	log.Println("Categories seeded")
+	if seeded > 0 {
+		log.Printf("Seeded %d categories", seeded)
+	}
 }

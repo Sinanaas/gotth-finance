@@ -1,67 +1,105 @@
 package handlers
 
 import (
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"time"
+
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
 type GetHomeHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetHomeHandler(bc *controllers.BasicController) *GetHomeHandler {
-	return &GetHomeHandler{BC: bc}
+func NewGetHomeHandler(bm *managers.BasicManager) *GetHomeHandler {
+	return &GetHomeHandler{BM: bm}
 }
 
 func (h *GetHomeHandler) ServeHTTP(ctx *gin.Context) {
 	userId := utils.GetSessionUserID(ctx)
-
-	accounts, err := h.BC.GetUserAccounts(userId)
-	if err != nil {
-		return
-	}
-
-	thisMonthExpenses, err := h.BC.GetUserMonthlyExpenses(userId)
-	if err != nil && thisMonthExpenses > 0 {
-		return
-	}
-
-	thisMonthIncome, err := h.BC.GetUserMonthlyIncome(userId)
-	if err != nil && thisMonthIncome > 0 {
-		return
-	}
-
-	loans, err := h.BC.GetUserActiveLoans(userId)
-	if err != nil {
-		return
-	}
-
-	totalBalance := h.BC.GetUserTotalBalance(userId)
-
-	transactions, err := h.BC.GetUserLatestSixTransactions(userId)
-	if err != nil {
-		return
-	}
-
-	recurring, err := h.BC.GetUserUpcomingRecurring(userId)
-	if err != nil {
-		return
-	}
-
-	topCategories, err := h.BC.GetUserTopCategories(userId)
-	if err != nil {
-		return
-	}
-
 	cookie, _ := ctx.Cookie("access_token")
-	month := time.Now().Month()
-	c := templates.Home(thisMonthIncome, thisMonthExpenses, accounts, loans, transactions, recurring, month.String(), utils.FormatCurrency(totalBalance), topCategories)
-	err = templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer)
+	now := time.Now()
+
+	// Current month totals
+	thisMonthIncome, thisMonthExpenses, err := h.BM.GetUserMonthlyTotals(userId, now.Year(), now.Month())
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Error rendering template"})
+		renderErrorPage(ctx, cookie, "Failed to load monthly totals")
 		return
+	}
+
+	// Previous month totals for MoM delta
+	prev := now.AddDate(0, -1, 0)
+	prevIncome, prevExpense, err := h.BM.GetUserMonthlyTotals(userId, prev.Year(), prev.Month())
+	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load previous month totals")
+		return
+	}
+
+	accounts, err := h.BM.GetUserAccounts(userId)
+	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
+		return
+	}
+
+	loans, err := h.BM.GetUserActiveLoans(userId)
+	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load loans")
+		return
+	}
+
+	totalBalance := h.BM.GetUserTotalBalance(userId)
+
+	transactions, err := h.BM.GetUserLatestSixTransactions(userId)
+	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load transactions")
+		return
+	}
+
+	// All upcoming recurring (not just closest)
+	recurrings, err := h.BM.GetAllUpcomingRecurring(userId)
+	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load recurring")
+		return
+	}
+
+	topCategories, err := h.BM.GetUserTopCategories(userId)
+	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load top categories")
+		return
+	}
+
+	// Build 6-month chart data
+	monthlyLabels := make([]string, 6)
+	monthlyIncome := make([]float64, 6)
+	monthlyExpense := make([]float64, 6)
+	for i := 5; i >= 0; i-- {
+		t := now.AddDate(0, -i, 0)
+		idx := 5 - i
+		monthlyLabels[idx] = t.Format("Jan '06")
+		inc, exp, _ := h.BM.GetUserMonthlyTotals(userId, t.Year(), t.Month())
+		monthlyIncome[idx] = inc
+		monthlyExpense[idx] = exp
+	}
+
+	c := templates.Home(
+		thisMonthIncome,
+		thisMonthExpenses,
+		prevIncome,
+		prevExpense,
+		accounts,
+		loans,
+		transactions,
+		recurrings,
+		now.Month().String(),
+		utils.FormatCurrency(totalBalance),
+		topCategories,
+		monthlyLabels,
+		monthlyIncome,
+		monthlyExpense,
+	)
+	if err := templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer); err != nil {
+		ctx.JSON(500, gin.H{"error": "Error rendering template"})
 	}
 }

@@ -1,9 +1,28 @@
 package utils
 
 import (
-	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
+	"fmt"
+	"strings"
 	"time"
+
+	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 )
+
+func BuildJSONArray(items []string) string {
+	quoted := make([]string, len(items))
+	for i, s := range items {
+		quoted[i] = fmt.Sprintf("%q", s)
+	}
+	return "[" + strings.Join(quoted, ",") + "]"
+}
+
+func BuildJSONFloatArray(items []float64) string {
+	parts := make([]string, len(items))
+	for i, v := range items {
+		parts[i] = fmt.Sprintf("%.2f", v)
+	}
+	return "[" + strings.Join(parts, ",") + "]"
+}
 
 func GetNextOccurrence(startDate time.Time, frequency constants.Periodicity, today time.Time) time.Time {
 	nextOccurrence := startDate

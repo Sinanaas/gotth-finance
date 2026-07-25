@@ -1,38 +1,42 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type GetRecurringHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetRecurringHandler(bc *controllers.BasicController) *GetRecurringHandler {
-	return &GetRecurringHandler{BC: bc}
+func NewGetRecurringHandler(bm *managers.BasicManager) *GetRecurringHandler {
+	return &GetRecurringHandler{BM: bm}
 }
 
 func (h *GetRecurringHandler) ServeHTTP(ctx *gin.Context) {
 	cookie, _ := ctx.Cookie("access_token")
 	userId := utils.GetSessionUserID(ctx)
 
-	categories, err := h.BC.GetAllCategories()
+	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load categories")
 		return
 	}
 
-	recurring, err := h.BC.GetRecurrings(userId)
+	recurring, err := h.BM.GetRecurrings(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load recurring")
 		return
 	}
 
-	accounts, err := h.BC.GetUserAccounts(userId)
+	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
 	}
 

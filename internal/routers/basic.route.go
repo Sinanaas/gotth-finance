@@ -1,36 +1,45 @@
 package routers
 
 import (
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/handlers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type BasicRouter struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 	RG *gin.RouterGroup
 }
 
-func NewBasicRouter(bc *controllers.BasicController, rg *gin.RouterGroup) *BasicRouter {
-	return &BasicRouter{BC: bc, RG: rg}
+func NewBasicRouter(bm *managers.BasicManager, rg *gin.RouterGroup) *BasicRouter {
+	return &BasicRouter{BM: bm, RG: rg}
 }
 
-func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bc *controllers.BasicController) {
-	rg.GET("/", middleware.DeserializeUser(), handlers.NewGetHomeHandler(bc).ServeHTTP)
-	rg.GET("/transaction", middleware.DeserializeUser(), handlers.NewGetTransaction(bc).ServeHTTP)
-	rg.POST("/transaction", middleware.DeserializeUser(), handlers.NewPostTransactionHandler(bc).ServeHTTP)
-	rg.GET("/accounts", middleware.DeserializeUser(), handlers.NewGetAccountsHandler(bc).ServeHTTP)
-	rg.POST("/account", middleware.DeserializeUser(), handlers.NewPostAccountHandler(bc).ServeHTTP)
-	rg.GET("/account/balance", middleware.DeserializeUser(), handlers.NewGetBalanceHandler(bc).ServeHTTP)
-	rg.GET("/recurring", middleware.DeserializeUser(), handlers.NewGetRecurringHandler(bc).ServeHTTP)
-	rg.POST("/recurring", middleware.DeserializeUser(), handlers.NewPostRecurringHandler(bc).ServeHTTP)
-	rg.GET("/loans", middleware.DeserializeUser(), handlers.NewGetLoanHandler(bc).ServeHTTP)
-	rg.POST("/loan", middleware.DeserializeUser(), handlers.NewPostLoanHandler(bc).ServeHTTP)
-	rg.POST("/loan/finish", middleware.DeserializeUser(), handlers.NewPostFinishLoanHandler(bc).ServeHTTP)
+func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bm *managers.BasicManager) {
+	rg.GET("/", middleware.DeserializeUser(), handlers.NewGetHomeHandler(bm).ServeHTTP)
+	rg.GET("/transaction", middleware.DeserializeUser(), handlers.NewGetTransaction(bm).ServeHTTP)
+	rg.POST("/transaction", middleware.DeserializeUser(), handlers.NewPostTransactionHandler(bm).ServeHTTP)
+	rg.GET("/accounts", middleware.DeserializeUser(), handlers.NewGetAccountsHandler(bm).ServeHTTP)
+	rg.POST("/account", middleware.DeserializeUser(), handlers.NewPostAccountHandler(bm).ServeHTTP)
+	rg.GET("/account/balance", middleware.DeserializeUser(), handlers.NewGetBalanceHandler(bm).ServeHTTP)
+	rg.GET("/recurring", middleware.DeserializeUser(), handlers.NewGetRecurringHandler(bm).ServeHTTP)
+	rg.POST("/recurring", middleware.DeserializeUser(), handlers.NewPostRecurringHandler(bm).ServeHTTP)
+	rg.GET("/loans", middleware.DeserializeUser(), handlers.NewGetLoanHandler(bm).ServeHTTP)
+	rg.POST("/loan", middleware.DeserializeUser(), handlers.NewPostLoanHandler(bm).ServeHTTP)
+	rg.POST("/loan/finish", middleware.DeserializeUser(), handlers.NewPostFinishLoanHandler(bm).ServeHTTP)
 
-	rg.PUT("/transaction", middleware.DeserializeUser(), handlers.NewDeleteTransactionHandler(bc).ServeHTTP)
-	rg.PUT("/account", middleware.DeserializeUser(), handlers.NewDeleteAccountHandler(bc).ServeHTTP)
-	rg.PUT("/recurring", middleware.DeserializeUser(), handlers.NewDeleteRecurringHandler(bc).ServeHTTP)
-	rg.PUT("/loan", middleware.DeserializeUser(), handlers.NewDeleteLoanHandler(bc).ServeHTTP)
+	rg.GET("/transaction/list", middleware.DeserializeUser(), handlers.NewGetTransactionListHandler(bm).ServeHTTP)
+	rg.GET("/transaction/:id/edit", middleware.DeserializeUser(), handlers.NewGetEditTransactionHandler(bm).ServeHTTP)
+	rg.PATCH("/transaction/:id", middleware.DeserializeUser(), handlers.NewPatchTransactionHandler(bm).ServeHTTP)
+	rg.PUT("/transaction", middleware.DeserializeUser(), handlers.NewDeleteTransactionHandler(bm).ServeHTTP)
+	rg.GET("/accounts/transfer", middleware.DeserializeUser(), handlers.NewGetTransferHandler(bm).ServeHTTP)
+	rg.POST("/accounts/transfer", middleware.DeserializeUser(), handlers.NewPostTransferHandler(bm).ServeHTTP)
+	rg.PUT("/account", middleware.DeserializeUser(), handlers.NewDeleteAccountHandler(bm).ServeHTTP)
+	rg.PUT("/recurring", middleware.DeserializeUser(), handlers.NewDeleteRecurringHandler(bm).ServeHTTP)
+	rg.PUT("/loan", middleware.DeserializeUser(), handlers.NewDeleteLoanHandler(bm).ServeHTTP)
+
+	rg.GET("/categories", middleware.DeserializeUser(), handlers.NewGetCategoriesHandler(bm).ServeHTTP)
+	rg.POST("/categories", middleware.DeserializeUser(), handlers.NewPostCategoryHandler(bm).ServeHTTP)
+	rg.DELETE("/categories/:id", middleware.DeserializeUser(), handlers.NewDeleteCategoryHandler(bm).ServeHTTP)
 }

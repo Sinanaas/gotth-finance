@@ -1,10 +1,10 @@
 package initializers
 
 import (
+	"github.com/spf13/viper"
+	"log"
 	"reflect"
 	"time"
-	"log"
-	"github.com/spf13/viper"
 )
 
 type Config struct {

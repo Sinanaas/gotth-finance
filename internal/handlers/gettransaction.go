@@ -1,45 +1,49 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type GetTransactionHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetTransaction(bc *controllers.BasicController) *GetTransactionHandler {
-	return &GetTransactionHandler{BC: bc}
+func NewGetTransaction(bm *managers.BasicManager) *GetTransactionHandler {
+	return &GetTransactionHandler{BM: bm}
 }
 
 func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 	cookie, _ := ctx.Cookie("access_token")
 	userId := utils.GetSessionUserID(ctx)
 
-	categories, err := h.BC.GetAllCategories()
+	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load categories")
 		return
 	}
 
-	transactions, err := h.BC.GetUserTransactions(userId)
+	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
 	}
 
-	accounts, err := h.BC.GetUserAccounts(userId)
+	transactions, total, err := h.BM.FilterTransactions(userId, "", "", "", "", "", -1, 1, 20)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load transactions")
 		return
 	}
 
-	var transactionType constants.TransactionType
-	transactionTypeArray := transactionType.ToArrayString()
+	var txType constants.TransactionType
+	transactionTypeArray := txType.ToArrayString()
 
-	c := templates.Transaction(categories, transactions, accounts, transactionTypeArray)
+	c := templates.Transaction(categories, transactions, accounts, transactionTypeArray, total)
 	err = templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

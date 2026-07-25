@@ -106,6 +106,7 @@ func (am *AuthManager) Login(ctx *gin.Context) error {
 		return fmt.Errorf("failed to save session")
 	}
 
+	ctx.SetSameSite(http.SameSiteLaxMode)
 	ctx.SetCookie("access_token", accessToken, am.config.AccessTokenMaxAge*60, "/", "", false, true)
 	ctx.SetCookie("refresh_token", refreshToken, am.config.RefreshTokenMaxAge*60, "/", "", false, true)
 	ctx.SetCookie("logged_in", "true", am.config.AccessTokenMaxAge, "/", "", false, false)
@@ -134,6 +135,7 @@ func (am *AuthManager) RefreshToken(ctx *gin.Context) bool {
 		return false
 	}
 
+	ctx.SetSameSite(http.SameSiteLaxMode)
 	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge*60, "/", "", false, true)
 	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "", false, false)
 	return true

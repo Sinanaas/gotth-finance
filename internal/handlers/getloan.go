@@ -1,38 +1,42 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type GetLoanHandler struct {
-	BC *controllers.BasicController
+	BM *managers.BasicManager
 }
 
-func NewGetLoanHandler(bc *controllers.BasicController) *GetLoanHandler {
-	return &GetLoanHandler{BC: bc}
+func NewGetLoanHandler(bm *managers.BasicManager) *GetLoanHandler {
+	return &GetLoanHandler{BM: bm}
 }
 
 func (h *GetLoanHandler) ServeHTTP(ctx *gin.Context) {
 	cookie, _ := ctx.Cookie("access_token")
 	userId := utils.GetSessionUserID(ctx)
 
-	categories, err := h.BC.GetAllCategories()
+	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load categories")
 		return
 	}
 
-	loans, err := h.BC.GetLoans(userId)
+	loans, err := h.BM.GetLoans(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load loans")
 		return
 	}
 
-	accounts, err := h.BC.GetUserAccounts(userId)
+	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
 	}
 

@@ -21,7 +21,15 @@ func NewAuthManager(db *gorm.DB, conf *initializers.Config) *AuthManager {
 	return &AuthManager{DB: db, config: conf}
 }
 
+func (am *AuthManager) RegistrationEnabled() bool {
+	return am.config.AllowRegistration
+}
+
 func (am *AuthManager) SignUp(ctx *gin.Context) error {
+	if !am.config.AllowRegistration {
+		return fmt.Errorf("registration is closed")
+	}
+
 	var payload models.SignUpInput
 	if err := ctx.ShouldBind(&payload); err != nil {
 		return fmt.Errorf("failed to bind payload")

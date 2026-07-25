@@ -19,7 +19,7 @@ func NewAuthRouter(ac *controllers.AuthController, rg *gin.RouterGroup) *AuthRou
 func (ar *AuthRouter) AuthRoute(rg *gin.RouterGroup, ac *controllers.AuthController) {
 	rg.GET("/login", handlers.NewGetLoginHandler().ServeHTTP)
 	rg.POST("/login", handlers.NewPostLoginHandler(ac).ServeHTTP)
-	rg.GET("/register", handlers.NewGetRegisterHandler().ServeHTTP)
+	rg.GET("/register", handlers.NewGetRegisterHandler(ac).ServeHTTP)
 	rg.POST("/register", handlers.NewPostRegisterHandler(ac).ServeHTTP)
 	rg.GET("/logout", middleware.DeserializeUser(), handlers.NewGetLogoutHandler(ac).ServeHTTP)
 }

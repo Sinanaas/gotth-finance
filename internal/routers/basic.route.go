@@ -53,4 +53,9 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bm *managers.BasicManager
 	rg.GET("/budgets", middleware.DeserializeUser(), handlers.NewGetBudgetsHandler(bm).ServeHTTP)
 	rg.POST("/budgets", middleware.DeserializeUser(), handlers.NewPostBudgetHandler(bm).ServeHTTP)
 	rg.DELETE("/budgets/:id", middleware.DeserializeUser(), handlers.NewDeleteBudgetHandler(bm).ServeHTTP)
+
+	rg.GET("/goals", middleware.DeserializeUser(), handlers.NewGetGoalsHandler(bm).ServeHTTP)
+	rg.POST("/goals", middleware.DeserializeUser(), handlers.NewPostGoalHandler(bm).ServeHTTP)
+	rg.DELETE("/goals/:id", middleware.DeserializeUser(), handlers.NewDeleteGoalHandler(bm).ServeHTTP)
+	rg.POST("/goals/:id/contribute", middleware.DeserializeUser(), handlers.NewPostGoalContributeHandler(bm).ServeHTTP)
 }

@@ -60,6 +60,7 @@ func init() {
 		&models.Account{},
 		&models.Loan{},
 		&models.Budget{},
+		&models.Goal{},
 	)
 
 	seeders.SeedCategories(initializers.DB)

@@ -60,7 +60,7 @@ func init() {
 
 	server = gin.Default()
 	store := cookie.NewStore([]byte(config.SessionSecretKey))
-	store.Options(sessions.Options{Path: "/", MaxAge: 86400 * 7, HttpOnly: true, SameSite: http.SameSiteLaxMode})
+	store.Options(sessions.Options{Path: "/", MaxAge: 86400 * 7, HttpOnly: true, Secure: config.CookieSecure, SameSite: http.SameSiteLaxMode})
 	server.Use(sessions.Sessions("mysession", store))
 
 	router = server.Group("/")

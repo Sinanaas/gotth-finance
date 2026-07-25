@@ -24,6 +24,10 @@ type Config struct {
 	AccessTokenMaxAge      int           `mapstructure:"ACCESS_TOKEN_MAXAGE"`
 	RefreshTokenMaxAge     int           `mapstructure:"REFRESH_TOKEN_MAXAGE"`
 	SessionSecretKey       string        `mapstructure:"SESSION_SECRET_KEY"`
+
+	// Hosting / security flags (default false when absent).
+	AllowRegistration bool `mapstructure:"ALLOW_REGISTRATION"`
+	CookieSecure      bool `mapstructure:"COOKIE_SECURE"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

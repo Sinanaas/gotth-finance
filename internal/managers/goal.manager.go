@@ -89,6 +89,9 @@ func (m *BasicManager) ContributeToGoal(goalId, userId, fromAccountId string, am
 	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", goalUUID, userUUID).First(&goal).Error; err != nil {
 		return err
 	}
+	if goal.AccountID == uuid.Nil {
+		return fmt.Errorf("this goal isn't linked to an account — delete it and create a new one")
+	}
 	if fromAccountId == goal.AccountID.String() {
 		return fmt.Errorf("source account must differ from the goal's account")
 	}

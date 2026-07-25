@@ -49,13 +49,13 @@ type TransactionRequest struct {
 }
 
 type TransactionUpdateRequest struct {
-	ID          string
-	Amount      float64
-	Type        int
-	Description string
-	CategoryID  string
-	Date        string
+	ID           string
+	Amount       float64
+	Type         int
+	Description  string
+	CategoryID   string
+	Date         string
 	OldAccountID string
 	NewAccountID string
-	UserID      string
+	UserID       string
 }

@@ -1,13 +1,13 @@
 package managers
 
 import (
+	"fmt"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/go-co-op/gocron/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"time"
-	"fmt"
 )
 
 type BasicManager struct {

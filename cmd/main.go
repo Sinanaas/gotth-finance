@@ -8,11 +8,11 @@ import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/routers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/seeders"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron/v2"
-	"github.com/Sinanaas/gotth-financial-tracker/internal/seeders"
 )
 
 var (

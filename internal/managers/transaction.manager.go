@@ -153,6 +153,14 @@ func (m *BasicManager) CreateTransfer(payload models.TransferRequest) error {
 		return err
 	}
 
+	fromAccount, err := m.FindAccountById(payload.FromAccountID)
+	if err != nil {
+		return err
+	}
+	if fromAccount.Balance < payload.Amount {
+		return fmt.Errorf("insufficient balance in source account")
+	}
+
 	// Fetch system categories for Transfer Out / Transfer In
 	transferOutCat, err := m.FindCategoryByName("Transfer Out")
 	if err != nil {

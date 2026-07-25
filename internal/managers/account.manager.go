@@ -14,11 +14,13 @@ func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
 		return err
 	}
 
+	// Balance starts at 0: the initial-deposit transaction below brings it to
+	// payload.Balance, keeping the stored balance equal to the transaction sum.
 	account := models.Account{
 		UserID:      userUUID,
 		Name:        payload.Name,
 		Description: payload.Description,
-		Balance:     payload.Balance,
+		Balance:     0,
 	}
 
 	if err := m.DB.Create(&account).Error; err != nil {
@@ -26,18 +28,20 @@ func (m *BasicManager) CreateAccount(payload models.AccountRequest) error {
 	}
 
 	if payload.Balance > 0 {
-		createdAccount, _ := m.GetLatestUserAccount(payload.UserID)
-		var transaction models.TransactionRequest
-		category, _ := m.FindCategoryByName("Initial")
-		transaction.UserID = payload.UserID
-		transaction.Amount = payload.Balance
-		transaction.Type = 1
-		transaction.Description = "Initial deposit"
-		transaction.Account = createdAccount.ID.String()
-		transaction.CategoryID = category.ID.String()
-		transaction.Date = time.Now().Format("2006-01-02")
-		err = m.CreateTransaction(transaction)
+		category, err := m.FindCategoryByName("Initial")
 		if err != nil {
+			return err
+		}
+		transaction := models.TransactionRequest{
+			UserID:      payload.UserID,
+			Amount:      payload.Balance,
+			Type:        1,
+			Description: "Initial deposit",
+			Account:     account.ID.String(),
+			CategoryID:  category.ID.String(),
+			Date:        time.Now().Format("2006-01-02"),
+		}
+		if err := m.CreateTransaction(transaction); err != nil {
 			return err
 		}
 	}
@@ -57,20 +61,6 @@ func (m *BasicManager) GetUserAccounts(userId string) ([]models.Account, error) 
 	}
 
 	return accounts, nil
-}
-
-func (m *BasicManager) GetLatestUserAccount(userId string) (models.Account, error) {
-	userUUID, err := uuid.Parse(userId)
-	if err != nil {
-		return models.Account{}, err
-	}
-
-	var account models.Account
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Last(&account).Error; err != nil {
-		return models.Account{}, err
-	}
-
-	return account, nil
 }
 
 func (m *BasicManager) FindAccountById(accountId string) (models.Account, error) {

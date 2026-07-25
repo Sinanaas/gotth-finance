@@ -42,7 +42,7 @@ func (h *GetTransactionListHandler) ServeHTTP(ctx *gin.Context) {
 
 	transactions, total, err := h.BM.FilterTransactions(userId, startDate, endDate, categoryID, accountID, search, txType, page, pageSize)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		swalError(ctx, "Failed to load transactions")
 		return
 	}
 

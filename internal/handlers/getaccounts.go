@@ -17,13 +17,16 @@ func NewGetAccountsHandler(bm *managers.BasicManager) *GetAccountsHandler {
 
 func (h *GetAccountsHandler) ServeHTTP(ctx *gin.Context) {
 	userId := utils.GetSessionUserID(ctx)
-	accounts, err := h.BM.GetUserAccounts(userId)
-	c := templates.Accounts(accounts)
-
 	cookie, _ := ctx.Cookie("access_token")
-	err = templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer)
+
+	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
+	}
+
+	c := templates.Accounts(accounts)
+	if err := templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer); err != nil {
+		ctx.JSON(500, gin.H{"error": err.Error()})
 	}
 }

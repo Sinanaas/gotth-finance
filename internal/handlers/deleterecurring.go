@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,16 +17,24 @@ func NewDeleteRecurringHandler(bm *managers.BasicManager) *DeleteRecurringHandle
 }
 
 func (h *DeleteRecurringHandler) ServeHTTP(ctx *gin.Context) {
-	recurringId := ctx.PostForm("RecurringID")
-	if recurringId == "" {
-		ctx.JSON(400, gin.H{"error": "Recurring ID is missing"})
+	userId := utils.GetSessionUserID(ctx)
+
+	recurringId, err := validation.UUIDField(ctx.PostForm("RecurringID"), "recurring payment")
+	if err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
 
-	err := h.BM.DeleteRecurringById(recurringId)
-	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Failed to delete recurring"})
+	if err := h.BM.DeleteRecurringById(recurringId); err != nil {
+		swalError(ctx, "Failed to delete recurring payment")
 		return
 	}
-	ctx.Header("HX-Redirect", "/recurring")
+
+	recurrings, err := h.BM.GetRecurrings(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload recurring")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.RecurringPanel(recurrings).Render(ctx.Request.Context(), ctx.Writer)
 }

@@ -24,19 +24,19 @@ func (h *GetLoanHandler) ServeHTTP(ctx *gin.Context) {
 
 	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
+		renderErrorPage(ctx, cookie, "Failed to load categories")
 		return
 	}
 
 	loans, err := h.BM.GetLoans(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load loans"})
+		renderErrorPage(ctx, cookie, "Failed to load loans")
 		return
 	}
 
 	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
 	}
 

@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,17 +17,24 @@ func NewDeleteAccountHandler(bm *managers.BasicManager) *DeleteAccountHandler {
 }
 
 func (h *DeleteAccountHandler) ServeHTTP(ctx *gin.Context) {
-	accountId := ctx.PostForm("AccountID")
-	if accountId == "" {
-		ctx.JSON(400, gin.H{"error": "Account ID is missing"})
-		return
-	}
+	userId := utils.GetSessionUserID(ctx)
 
-	err := h.BM.DeleteAccountById(accountId)
+	accountId, err := validation.UUIDField(ctx.PostForm("AccountID"), "account")
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Failed to delete account"})
+		swalError(ctx, err.Error())
 		return
 	}
 
-	ctx.Header("HX-Redirect", "/accounts")
+	if err := h.BM.DeleteAccountById(accountId); err != nil {
+		swalError(ctx, "Failed to delete account")
+		return
+	}
+
+	accounts, err := h.BM.GetUserAccounts(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload accounts")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.AccountsPanel(accounts).Render(ctx.Request.Context(), ctx.Writer)
 }

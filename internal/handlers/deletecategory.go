@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
-	"net/http"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,22 +18,23 @@ func NewDeleteCategoryHandler(bm *managers.BasicManager) *DeleteCategoryHandler 
 
 func (h *DeleteCategoryHandler) ServeHTTP(ctx *gin.Context) {
 	userId := utils.GetSessionUserID(ctx)
-	categoryId := ctx.Param("id")
 
-	if err := h.BM.DeleteUserCategory(categoryId, userId); err != nil {
-		swalData, _ := json.Marshal(map[string]interface{}{
-			"swal:alert": map[string]interface{}{
-				"title":    "Error",
-				"text":     "Failed to delete category",
-				"icon":     "error",
-				"redirect": "/categories",
-			},
-		})
-		ctx.Header("HX-Trigger", string(swalData))
-		ctx.Status(http.StatusInternalServerError)
+	categoryId, err := validation.UUIDField(ctx.Param("id"), "category")
+	if err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
 
-	ctx.Header("HX-Redirect", "/categories")
-	ctx.Status(http.StatusOK)
+	if err := h.BM.DeleteUserCategory(categoryId, userId); err != nil {
+		swalError(ctx, "Failed to delete category")
+		return
+	}
+
+	categories, err := h.BM.GetUserCategories(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload categories")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.CategoriesPanel(categories).Render(ctx.Request.Context(), ctx.Writer)
 }

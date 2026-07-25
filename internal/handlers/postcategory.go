@@ -1,11 +1,10 @@
 package handlers
 
 import (
-	"encoding/json"
-	"net/http"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,28 +19,22 @@ func NewPostCategoryHandler(bm *managers.BasicManager) *PostCategoryHandler {
 func (h *PostCategoryHandler) ServeHTTP(ctx *gin.Context) {
 	userId := utils.GetSessionUserID(ctx)
 
-	name := ctx.PostForm("Name")
-	description := ctx.PostForm("Description")
-
-	if name == "" {
-		ctx.Status(http.StatusBadRequest)
+	name, err := validation.Required(ctx.PostForm("Name"), "category name")
+	if err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
 
-	if err := h.BM.CreateUserCategory(userId, name, description); err != nil {
-		swalData, _ := json.Marshal(map[string]interface{}{
-			"swal:alert": map[string]interface{}{
-				"title":    "Error",
-				"text":     "Failed to create category",
-				"icon":     "error",
-				"redirect": "/categories",
-			},
-		})
-		ctx.Header("HX-Trigger", string(swalData))
-		ctx.Status(http.StatusInternalServerError)
+	if err := h.BM.CreateUserCategory(userId, name, ctx.PostForm("Description")); err != nil {
+		swalError(ctx, "Failed to create category")
 		return
 	}
 
-	ctx.Header("HX-Redirect", "/categories")
-	ctx.Status(http.StatusOK)
+	categories, err := h.BM.GetUserCategories(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload categories")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.CategoriesPanel(categories).Render(ctx.Request.Context(), ctx.Writer)
 }

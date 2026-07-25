@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,16 +17,24 @@ func NewDeleteLoanHandler(bm *managers.BasicManager) *DeleteLoanHandler {
 }
 
 func (h *DeleteLoanHandler) ServeHTTP(ctx *gin.Context) {
-	loanId := ctx.PostForm("LoanID")
-	if loanId == "" {
-		ctx.JSON(400, gin.H{"error": "Loan ID is missing"})
+	userId := utils.GetSessionUserID(ctx)
+
+	loanId, err := validation.UUIDField(ctx.PostForm("LoanID"), "loan")
+	if err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
 
-	err := h.BM.DeleteLoanById(loanId)
-	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Failed to delete loan"})
+	if err := h.BM.DeleteLoanById(loanId); err != nil {
+		swalError(ctx, "Failed to delete loan")
 		return
 	}
-	ctx.Header("HX-Redirect", "/loans")
+
+	loans, err := h.BM.GetLoans(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload loans")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.LoansPanel(loans).Render(ctx.Request.Context(), ctx.Writer)
 }

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"net/http"
 	"time"
 
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
@@ -26,7 +25,7 @@ func (h *GetHomeHandler) ServeHTTP(ctx *gin.Context) {
 	// Current month totals
 	thisMonthIncome, thisMonthExpenses, err := h.BM.GetUserMonthlyTotals(userId, now.Year(), now.Month())
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load monthly totals"})
+		renderErrorPage(ctx, cookie, "Failed to load monthly totals")
 		return
 	}
 
@@ -34,19 +33,19 @@ func (h *GetHomeHandler) ServeHTTP(ctx *gin.Context) {
 	prev := now.AddDate(0, -1, 0)
 	prevIncome, prevExpense, err := h.BM.GetUserMonthlyTotals(userId, prev.Year(), prev.Month())
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load previous month totals"})
+		renderErrorPage(ctx, cookie, "Failed to load previous month totals")
 		return
 	}
 
 	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
 	}
 
 	loans, err := h.BM.GetUserActiveLoans(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load loans"})
+		renderErrorPage(ctx, cookie, "Failed to load loans")
 		return
 	}
 
@@ -54,20 +53,20 @@ func (h *GetHomeHandler) ServeHTTP(ctx *gin.Context) {
 
 	transactions, err := h.BM.GetUserLatestSixTransactions(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load transactions"})
+		renderErrorPage(ctx, cookie, "Failed to load transactions")
 		return
 	}
 
 	// All upcoming recurring (not just closest)
 	recurrings, err := h.BM.GetAllUpcomingRecurring(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load recurring"})
+		renderErrorPage(ctx, cookie, "Failed to load recurring")
 		return
 	}
 
 	topCategories, err := h.BM.GetUserTopCategories(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load top categories"})
+		renderErrorPage(ctx, cookie, "Failed to load top categories")
 		return
 	}
 

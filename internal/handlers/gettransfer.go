@@ -22,7 +22,7 @@ func (h *GetTransferHandler) ServeHTTP(ctx *gin.Context) {
 
 	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
+		swalError(ctx, "Failed to load accounts")
 		return
 	}
 

@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,47 +17,64 @@ func NewPostRecurringHandler(bm *managers.BasicManager) *PostRecurringHandler {
 	return &PostRecurringHandler{BM: bm}
 }
 
-func (h *PostRecurringHandler) ServeHTTP(c *gin.Context) {
-	var payload models.RecurringRequest
-	var err error
+func (h *PostRecurringHandler) ServeHTTP(ctx *gin.Context) {
+	userId := utils.GetSessionUserID(ctx)
 
-	payload.Name = c.PostForm("Name")
-	payload.CategoryID = c.PostForm("Category")
-	payload.Amount, err = strconv.ParseFloat(c.PostForm("Amount"), 64)
+	name, err := validation.Required(ctx.PostForm("Name"), "name")
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/recurring"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.Periodicity, err = strconv.Atoi(c.PostForm("Periodicity"))
+	amount, err := validation.Amount(ctx.PostForm("Amount"))
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/recurring"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.TransactionType, err = strconv.Atoi(c.PostForm("Type"))
+	txType, err := validation.IntField(ctx.PostForm("Type"), "type")
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/recurring"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
+		return
+	}
+	periodicity, err := validation.IntField(ctx.PostForm("Periodicity"), "periodicity")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	categoryId, err := validation.UUIDField(ctx.PostForm("Category"), "category")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	accountId, err := validation.UUIDField(ctx.PostForm("Account"), "account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	if _, err := validation.Date(ctx.PostForm("StartDate")); err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
 
-	payload.StartDate = c.PostForm("StartDate")
-	payload.AccountID = c.PostForm("Account")
-	session := sessions.Default(c)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
+	payload := models.RecurringRequest{
+		Name:            name,
+		Amount:          amount,
+		TransactionType: txType,
+		Periodicity:     periodicity,
+		CategoryID:      categoryId,
+		AccountID:       accountId,
+		StartDate:       ctx.PostForm("StartDate"),
+		UserID:          userId,
 	}
-	payload.UserID = userId
-
-	err = h.BM.CreateRecurring(payload)
-	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/recurring"}}`, err.Error()))
-		c.Status(400)
+	if err := h.BM.CreateRecurring(payload); err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
-	c.Writer.Header().Set("HX-Trigger", `{"swal:alert": {"title": "Recurring Created!", "text": "Recurring has been successfully created.", "icon": "success", "redirect": "/recurring"}}`)
-	c.Status(200)
+
+	recurrings, err := h.BM.GetRecurrings(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload recurring")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.RecurringPanel(recurrings).Render(ctx.Request.Context(), ctx.Writer)
 }

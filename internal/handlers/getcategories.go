@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
@@ -23,12 +21,12 @@ func (h *GetCategoriesHandler) ServeHTTP(ctx *gin.Context) {
 
 	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
+		renderErrorPage(ctx, cookie, "Failed to load categories")
 		return
 	}
 
 	c := templates.Categories(categories)
 	if err := templates.Layout(c, cookie).Render(ctx.Request.Context(), ctx.Writer); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render template"})
+		renderErrorPage(ctx, cookie, "Failed to render template")
 	}
 }

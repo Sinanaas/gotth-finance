@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,42 +17,60 @@ func NewPostLoanHandler(bm *managers.BasicManager) *PostLoanHandler {
 	return &PostLoanHandler{BM: bm}
 }
 
-func (h *PostLoanHandler) ServeHTTP(c *gin.Context) {
-	var payload models.LoanRequest
-	var err error
+func (h *PostLoanHandler) ServeHTTP(ctx *gin.Context) {
+	userId := utils.GetSessionUserID(ctx)
 
-	payload.Description = c.PostForm("Description")
-	payload.CategoryID = c.PostForm("Category")
-	payload.ToWhom = c.PostForm("Towhom")
-	payload.Status = false
-	payload.LoanDate = c.PostForm("Date")
-	payload.Amount, err = strconv.ParseFloat(c.PostForm("Amount"), 64)
+	toWhom, err := validation.Required(ctx.PostForm("Towhom"), "person or party")
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/loans"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.TransactionType, err = strconv.Atoi(c.PostForm("Type"))
+	amount, err := validation.Amount(ctx.PostForm("Amount"))
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/loans"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.AccountID = c.PostForm("Account")
-	session := sessions.Default(c)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
+	txType, err := validation.IntField(ctx.PostForm("Type"), "type")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
 	}
-	payload.UserID = userId
+	categoryId, err := validation.UUIDField(ctx.PostForm("Category"), "category")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	accountId, err := validation.UUIDField(ctx.PostForm("Account"), "account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	if _, err := validation.Date(ctx.PostForm("Date")); err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
 
-	err = h.BM.CreateLoan(payload)
-	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/loans"}}`, err.Error()))
-		c.Status(400)
+	payload := models.LoanRequest{
+		Description:     ctx.PostForm("Description"),
+		CategoryID:      categoryId,
+		ToWhom:          toWhom,
+		Status:          false,
+		LoanDate:        ctx.PostForm("Date"),
+		Amount:          amount,
+		TransactionType: txType,
+		AccountID:       accountId,
+		UserID:          userId,
+	}
+	if err := h.BM.CreateLoan(payload); err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
-	c.Writer.Header().Set("HX-Trigger", `{"swal:alert": {"title": "Loan Created!", "text": "Loan has been successfully created.", "icon": "success", "redirect": "/loans"}}`)
-	c.Status(200)
+
+	loans, err := h.BM.GetLoans(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload loans")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.LoansPanel(loans).Render(ctx.Request.Context(), ctx.Writer)
 }

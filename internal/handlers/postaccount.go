@@ -1,12 +1,13 @@
 package handlers
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,32 +19,36 @@ func NewPostAccountHandler(bm *managers.BasicManager) *PostAccountHandler {
 	return &PostAccountHandler{BM: bm}
 }
 
-func (h *PostAccountHandler) ServeHTTP(c *gin.Context) {
-	var payload models.AccountRequest
-	var err error
+func (h *PostAccountHandler) ServeHTTP(ctx *gin.Context) {
+	userId := utils.GetSessionUserID(ctx)
 
-	payload.Name = c.PostForm("Name")
-	payload.Description = c.PostForm("Description")
-	payload.Balance, err = strconv.ParseFloat(c.PostForm("Balance"), 64)
+	name, err := validation.Required(ctx.PostForm("Name"), "account name")
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/accounts"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
 		return
 	}
-	session := sessions.Default(c)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
-	}
-	payload.UserID = userId
-
-	err = h.BM.CreateAccount(payload)
-	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/accounts"}}`, err.Error()))
-		c.Status(400)
+	balance, err := strconv.ParseFloat(ctx.PostForm("Balance"), 64)
+	if err != nil || balance < 0 {
+		swalError(ctx, "balance must be zero or more")
 		return
 	}
-	c.Writer.Header().Set("HX-Trigger", `{"swal:alert": {"title": "Account Created!", "text": "Account has been successfully created.", "icon": "success", "redirect": "/accounts"}}`)
-	c.Status(200)
+
+	payload := models.AccountRequest{
+		Name:        name,
+		Description: ctx.PostForm("Description"),
+		Balance:     balance,
+		UserID:      userId,
+	}
+	if err := h.BM.CreateAccount(payload); err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+
+	accounts, err := h.BM.GetUserAccounts(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload accounts")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.AccountsPanel(accounts).Render(ctx.Request.Context(), ctx.Writer)
 }

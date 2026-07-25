@@ -24,19 +24,19 @@ func (h *GetRecurringHandler) ServeHTTP(ctx *gin.Context) {
 
 	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
+		renderErrorPage(ctx, cookie, "Failed to load categories")
 		return
 	}
 
 	recurring, err := h.BM.GetRecurrings(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load recurring"})
+		renderErrorPage(ctx, cookie, "Failed to load recurring")
 		return
 	}
 
 	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
 	}
 

@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"fmt"
-	"strconv"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,40 +17,58 @@ func NewPostTransactionHandler(bm *managers.BasicManager) *PostTransactionHandle
 	return &PostTransactionHandler{BM: bm}
 }
 
-func (h *PostTransactionHandler) ServeHTTP(c *gin.Context) {
-	var payload models.TransactionRequest
-	var err error
+func (h *PostTransactionHandler) ServeHTTP(ctx *gin.Context) {
+	userId := utils.GetSessionUserID(ctx)
 
-	payload.Description = c.PostForm("Description")
-	payload.CategoryID = c.PostForm("Category")
-	payload.Amount, err = strconv.ParseFloat(c.PostForm("Amount"), 64)
+	description, err := validation.Required(ctx.PostForm("Description"), "description")
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/transaction"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.Date = c.PostForm("Date")
-	payload.Type, err = strconv.Atoi(c.PostForm("Type"))
+	amount, err := validation.Amount(ctx.PostForm("Amount"))
 	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/transaction"}}`, err.Error()))
-		c.Status(400)
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.Account = c.PostForm("Account")
-	session := sessions.Default(c)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
+	txType, err := validation.IntField(ctx.PostForm("Type"), "type")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
 	}
-	payload.UserID = userId
+	categoryId, err := validation.UUIDField(ctx.PostForm("Category"), "category")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	accountId, err := validation.UUIDField(ctx.PostForm("Account"), "account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	if _, err := validation.Date(ctx.PostForm("Date")); err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
 
-	err = h.BM.CreateTransaction(payload)
-	if err != nil {
-		c.Writer.Header().Set("HX-Trigger", fmt.Sprintf(`{"swal:alert": {"title": "Error!", "text": "%s", "icon": "error", "redirect": "/transaction"}}`, err.Error()))
-		c.Status(400)
+	payload := models.TransactionRequest{
+		Description: description,
+		CategoryID:  categoryId,
+		Amount:      amount,
+		Date:        ctx.PostForm("Date"),
+		Type:        txType,
+		Account:     accountId,
+		UserID:      userId,
+	}
+	if err := h.BM.CreateTransaction(payload); err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
-	c.Writer.Header().Set("HX-Trigger", `{"swal:alert": {"title": "Transaction Created!", "text": "Transaction has been successfully created.", "icon": "success", "redirect": "/transaction"}}`)
-	c.Status(200)
+
+	transactions, total, err := h.BM.FilterTransactions(userId, "", "", "", "", "", -1, 1, 20)
+	if err != nil {
+		swalError(ctx, "Failed to reload transactions")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.TransactionListBody(transactions, total, 1, 20).Render(ctx.Request.Context(), ctx.Writer)
 }

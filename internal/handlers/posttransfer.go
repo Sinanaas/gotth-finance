@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"net/http"
-	"strconv"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,31 +18,50 @@ func NewPostTransferHandler(bm *managers.BasicManager) *PostTransferHandler {
 }
 
 func (h *PostTransferHandler) ServeHTTP(ctx *gin.Context) {
-	var payload models.TransferRequest
-	var err error
+	userId := utils.GetSessionUserID(ctx)
 
-	payload.FromAccountID = ctx.PostForm("FromAccount")
-	payload.ToAccountID = ctx.PostForm("ToAccount")
-	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
+	fromId, err := validation.UUIDField(ctx.PostForm("FromAccount"), "source account")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.Date = ctx.PostForm("Date")
-	payload.Description = ctx.PostForm("Description")
-
-	session := sessions.Default(ctx)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
+	toId, err := validation.UUIDField(ctx.PostForm("ToAccount"), "destination account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
 	}
-	payload.UserID = userId
+	if fromId == toId {
+		swalError(ctx, "cannot transfer to the same account")
+		return
+	}
+	amount, err := validation.Amount(ctx.PostForm("Amount"))
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	if _, err := validation.Date(ctx.PostForm("Date")); err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
 
+	payload := models.TransferRequest{
+		FromAccountID: fromId,
+		ToAccountID:   toId,
+		Amount:        amount,
+		Date:          ctx.PostForm("Date"),
+		Description:   ctx.PostForm("Description"),
+		UserID:        userId,
+	}
 	if err := h.BM.CreateTransfer(payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		swalError(ctx, err.Error())
 		return
 	}
 
-	ctx.Header("HX-Redirect", "/accounts")
+	accounts, err := h.BM.GetUserAccounts(userId)
+	if err != nil {
+		swalError(ctx, "Failed to reload accounts")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.AccountsPanel(accounts).Render(ctx.Request.Context(), ctx.Writer)
 }

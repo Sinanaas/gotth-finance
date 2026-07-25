@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
@@ -23,24 +21,24 @@ func (h *GetEditTransactionHandler) ServeHTTP(ctx *gin.Context) {
 
 	transaction, err := h.BM.FindTransactionById(id)
 	if err != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "Transaction not found"})
+		swalError(ctx, "Transaction not found")
 		return
 	}
 
 	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
+		swalError(ctx, "Failed to load categories")
 		return
 	}
 
 	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
+		swalError(ctx, "Failed to load accounts")
 		return
 	}
 
 	c := templates.EditTransactionModal(transaction, categories, accounts)
 	if err := c.Render(ctx.Request.Context(), ctx.Writer); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to render modal"})
+		swalError(ctx, "Failed to render modal")
 	}
 }

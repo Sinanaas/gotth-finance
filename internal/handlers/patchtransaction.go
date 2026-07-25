@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"net/http"
-	"strconv"
-
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
-	"github.com/gin-contrib/sessions"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+	"github.com/Sinanaas/gotth-financial-tracker/internal/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,38 +18,69 @@ func NewPatchTransactionHandler(bm *managers.BasicManager) *PatchTransactionHand
 }
 
 func (h *PatchTransactionHandler) ServeHTTP(ctx *gin.Context) {
-	var payload models.TransactionUpdateRequest
-	var err error
+	userId := utils.GetSessionUserID(ctx)
 
-	payload.ID = ctx.Param("id")
-	payload.Description = ctx.PostForm("Description")
-	payload.CategoryID = ctx.PostForm("Category")
-	payload.OldAccountID = ctx.PostForm("OldAccountID")
-	payload.NewAccountID = ctx.PostForm("Account")
-	payload.Amount, err = strconv.ParseFloat(ctx.PostForm("Amount"), 64)
+	transactionId, err := validation.UUIDField(ctx.Param("id"), "transaction")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		swalError(ctx, err.Error())
 		return
 	}
-	payload.Date = ctx.PostForm("Date")
-	payload.Type, err = strconv.Atoi(ctx.PostForm("Type"))
+	description, err := validation.Required(ctx.PostForm("Description"), "description")
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		swalError(ctx, err.Error())
+		return
+	}
+	amount, err := validation.Amount(ctx.PostForm("Amount"))
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	txType, err := validation.IntField(ctx.PostForm("Type"), "type")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	categoryId, err := validation.UUIDField(ctx.PostForm("Category"), "category")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	newAccountId, err := validation.UUIDField(ctx.PostForm("Account"), "account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	oldAccountId, err := validation.UUIDField(ctx.PostForm("OldAccountID"), "account")
+	if err != nil {
+		swalError(ctx, err.Error())
+		return
+	}
+	if _, err := validation.Date(ctx.PostForm("Date")); err != nil {
+		swalError(ctx, err.Error())
 		return
 	}
 
-	session := sessions.Default(ctx)
-	var userId string
-	v := session.Get("user_id")
-	if v != nil {
-		userId = v.(string)
+	payload := models.TransactionUpdateRequest{
+		ID:           transactionId,
+		Description:  description,
+		CategoryID:   categoryId,
+		OldAccountID: oldAccountId,
+		NewAccountID: newAccountId,
+		Amount:       amount,
+		Date:         ctx.PostForm("Date"),
+		Type:         txType,
+		UserID:       userId,
 	}
-	payload.UserID = userId
-
 	if err := h.BM.UpdateTransaction(payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		swalError(ctx, err.Error())
 		return
 	}
 
-	ctx.Header("HX-Redirect", "/transaction")
+	transactions, total, err := h.BM.FilterTransactions(userId, "", "", "", "", "", -1, 1, 20)
+	if err != nil {
+		swalError(ctx, "Failed to reload transactions")
+		return
+	}
+	ctx.Status(200)
+	_ = templates.TransactionListBody(transactions, total, 1, 20).Render(ctx.Request.Context(), ctx.Writer)
 }

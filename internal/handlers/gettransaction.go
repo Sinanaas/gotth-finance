@@ -24,19 +24,19 @@ func (h *GetTransactionHandler) ServeHTTP(ctx *gin.Context) {
 
 	categories, err := h.BM.GetUserCategories(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load categories"})
+		renderErrorPage(ctx, cookie, "Failed to load categories")
 		return
 	}
 
 	accounts, err := h.BM.GetUserAccounts(userId)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load accounts"})
+		renderErrorPage(ctx, cookie, "Failed to load accounts")
 		return
 	}
 
 	transactions, total, err := h.BM.FilterTransactions(userId, "", "", "", "", "", -1, 1, 20)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load transactions"})
+		renderErrorPage(ctx, cookie, "Failed to load transactions")
 		return
 	}
 

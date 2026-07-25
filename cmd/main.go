@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 
 	"github.com/Sinanaas/gotth-financial-tracker/internal/controllers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/initializers"
@@ -59,6 +60,7 @@ func init() {
 
 	server = gin.Default()
 	store := cookie.NewStore([]byte(config.SessionSecretKey))
+	store.Options(sessions.Options{Path: "/", MaxAge: 86400 * 7, HttpOnly: true, SameSite: http.SameSiteLaxMode})
 	server.Use(sessions.Sessions("mysession", store))
 
 	router = server.Group("/")

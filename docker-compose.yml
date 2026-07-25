@@ -17,5 +17,18 @@ services:
     depends_on:
       - db
 
+  backup:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - app.env
+    volumes:
+      - ./scripts/backup.sh:/backup.sh:ro
+      - db_backups:/backups
+    entrypoint: ["sh", "/backup.sh"]
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
+  db_backups:

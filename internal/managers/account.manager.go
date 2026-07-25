@@ -124,6 +124,37 @@ func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
 	return nil
 }
 
+func (m *BasicManager) FindUserAccountById(userId, id string) (models.Account, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return models.Account{}, err
+	}
+	accUUID, err := uuid.Parse(id)
+	if err != nil {
+		return models.Account{}, err
+	}
+	var account models.Account
+	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", accUUID, userUUID).First(&account).Error; err != nil {
+		return models.Account{}, err
+	}
+	return account, nil
+}
+
+// UpdateAccount edits name/description only; balance stays derived from transactions.
+func (m *BasicManager) UpdateAccount(userId, id, name, description string) error {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
+	accUUID, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+	return m.DB.Model(&models.Account{}).
+		Where("id = ? AND user_id = ? AND deleted_at IS NULL", accUUID, userUUID).
+		Updates(map[string]interface{}{"name": name, "description": description}).Error
+}
+
 // SumBalance derives an account balance from its transactions: income adds,
 // expense subtracts. This is the single source of truth for balances.
 func SumBalance(transactions []models.Transaction) float64 {

@@ -30,7 +30,7 @@ func (h *DeleteTransactionHandler) ServeHTTP(ctx *gin.Context) {
 		return
 	}
 
-	if err := h.BM.DeleteTransactionById(transactionId); err != nil {
+	if err := h.BM.DeleteTransactionById(transactionId, userId); err != nil {
 		swalError(ctx, "Failed to delete transaction")
 		return
 	}

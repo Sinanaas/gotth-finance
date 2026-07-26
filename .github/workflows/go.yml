@@ -33,7 +33,7 @@ jobs:
           go-version-file: go.mod
 
       - name: Install templ
-        run: go install github.com/a-h/templ/cmd/templ@v0.2.793
+        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
 
       - name: Generate templ files
         run: templ generate

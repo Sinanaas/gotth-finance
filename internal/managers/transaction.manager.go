@@ -2,6 +2,7 @@ package managers
 
 import (
 	"fmt"
+	"strconv"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/google/uuid"
@@ -40,18 +41,21 @@ func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) erro
 		AccountID:       accountUUID,
 	}
 
-	// Guard overdraft on expense before recording it.
-	if transaction.TransactionType == constants.Expenses {
-		var account models.Account
-		if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
-			return err
+	// Guard overdraft inside a transaction with a row-level lock to prevent races.
+	err = m.DB.Transaction(func(tx *gorm.DB) error {
+		if transaction.TransactionType == constants.Expenses {
+			var account models.Account
+			if err := tx.Set("gorm:query_option", "FOR UPDATE").
+				Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
+				return err
+			}
+			if account.Balance < transaction.Amount {
+				return fmt.Errorf("insufficient balance")
+			}
 		}
-		if account.Balance < transaction.Amount {
-			return fmt.Errorf("insufficient balance")
-		}
-	}
-
-	if err := m.DB.Create(&transaction).Error; err != nil {
+		return tx.Create(&transaction).Error
+	})
+	if err != nil {
 		return err
 	}
 
@@ -127,7 +131,7 @@ func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Tra
 	}
 
 	var transactions []models.Transaction
-	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Order("transaction_date desc").Limit(7).Find(&transactions).Error; err != nil {
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Order("transaction_date desc").Limit(6).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 
@@ -159,6 +163,10 @@ func (m *BasicManager) CreateTransfer(payload models.TransferRequest) error {
 	}
 	if fromAccount.Balance < payload.Amount {
 		return fmt.Errorf("insufficient balance in source account")
+	}
+	// Destination must exist too (prevents FK violations from stale/nil account refs).
+	if _, err := m.FindAccountById(payload.ToAccountID); err != nil {
+		return fmt.Errorf("destination account not found")
 	}
 
 	// Fetch system categories for Transfer Out / Transfer In
@@ -216,7 +224,9 @@ func (m *BasicManager) CreateTransfer(payload models.TransferRequest) error {
 		return err
 	}
 
-	tx.Commit()
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
 
 	// Recalculate both accounts
 	if err := m.RecalculateAccountBalance(payload.FromAccountID); err != nil {
@@ -258,26 +268,18 @@ func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest
 		return err
 	}
 
+	userUUID, err := uuid.Parse(payload.UserID)
+	if err != nil {
+		return err
+	}
+
 	transactionDate, err := time.Parse("2006-01-02", payload.Date)
 	if err != nil {
 		return err
 	}
 
 	var transaction models.Transaction
-	if err := m.DB.Where("id = ? AND deleted_at IS NULL", transactionUUID).First(&transaction).Error; err != nil {
-		return err
-	}
-
-	tx := m.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	// Reverse old transaction effect on old account
-	if err := m.RecalculateAccountBalance(payload.OldAccountID); err != nil {
-		tx.Rollback()
+	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", transactionUUID, userUUID).First(&transaction).Error; err != nil {
 		return err
 	}
 
@@ -288,19 +290,14 @@ func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest
 	transaction.TransactionDate = transactionDate
 	transaction.AccountID = newAccountUUID
 
-	if err := tx.Save(&transaction).Error; err != nil {
-		tx.Rollback()
+	if err := m.DB.Save(&transaction).Error; err != nil {
 		return err
 	}
 
-	tx.Commit()
-
-	// Recalculate new account balance
+	// Recalculate affected accounts after the save is committed.
 	if err := m.RecalculateAccountBalance(payload.NewAccountID); err != nil {
 		return err
 	}
-
-	// Recalculate old account if it changed
 	if payload.OldAccountID != payload.NewAccountID {
 		if err := m.RecalculateAccountBalance(payload.OldAccountID); err != nil {
 			return err
@@ -310,14 +307,18 @@ func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest
 	return nil
 }
 
-func (m *BasicManager) DeleteTransactionById(transactionId string) error {
+func (m *BasicManager) DeleteTransactionById(transactionId, userId string) error {
 	transactionUUID, err := uuid.Parse(transactionId)
+	if err != nil {
+		return err
+	}
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return err
 	}
 
 	var transaction models.Transaction
-	if err := m.DB.Where("id = ?", transactionUUID).First(&transaction).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", transactionUUID, userUUID).First(&transaction).Error; err != nil {
 		return err
 	}
 
@@ -327,4 +328,119 @@ func (m *BasicManager) DeleteTransactionById(transactionId string) error {
 	}
 
 	return nil
+}
+
+// ImportResult summarizes a CSV import.
+type ImportResult struct {
+	Imported int
+	Skipped  []string // human-readable "row N: reason"
+}
+
+// ImportTransactions bulk-creates transactions from parsed CSV rows (excluding
+// the header). Category and account are resolved by name (owned by the user),
+// matching the export format. Valid rows are inserted atomically; invalid rows
+// are reported and skipped. Affected account balances are recomputed after.
+func (m *BasicManager) ImportTransactions(userId string, records [][]string) (ImportResult, error) {
+	var result ImportResult
+
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return result, err
+	}
+
+	// Build name -> id maps for this user's categories and accounts.
+	var categories []models.Category
+	if err := m.DB.Where("deleted_at IS NULL AND (user_id IS NULL OR user_id = ?)", userUUID).Find(&categories).Error; err != nil {
+		return result, err
+	}
+	catByName := map[string]uuid.UUID{}
+	for _, c := range categories {
+		catByName[c.Name] = c.ID
+	}
+	var accounts []models.Account
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&accounts).Error; err != nil {
+		return result, err
+	}
+	accByName := map[string]uuid.UUID{}
+	for _, a := range accounts {
+		accByName[a.Name] = a.ID
+	}
+
+	var toInsert []models.Transaction
+	affected := map[uuid.UUID]bool{}
+
+	for i, row := range records {
+		if i == 0 {
+			continue // header
+		}
+		lineNo := i + 1
+		if len(row) < 6 {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: expected 6 columns", lineNo))
+			continue
+		}
+		dateStr, typeStr, desc, catName, accName, amountStr := row[0], row[1], row[2], row[3], row[4], row[5]
+
+		date, err := time.Parse("2006-01-02", dateStr)
+		if err != nil {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: invalid date %q", lineNo, dateStr))
+			continue
+		}
+		var txType constants.TransactionType
+		switch typeStr {
+		case "Income":
+			txType = constants.Income
+		case "Expenses":
+			txType = constants.Expenses
+		default:
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: unknown type %q", lineNo, typeStr))
+			continue
+		}
+		amount, err := strconv.ParseFloat(amountStr, 64)
+		if err != nil || amount <= 0 {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: invalid amount %q", lineNo, amountStr))
+			continue
+		}
+		catID, ok := catByName[catName]
+		if !ok {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: unknown category %q", lineNo, catName))
+			continue
+		}
+		accID, ok := accByName[accName]
+		if !ok {
+			result.Skipped = append(result.Skipped, fmt.Sprintf("row %d: unknown account %q", lineNo, accName))
+			continue
+		}
+
+		toInsert = append(toInsert, models.Transaction{
+			UserID:          userUUID,
+			Amount:          amount,
+			TransactionType: txType,
+			Description:     desc,
+			CategoryID:      catID,
+			TransactionDate: date,
+			AccountID:       accID,
+		})
+		affected[accID] = true
+	}
+
+	if len(toInsert) > 0 {
+		if err := m.DB.Transaction(func(tx *gorm.DB) error {
+			for idx := range toInsert {
+				if err := tx.Create(&toInsert[idx]).Error; err != nil {
+					return err
+				}
+			}
+			return nil
+		}); err != nil {
+			return result, err
+		}
+		for accID := range affected {
+			if err := m.RecalculateAccountBalance(accID.String()); err != nil {
+				return result, err
+			}
+		}
+	}
+
+	result.Imported = len(toInsert)
+	return result, nil
 }

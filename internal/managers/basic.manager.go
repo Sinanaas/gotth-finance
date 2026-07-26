@@ -32,7 +32,7 @@ func (m *BasicManager) GetUserMonthlyIncome(id string) (float64, error) {
 	endOfMonth := startOfMonth.AddDate(0, 1, -1)
 
 	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transfer_group_id IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
 		return 0, err
 	}
 
@@ -57,7 +57,7 @@ func (m *BasicManager) GetUserMonthlyExpenses(id string) (float64, error) {
 	endOfMonth := startOfMonth.AddDate(0, 1, -1)
 
 	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transfer_group_id IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
 		return 0, err
 	}
 
@@ -81,14 +81,14 @@ func (m *BasicManager) GetUserMonthlyTotals(userId string, year int, month time.
 	endOfMonth := startOfMonth.AddDate(0, 1, -1)
 
 	var transactions []models.Transaction
-	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL AND transfer_group_id IS NULL AND transaction_date BETWEEN ? AND ?", userUUID, startOfMonth, endOfMonth).Find(&transactions).Error; err != nil {
 		return 0, 0, err
 	}
 
 	for _, t := range transactions {
 		if t.TransactionType == constants.Income {
 			income += t.Amount
-		} else {
+		} else if t.TransactionType == constants.Expenses {
 			expense += t.Amount
 		}
 	}
@@ -104,6 +104,13 @@ func (m *BasicManager) GetUserTotalBalance(userId string) float64 {
 	for _, account := range accounts {
 		total += account.Balance
 	}
+
+	// Goal savings are still the user's money — add them back to net worth.
+	var goalTotal float64
+	m.DB.Model(&models.Goal{}).
+		Where("user_id = ? AND deleted_at IS NULL", userUUID).
+		Select("COALESCE(SUM(saved_amount), 0)").Scan(&goalTotal)
+	total += goalTotal
 
 	return total
 }

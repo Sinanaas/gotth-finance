@@ -21,7 +21,15 @@ func NewAuthManager(db *gorm.DB, conf *initializers.Config) *AuthManager {
 	return &AuthManager{DB: db, config: conf}
 }
 
+func (am *AuthManager) RegistrationEnabled() bool {
+	return am.config.AllowRegistration
+}
+
 func (am *AuthManager) SignUp(ctx *gin.Context) error {
+	if !am.config.AllowRegistration {
+		return fmt.Errorf("registration is closed")
+	}
+
 	var payload models.SignUpInput
 	if err := ctx.ShouldBind(&payload); err != nil {
 		return fmt.Errorf("failed to bind payload")
@@ -107,9 +115,9 @@ func (am *AuthManager) Login(ctx *gin.Context) error {
 	}
 
 	ctx.SetSameSite(http.SameSiteLaxMode)
-	ctx.SetCookie("access_token", accessToken, am.config.AccessTokenMaxAge*60, "/", "", false, true)
-	ctx.SetCookie("refresh_token", refreshToken, am.config.RefreshTokenMaxAge*60, "/", "", false, true)
-	ctx.SetCookie("logged_in", "true", am.config.AccessTokenMaxAge, "/", "", false, false)
+	ctx.SetCookie("access_token", accessToken, am.config.AccessTokenMaxAge*60, "/", "", am.config.CookieSecure, true)
+	ctx.SetCookie("refresh_token", refreshToken, am.config.RefreshTokenMaxAge*60, "/", "", am.config.CookieSecure, true)
+	ctx.SetCookie("logged_in", "true", am.config.AccessTokenMaxAge, "/", "", am.config.CookieSecure, false)
 
 	return nil
 }
@@ -136,8 +144,8 @@ func (am *AuthManager) RefreshToken(ctx *gin.Context) bool {
 	}
 
 	ctx.SetSameSite(http.SameSiteLaxMode)
-	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge*60, "/", "", false, true)
-	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "", false, false)
+	ctx.SetCookie("access_token", accessToken, config.AccessTokenMaxAge*60, "/", "", config.CookieSecure, true)
+	ctx.SetCookie("logged_in", "true", config.AccessTokenMaxAge*60, "/", "", config.CookieSecure, false)
 	return true
 }
 

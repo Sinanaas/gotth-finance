@@ -36,10 +36,28 @@ func (br *BasicRouter) BasicRoute(rg *gin.RouterGroup, bm *managers.BasicManager
 	rg.GET("/accounts/transfer", middleware.DeserializeUser(), handlers.NewGetTransferHandler(bm).ServeHTTP)
 	rg.POST("/accounts/transfer", middleware.DeserializeUser(), handlers.NewPostTransferHandler(bm).ServeHTTP)
 	rg.PUT("/account", middleware.DeserializeUser(), handlers.NewDeleteAccountHandler(bm).ServeHTTP)
+	rg.GET("/account/:id/edit", middleware.DeserializeUser(), handlers.NewGetEditAccountHandler(bm).ServeHTTP)
+	rg.PATCH("/account/:id", middleware.DeserializeUser(), handlers.NewPatchAccountHandler(bm).ServeHTTP)
 	rg.PUT("/recurring", middleware.DeserializeUser(), handlers.NewDeleteRecurringHandler(bm).ServeHTTP)
+	rg.GET("/recurring/:id/edit", middleware.DeserializeUser(), handlers.NewGetEditRecurringHandler(bm).ServeHTTP)
+	rg.PATCH("/recurring/:id", middleware.DeserializeUser(), handlers.NewPatchRecurringHandler(bm).ServeHTTP)
 	rg.PUT("/loan", middleware.DeserializeUser(), handlers.NewDeleteLoanHandler(bm).ServeHTTP)
 
 	rg.GET("/categories", middleware.DeserializeUser(), handlers.NewGetCategoriesHandler(bm).ServeHTTP)
 	rg.POST("/categories", middleware.DeserializeUser(), handlers.NewPostCategoryHandler(bm).ServeHTTP)
 	rg.DELETE("/categories/:id", middleware.DeserializeUser(), handlers.NewDeleteCategoryHandler(bm).ServeHTTP)
+
+	rg.GET("/transactions/export", middleware.DeserializeUser(), handlers.NewExportTransactionsHandler(bm).ServeHTTP)
+	rg.POST("/transactions/import", middleware.DeserializeUser(), handlers.NewPostImportTransactionsHandler(bm).ServeHTTP)
+
+	rg.GET("/budgets", middleware.DeserializeUser(), handlers.NewGetBudgetsHandler(bm).ServeHTTP)
+	rg.POST("/budgets", middleware.DeserializeUser(), handlers.NewPostBudgetHandler(bm).ServeHTTP)
+	rg.DELETE("/budgets/:id", middleware.DeserializeUser(), handlers.NewDeleteBudgetHandler(bm).ServeHTTP)
+
+	rg.GET("/reports", middleware.DeserializeUser(), handlers.NewGetReportsHandler(bm).ServeHTTP)
+
+	rg.GET("/goals", middleware.DeserializeUser(), handlers.NewGetGoalsHandler(bm).ServeHTTP)
+	rg.POST("/goals", middleware.DeserializeUser(), handlers.NewPostGoalHandler(bm).ServeHTTP)
+	rg.DELETE("/goals/:id", middleware.DeserializeUser(), handlers.NewDeleteGoalHandler(bm).ServeHTTP)
+	rg.POST("/goals/:id/contribute", middleware.DeserializeUser(), handlers.NewPostGoalContributeHandler(bm).ServeHTTP)
 }

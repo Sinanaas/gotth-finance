@@ -14,35 +14,25 @@ import (
 
 func DeserializeUser() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var accessToken string
 		cookie, err := ctx.Cookie("access_token")
-		if err != nil {
+		if err != nil || cookie == "" {
 			ctx.Redirect(http.StatusSeeOther, "/login")
-			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
-			return
-		}
-
-		accessToken = cookie
-		if accessToken == "" {
-			ctx.Redirect(http.StatusSeeOther, "/login")
-			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
+			ctx.Abort()
 			return
 		}
 
 		config, _ := initializers.LoadConfig(".")
-		sub, err := utils.ValidateToken(accessToken, config.AccessTokenPublicKey)
-
+		sub, err := utils.ValidateToken(cookie, config.AccessTokenPublicKey)
 		if err != nil {
 			ctx.Redirect(http.StatusSeeOther, "/login")
-			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
+			ctx.Abort()
 			return
 		}
 
 		var user models.User
-		result := initializers.DB.First(&user, "id = ?", fmt.Sprint(sub))
-		if result.Error != nil {
+		if err := initializers.DB.First(&user, "id = ?", fmt.Sprint(sub)).Error; err != nil {
 			ctx.Redirect(http.StatusSeeOther, "/login")
-			ctx.Redirect(http.StatusSeeOther, ctx.Request.RequestURI)
+			ctx.Abort()
 			return
 		}
 

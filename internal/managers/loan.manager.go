@@ -43,13 +43,6 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 		return err
 	}
 
-	tx := m.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
 	loan := models.Loan{
 		UserID:          userUUID,
 		Amount:          payload.Amount,
@@ -62,81 +55,75 @@ func (m *BasicManager) CreateLoan(payload models.LoanRequest) error {
 		Description:     payload.Description,
 	}
 
-	if err := m.DB.Create(&loan).Error; err != nil {
-		return err
+	transaction := models.Transaction{
+		UserID:          userUUID,
+		Amount:          payload.Amount,
+		TransactionType: constants.TransactionType(payload.TransactionType),
+		CategoryID:      categoryUUID,
+		TransactionDate: transactionDate,
+		AccountID:       accountUUID,
 	}
-
-	// create transaction
-	var transaction models.Transaction
-	transaction.UserID = userUUID
-	transaction.Amount = payload.Amount
-	transaction.TransactionType = constants.TransactionType(payload.TransactionType)
 	if loan.TransactionType == constants.Expenses {
 		transaction.Description = "Lent: " + payload.Description
 	} else {
 		transaction.Description = "Borrowed: " + payload.Description
 	}
-	transaction.CategoryID = categoryUUID
-	transaction.TransactionDate = transactionDate
-	transaction.AccountID = accountUUID
 
-	if err := m.DB.Create(&transaction).Error; err != nil {
-		tx.Rollback()
-	}
-
-	// Update initial_transaction_id inside loan
-	if err := tx.Model(&loan).Update("initial_transaction_id", transaction.ID).Error; err != nil {
-		tx.Rollback()
+	// All writes share one transaction: a failure rolls the whole thing back.
+	if err := m.DB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&loan).Error; err != nil {
+			return err
+		}
+		if err := tx.Create(&transaction).Error; err != nil {
+			return err
+		}
+		return tx.Model(&loan).Update("initial_transaction_id", transaction.ID).Error
+	}); err != nil {
 		return err
 	}
-
-	tx.Commit()
 
 	return m.RecalculateAccountBalance(loan.AccountID.String())
 }
 
-func (m *BasicManager) FinishLoan(id string) error {
+func (m *BasicManager) FinishLoan(id, userId string) error {
 	loanUUID, err := uuid.Parse(id)
 	if err != nil {
 		return err
 	}
-	tx := m.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
 	var loan models.Loan
-	if err := m.DB.Where("id = ?", loanUUID).First(&loan).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", loanUUID, userUUID).First(&loan).Error; err != nil {
 		return err
 	}
 
-	loan.Status = true
-	loan.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
-	if err := m.DB.Save(&loan).Error; err != nil {
-		return err
+	repaid := models.Transaction{
+		UserID:          loan.UserID,
+		Amount:          loan.Amount,
+		Description:     "Loan repaid: " + loan.Description,
+		CategoryID:      loan.CategoryID,
+		TransactionDate: time.Now(),
+		AccountID:       loan.AccountID,
 	}
-
-	// create transaction
-	var transaction models.Transaction
-	transaction.UserID = loan.UserID
-	transaction.Amount = loan.Amount
 	if loan.TransactionType == constants.Income {
-		transaction.TransactionType = constants.Expenses
-	} else if loan.TransactionType == constants.Expenses {
-		transaction.TransactionType = constants.Income
-	}
-	transaction.Description = "Loan repaid: " + loan.Description
-	transaction.CategoryID = loan.CategoryID
-	transaction.TransactionDate = time.Now()
-	transaction.AccountID = loan.AccountID
-
-	if err := m.DB.Create(&transaction).Error; err != nil {
-		tx.Rollback()
+		repaid.TransactionType = constants.Expenses
+	} else {
+		repaid.TransactionType = constants.Income
 	}
 
-	tx.Commit()
+	// Close the loan and record the repayment atomically.
+	if err := m.DB.Transaction(func(tx *gorm.DB) error {
+		loan.Status = true
+		loan.DeletedAt = gorm.DeletedAt{Time: time.Now(), Valid: true}
+		if err := tx.Save(&loan).Error; err != nil {
+			return err
+		}
+		return tx.Create(&repaid).Error
+	}); err != nil {
+		return err
+	}
 
 	return m.RecalculateAccountBalance(loan.AccountID.String())
 }
@@ -155,18 +142,22 @@ func (m *BasicManager) GetUserActiveLoans(id string) ([]models.Loan, error) {
 	return loans, nil
 }
 
-func (m *BasicManager) DeleteLoanById(loadId string) error {
+func (m *BasicManager) DeleteLoanById(loadId, userId string) error {
 	loanUUID, err := uuid.Parse(loadId)
+	if err != nil {
+		return err
+	}
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return err
 	}
 
 	var loan models.Loan
-	if err := m.DB.Where("id = ?", loanUUID).First(&loan).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", loanUUID, userUUID).First(&loan).Error; err != nil {
 		return err
 	}
 
-	if err := m.DeleteTransactionById(loan.InitialTransactionID.String()); err != nil {
+	if err := m.DeleteTransactionById(loan.InitialTransactionID.String(), userId); err != nil {
 		return err
 	}
 

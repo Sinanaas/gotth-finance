@@ -57,7 +57,7 @@ func (m *BasicManager) GetUserTopCategories(id string) ([]models.CategoryWithTot
 	}
 
 	var categories []models.CategoryWithTotal
-	if err := m.DB.Raw("SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? AND t.deleted_at IS NULL GROUP BY c.name ORDER BY total DESC LIMIT 5", userUUID).Scan(&categories).Error; err != nil {
+	if err := m.DB.Raw(`SELECT c.name, SUM(t.amount) as total FROM transactions t JOIN categories c ON t.category_id = c.id WHERE t.user_id = ? AND t.deleted_at IS NULL AND t.transaction_type = 0 AND t.transfer_group_id IS NULL AND c.user_id IS NOT NULL GROUP BY c.name ORDER BY total DESC LIMIT 5`, userUUID).Scan(&categories).Error; err != nil {
 		return nil, err
 	}
 

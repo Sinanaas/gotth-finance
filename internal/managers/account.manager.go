@@ -77,14 +77,18 @@ func (m *BasicManager) FindAccountById(accountId string) (models.Account, error)
 	return account, nil
 }
 
-func (m *BasicManager) DeleteAccountById(accountId string) error {
+func (m *BasicManager) DeleteAccountById(accountId, userId string) error {
 	accountUUID, err := uuid.Parse(accountId)
+	if err != nil {
+		return err
+	}
+	userUUID, err := uuid.Parse(userId)
 	if err != nil {
 		return err
 	}
 
 	var account models.Account
-	if err := m.DB.Where("id = ?", accountUUID).First(&account).Error; err != nil {
+	if err := m.DB.Where("id = ? AND user_id = ?", accountUUID, userUUID).First(&account).Error; err != nil {
 		return err
 	}
 
@@ -103,7 +107,7 @@ func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
 	}
 
 	var account models.Account
-	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountId).First(&account).Error; err != nil {
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
 		return err
 	}
 
@@ -118,6 +122,37 @@ func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
 	}
 
 	return nil
+}
+
+func (m *BasicManager) FindUserAccountById(userId, id string) (models.Account, error) {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return models.Account{}, err
+	}
+	accUUID, err := uuid.Parse(id)
+	if err != nil {
+		return models.Account{}, err
+	}
+	var account models.Account
+	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", accUUID, userUUID).First(&account).Error; err != nil {
+		return models.Account{}, err
+	}
+	return account, nil
+}
+
+// UpdateAccount edits name/description only; balance stays derived from transactions.
+func (m *BasicManager) UpdateAccount(userId, id, name, description string) error {
+	userUUID, err := uuid.Parse(userId)
+	if err != nil {
+		return err
+	}
+	accUUID, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+	return m.DB.Model(&models.Account{}).
+		Where("id = ? AND user_id = ? AND deleted_at IS NULL", accUUID, userUUID).
+		Updates(map[string]interface{}{"name": name, "description": description}).Error
 }
 
 // SumBalance derives an account balance from its transactions: income adds,

@@ -21,7 +21,8 @@ func (h *GetBalanceHandler) ServeHTTP(c *gin.Context) {
 		return
 	}
 
-	account, err := h.BM.FindAccountById(accountID)
+	userId := utils.GetSessionUserID(c)
+	account, err := h.BM.FindUserAccountById(userId, accountID)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Account not found"})
 		return

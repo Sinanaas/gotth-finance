@@ -13,6 +13,10 @@ func NewAuthController(authManager *managers.AuthManager) *AuthController {
 	return &AuthController{AuthManager: authManager}
 }
 
+func (ac *AuthController) RegistrationEnabled() bool {
+	return ac.AuthManager.RegistrationEnabled()
+}
+
 func (ac *AuthController) SignUp(ctx *gin.Context) error {
 	err := ac.AuthManager.SignUp(ctx)
 	if err != nil {

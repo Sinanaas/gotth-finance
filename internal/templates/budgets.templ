@@ -1,0 +1,152 @@
+package templates
+
+import "github.com/Sinanaas/gotth-financial-tracker/internal/models"
+import "github.com/Sinanaas/gotth-financial-tracker/internal/utils"
+import "fmt"
+
+func budgetBarWidth(percent int) string {
+	if percent > 100 {
+		percent = 100
+	}
+	if percent < 0 {
+		percent = 0
+	}
+	return fmt.Sprintf("width:%d%%", percent)
+}
+
+func budgetBarColor(over bool, percent int) string {
+	if over {
+		return "bg-red-500"
+	}
+	if percent >= 80 {
+		return "bg-amber-500"
+	}
+	return "bg-green-500"
+}
+
+templ Budgets(statuses []models.BudgetStatus, categories []models.Category) {
+	<div class="w-full h-full p-4">
+		@BudgetsPanel(statuses)
+		@addBudgetModal(categories)
+	</div>
+}
+
+templ addBudgetModal(categories []models.Category) {
+	<div id="budget-modal" data-modal class="fixed inset-0 z-50 hidden items-center justify-center bg-ink/40 backdrop-blur-sm p-4 animate-fade-in" onclick="if(event.target===this)closeModal('budget-modal')">
+		<div class="bg-white rounded-2xl shadow-soft w-full max-w-md animate-pop-in overflow-hidden">
+			<div class="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+				<h2 class="text-base font-semibold font-display text-stone-800">New Budget</h2>
+				<button type="button" onclick="closeModal('budget-modal')" class="text-stone-400 hover:text-stone-600 transition">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+				</button>
+			</div>
+			<form
+				hx-post="/budgets"
+				hx-trigger="submit"
+				hx-target="#budgets-panel"
+				hx-swap="outerHTML"
+				hx-encoding="application/x-www-form-urlencoded"
+				hx-on::after-request="if(event.detail.successful){ closeModal('budget-modal'); this.reset(); }"
+				class="px-6 py-5 flex flex-col gap-4"
+			>
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Category</label>
+					<select name="Category" class="rounded-lg p-2 border border-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 bg-white" required>
+						<option disabled selected value class="text-stone-400">Select category...</option>
+						for _, category := range categories {
+							if category.Name != "Income" {
+								<option value={ fmt.Sprintf("%s", category.ID) }>{ category.Name }</option>
+							}
+						}
+					</select>
+				</div>
+				<div class="flex flex-col gap-1.5">
+					<label class="text-xs font-semibold text-stone-500 uppercase tracking-wide">Monthly Limit</label>
+					<div class="flex items-center border border-stone-200 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-brand-400">
+						<span class="px-3 text-sm text-stone-400 bg-stone-50 border-r border-stone-200 py-2">Rp.</span>
+						<input type="number" name="Amount" placeholder="0" class="flex-1 p-2 text-sm outline-none" min="0" required/>
+					</div>
+				</div>
+				<div class="flex gap-3 pt-1">
+					<button type="button" onclick="closeModal('budget-modal')" class="flex-1 py-2.5 rounded-lg border border-stone-200 text-sm font-semibold text-stone-600 hover:bg-stone-50 transition">Cancel</button>
+					<button type="submit" class="flex-1 py-2.5 rounded-lg bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold shadow transition">Add Budget</button>
+				</div>
+			</form>
+		</div>
+	</div>
+}
+
+templ BudgetsPanel(statuses []models.BudgetStatus) {
+	<div class="flex flex-col min-h-0 h-full animate-fade-in" id="budgets-panel">
+		<div class="bg-white rounded-xl shadow-card flex flex-col h-full overflow-hidden">
+			<div class="flex items-center justify-between px-6 py-4 border-b border-stone-100">
+				<div>
+					<h2 class="text-lg font-semibold font-display text-stone-800">Budgets</h2>
+					<p class="text-xs text-stone-400 mt-0.5">Monthly spending limits per category</p>
+				</div>
+				<button type="button" onclick="openModal('budget-modal')" class="flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold rounded-lg shadow transition">
+					<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+					New Budget
+				</button>
+			</div>
+			<div class="flex-1 overflow-auto p-5">
+				if len(statuses) == 0 {
+					<div class="flex flex-col items-center gap-2 py-14">
+						<svg class="w-10 h-10 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+						</svg>
+						<p class="text-sm text-stone-400 font-medium">No budgets yet</p>
+						<p class="text-xs text-stone-300">Set a monthly limit for a category with the button above</p>
+					</div>
+				} else {
+					<div class="flex flex-col gap-4">
+						for _, s := range statuses {
+							<div class="border border-stone-100 rounded-xl p-4">
+								<div class="flex items-center justify-between mb-2">
+									<span class="text-sm font-semibold text-stone-700">{ s.CategoryName }</span>
+									<div class="flex items-center gap-3">
+										<span class="font-mono text-sm text-stone-600">Rp. { utils.FormatCurrency(s.Spent) } / { utils.FormatCurrency(s.Limit) }</span>
+										<form
+											hx-delete={ fmt.Sprintf("/budgets/%s", s.ID) }
+											hx-trigger="submit"
+											hx-target="#budgets-panel"
+											hx-swap="outerHTML"
+											hx-encoding="application/x-www-form-urlencoded"
+											class="mb-0"
+											confirm-with-sweet-alert="true"
+											swal-title="Delete Budget?"
+											swal-text="This removes the limit for this category."
+											swal-icon="warning"
+											swal-buttons="true"
+											swal-danger="true"
+										>
+											<button type="submit" class="text-red-400 hover:text-red-600 transition p-1 rounded hover:bg-red-50" title="Delete">
+												<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+													<polyline points="3 6 5 6 21 6"></polyline>
+													<path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+													<path d="M10 11v6M14 11v6"></path>
+													<path d="M9 6V4h6v2"></path>
+												</svg>
+											</button>
+										</form>
+									</div>
+								</div>
+								<div class="w-full h-2 rounded-full bg-stone-100 overflow-hidden">
+									<div class={ "h-full rounded-full transition-all " + budgetBarColor(s.Over, s.Percent) } style={ budgetBarWidth(s.Percent) }></div>
+								</div>
+								<div class="flex items-center justify-between mt-1.5">
+									if s.Over {
+										<span class="text-xs font-semibold text-red-500">Over by Rp. { utils.FormatCurrency(-s.Remaining) }</span>
+									} else {
+										<span class="text-xs text-stone-400">Rp. { utils.FormatCurrency(s.Remaining) } left</span>
+									}
+									<span class="text-xs text-stone-400">{ fmt.Sprintf("%d%%", s.Percent) }</span>
+								</div>
+							</div>
+						}
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+}

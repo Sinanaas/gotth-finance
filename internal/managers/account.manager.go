@@ -107,7 +107,7 @@ func (m *BasicManager) RecalculateAccountBalance(accountId string) error {
 	}
 
 	var account models.Account
-	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountId).First(&account).Error; err != nil {
+	if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
 		return err
 	}
 

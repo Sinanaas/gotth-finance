@@ -46,8 +46,21 @@ func (m *BasicManager) NetWorthSeries(userId string, months int) (labels []strin
 			Find(&transactions).Error; err != nil {
 			return nil, nil, err
 		}
+
+		// Goal contributions are recorded as "Savings" expenses, which reduces
+		// SumBalance. Add them back because the money is still the user's.
+		var savingsTotal float64
+		m.DB.Raw(`
+			SELECT COALESCE(SUM(t.amount), 0)
+			FROM transactions t
+			JOIN categories c ON t.category_id = c.id
+			WHERE t.user_id = ? AND t.deleted_at IS NULL
+			  AND t.transaction_date <= ?
+			  AND c.name = 'Savings' AND c.user_id IS NULL`,
+			userUUID, monthEnd).Scan(&savingsTotal)
+
 		labels = append(labels, t.Format("Jan '06"))
-		values = append(values, SumBalance(transactions))
+		values = append(values, SumBalance(transactions)+savingsTotal)
 	}
 	return labels, values, nil
 }

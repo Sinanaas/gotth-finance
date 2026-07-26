@@ -295,21 +295,12 @@ func (m *BasicManager) SetUserCRONJob(recurring models.Recurring, scheduler gocr
 		return fmt.Errorf("❌ failed to create new job: %w", err)
 	}
 
-	tx := m.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
 	recurring.JobID = j.ID()
 	recurring.JobName = recurring.Name
 
 	if err := m.DB.Save(&recurring).Error; err != nil {
-		tx.Rollback()
+		return err
 	}
-
-	tx.Commit()
 
 	return nil
 }
@@ -324,7 +315,7 @@ func (m *BasicManager) RemoveCRONJob(recurring models.Recurring, scheduler gocro
 
 func (m *BasicManager) LoadAndScheduleJobs() error {
 	var recurrings []models.Recurring
-	if err := m.DB.Find(&recurrings).Error; err != nil {
+	if err := m.DB.Where("deleted_at IS NULL").Find(&recurrings).Error; err != nil {
 		return err
 	}
 

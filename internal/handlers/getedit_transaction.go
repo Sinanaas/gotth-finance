@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Sinanaas/gotth-financial-tracker/internal/managers"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/templates"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/utils"
@@ -22,6 +24,10 @@ func (h *GetEditTransactionHandler) ServeHTTP(ctx *gin.Context) {
 	transaction, err := h.BM.FindTransactionById(id)
 	if err != nil {
 		swalError(ctx, "Transaction not found")
+		return
+	}
+	if transaction.UserID.String() != userId {
+		ctx.Status(http.StatusForbidden)
 		return
 	}
 

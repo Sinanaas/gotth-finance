@@ -41,18 +41,21 @@ func (m *BasicManager) CreateTransaction(payload models.TransactionRequest) erro
 		AccountID:       accountUUID,
 	}
 
-	// Guard overdraft on expense before recording it.
-	if transaction.TransactionType == constants.Expenses {
-		var account models.Account
-		if err := m.DB.Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
-			return err
+	// Guard overdraft inside a transaction with a row-level lock to prevent races.
+	err = m.DB.Transaction(func(tx *gorm.DB) error {
+		if transaction.TransactionType == constants.Expenses {
+			var account models.Account
+			if err := tx.Set("gorm:query_option", "FOR UPDATE").
+				Where("id = ? AND deleted_at IS NULL", accountUUID).First(&account).Error; err != nil {
+				return err
+			}
+			if account.Balance < transaction.Amount {
+				return fmt.Errorf("insufficient balance")
+			}
 		}
-		if account.Balance < transaction.Amount {
-			return fmt.Errorf("insufficient balance")
-		}
-	}
-
-	if err := m.DB.Create(&transaction).Error; err != nil {
+		return tx.Create(&transaction).Error
+	})
+	if err != nil {
 		return err
 	}
 
@@ -128,7 +131,7 @@ func (m *BasicManager) GetUserLatestSixTransactions(userId string) ([]models.Tra
 	}
 
 	var transactions []models.Transaction
-	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Order("transaction_date desc").Limit(7).Find(&transactions).Error; err != nil {
+	if err := m.DB.Preload("Category").Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Order("transaction_date desc").Limit(6).Find(&transactions).Error; err != nil {
 		return nil, err
 	}
 
@@ -221,7 +224,9 @@ func (m *BasicManager) CreateTransfer(payload models.TransferRequest) error {
 		return err
 	}
 
-	tx.Commit()
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
 
 	// Recalculate both accounts
 	if err := m.RecalculateAccountBalance(payload.FromAccountID); err != nil {
@@ -278,19 +283,6 @@ func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest
 		return err
 	}
 
-	tx := m.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	// Reverse old transaction effect on old account
-	if err := m.RecalculateAccountBalance(payload.OldAccountID); err != nil {
-		tx.Rollback()
-		return err
-	}
-
 	transaction.Amount = payload.Amount
 	transaction.TransactionType = constants.TransactionType(payload.Type)
 	transaction.Description = payload.Description
@@ -298,19 +290,14 @@ func (m *BasicManager) UpdateTransaction(payload models.TransactionUpdateRequest
 	transaction.TransactionDate = transactionDate
 	transaction.AccountID = newAccountUUID
 
-	if err := tx.Save(&transaction).Error; err != nil {
-		tx.Rollback()
+	if err := m.DB.Save(&transaction).Error; err != nil {
 		return err
 	}
 
-	tx.Commit()
-
-	// Recalculate new account balance
+	// Recalculate affected accounts after the save is committed.
 	if err := m.RecalculateAccountBalance(payload.NewAccountID); err != nil {
 		return err
 	}
-
-	// Recalculate old account if it changed
 	if payload.OldAccountID != payload.NewAccountID {
 		if err := m.RecalculateAccountBalance(payload.OldAccountID); err != nil {
 			return err

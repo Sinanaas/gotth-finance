@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Sinanaas/gotth-financial-tracker/internal/constants"
 	"github.com/Sinanaas/gotth-financial-tracker/internal/models"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func (m *BasicManager) GetGoalStatus(userId string) ([]models.GoalStatus, error) {
@@ -14,27 +16,27 @@ func (m *BasicManager) GetGoalStatus(userId string) ([]models.GoalStatus, error)
 		return nil, err
 	}
 	var goals []models.Goal
-	if err := m.DB.Preload("Account").Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&goals).Error; err != nil {
+	if err := m.DB.Where("user_id = ? AND deleted_at IS NULL", userUUID).Find(&goals).Error; err != nil {
 		return nil, err
 	}
 
 	statuses := make([]models.GoalStatus, 0, len(goals))
 	for _, g := range goals {
-		current := g.Account.Balance // progress = the linked account's balance
 		percent := 0
 		if g.TargetAmount > 0 {
-			percent = int(current / g.TargetAmount * 100)
+			percent = int(g.SavedAmount / g.TargetAmount * 100)
+			if percent > 100 {
+				percent = 100
+			}
 		}
 		statuses = append(statuses, models.GoalStatus{
-			ID:          g.ID,
-			Name:        g.Name,
-			AccountID:   g.AccountID,
-			AccountName: g.Account.Name,
-			Target:      g.TargetAmount,
-			Current:     current,
-			Remaining:   g.TargetAmount - current,
-			Percent:     percent,
-			Reached:     current >= g.TargetAmount,
+			ID:        g.ID,
+			Name:      g.Name,
+			Target:    g.TargetAmount,
+			Current:   g.SavedAmount,
+			Remaining: g.TargetAmount - g.SavedAmount,
+			Percent:   percent,
+			Reached:   g.SavedAmount >= g.TargetAmount,
 		})
 	}
 	return statuses, nil
@@ -45,20 +47,7 @@ func (m *BasicManager) CreateGoal(payload models.GoalRequest) error {
 	if err != nil {
 		return err
 	}
-	accountUUID, err := uuid.Parse(payload.AccountID)
-	if err != nil {
-		return err
-	}
-	// Ensure the account belongs to the user.
-	var count int64
-	m.DB.Model(&models.Account{}).
-		Where("id = ? AND user_id = ? AND deleted_at IS NULL", accountUUID, userUUID).
-		Count(&count)
-	if count == 0 {
-		return fmt.Errorf("account not found")
-	}
-
-	goal := models.Goal{UserID: userUUID, Name: payload.Name, TargetAmount: payload.TargetAmount, AccountID: accountUUID}
+	goal := models.Goal{UserID: userUUID, Name: payload.Name, TargetAmount: payload.TargetAmount}
 	return m.DB.Create(&goal).Error
 }
 
@@ -74,8 +63,8 @@ func (m *BasicManager) DeleteGoal(id, userId string) error {
 	return m.DB.Where("id = ? AND user_id = ?", goalUUID, userUUID).Delete(&models.Goal{}).Error
 }
 
-// ContributeToGoal moves money from a source account into the goal's linked
-// account as a real transfer — recorded as transactions, net worth preserved.
+// ContributeToGoal deducts amount from the chosen account as an expense transaction
+// and increments the goal's SavedAmount. The goal itself is not bound to any account.
 func (m *BasicManager) ContributeToGoal(goalId, userId, fromAccountId string, amount float64) error {
 	userUUID, err := uuid.Parse(userId)
 	if err != nil {
@@ -85,23 +74,55 @@ func (m *BasicManager) ContributeToGoal(goalId, userId, fromAccountId string, am
 	if err != nil {
 		return err
 	}
+	accountUUID, err := uuid.Parse(fromAccountId)
+	if err != nil {
+		return err
+	}
+
 	var goal models.Goal
 	if err := m.DB.Where("id = ? AND user_id = ? AND deleted_at IS NULL", goalUUID, userUUID).First(&goal).Error; err != nil {
 		return err
 	}
-	if goal.AccountID == uuid.Nil {
-		return fmt.Errorf("this goal isn't linked to an account — delete it and create a new one")
-	}
-	if fromAccountId == goal.AccountID.String() {
-		return fmt.Errorf("source account must differ from the goal's account")
+
+	// Find or create the global "Savings" category (atomic upsert avoids duplicates).
+	savingsCat := models.Category{Name: "Savings", Description: "Goal contributions"}
+	if err := m.DB.Where("name = ? AND user_id IS NULL AND deleted_at IS NULL", "Savings").
+		FirstOrCreate(&savingsCat).Error; err != nil {
+		return err
 	}
 
-	return m.CreateTransfer(models.TransferRequest{
-		FromAccountID: fromAccountId,
-		ToAccountID:   goal.AccountID.String(),
-		Amount:        amount,
-		Date:          time.Now().Format("2006-01-02"),
-		Description:   "Saving toward: " + goal.Name,
-		UserID:        userId,
+	// Run the balance check and both writes inside a single transaction with a
+	// row-level lock so concurrent contributions can't overdraft the account.
+	err = m.DB.Transaction(func(tx *gorm.DB) error {
+		var account models.Account
+		if err := tx.Set("gorm:query_option", "FOR UPDATE").
+			Where("id = ? AND user_id = ? AND deleted_at IS NULL", accountUUID, userUUID).
+			First(&account).Error; err != nil {
+			return fmt.Errorf("account not found")
+		}
+		if account.Balance < amount {
+			return fmt.Errorf("insufficient balance")
+		}
+
+		transaction := models.Transaction{
+			UserID:          userUUID,
+			AccountID:       accountUUID,
+			CategoryID:      savingsCat.ID,
+			Amount:          amount,
+			TransactionType: constants.Expenses,
+			Description:     "Saving toward: " + goal.Name,
+			TransactionDate: time.Now(),
+		}
+		if err := tx.Create(&transaction).Error; err != nil {
+			return err
+		}
+
+		goal.SavedAmount += amount
+		return tx.Save(&goal).Error
 	})
+	if err != nil {
+		return err
+	}
+
+	return m.RecalculateAccountBalance(fromAccountId)
 }

@@ -25,12 +25,7 @@ func (h *PostGoalHandler) ServeHTTP(ctx *gin.Context) {
 		swalError(ctx, err.Error())
 		return
 	}
-	accountId, err := validation.UUIDField(ctx.PostForm("Account"), "account")
-	if err != nil {
-		swalError(ctx, err.Error())
-		return
-	}
-	if err := h.BM.CreateGoal(models.GoalRequest{Name: name, TargetAmount: target, AccountID: accountId, UserID: userId}); err != nil {
+	if err := h.BM.CreateGoal(models.GoalRequest{Name: name, TargetAmount: target, UserID: userId}); err != nil {
 		swalError(ctx, err.Error())
 		return
 	}
